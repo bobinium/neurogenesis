@@ -4,16 +4,16 @@
 package neurogenesis;
 
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.graph.Network;
+import repast.simphony.space.grid.Grid;
 
 /**
  * @author bob
  *
  */
-public class InputNeuron {
+public class InputNeuron extends Neuron {
 
-	private final Network<Object> neuralNetwork;
-	
 	private final LightSensor lightSensor;
 	
 	/**
@@ -21,9 +21,12 @@ public class InputNeuron {
 	 * @param newNeuralNetwork
 	 */
 	public InputNeuron(final Network<Object> newNeuralNetwork,
-			final LightSensor newLightSensor) {
+			final LightSensor newLightSensor,
+			final ContinuousSpace<Object> newSpace,
+			final Grid<Object> newGrid) {
 		
-		this.neuralNetwork = newNeuralNetwork;
+		super(newNeuralNetwork, newSpace, newGrid);
+		
 		this.lightSensor = newLightSensor;
 		
 	} // End of InputNeuron()
@@ -54,4 +57,6 @@ public class InputNeuron {
 	public void step() {
 		
 	}
-}
+	
+	
+} // End of InputNeuron class

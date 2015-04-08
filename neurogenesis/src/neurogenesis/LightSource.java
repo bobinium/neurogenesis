@@ -1,8 +1,12 @@
 package neurogenesis;
 
+import repast.simphony.space.continuous.ContinuousSpace;
+
 
 public class LightSource {
 
+	private final ContinuousSpace<Object> space;
+	
 	private final int radiusOfTrajectory;
 	
 	private double angularPosition;
@@ -16,11 +20,13 @@ public class LightSource {
 	 * 
 	 * @param newRadius
 	 */
-	public LightSource(final int newRadiusOfTrajectory,
+	public LightSource(final ContinuousSpace<Object> newSpace,
+			final int newRadiusOfTrajectory,
 			final double newAngularPosition,
 			final double newAngularVelocity,
 			final double newLightIntensity) {
 		
+		this.space = newSpace;
 		this.radiusOfTrajectory = newRadiusOfTrajectory;
 		this.angularPosition = newAngularPosition;
 		this.angularVelocity = newAngularVelocity;
@@ -71,7 +77,12 @@ public class LightSource {
 	public void update() {
 		
 		// Constant velocity;
-		this.angularPosition = this.angularPosition + this.angularVelocity;
+		this.angularPosition = 
+				(this.angularPosition + this.angularVelocity) % (2 * Math.PI);
+		
+		System.out.println("Light source angular position: " + this.angularPosition);
+		
+		this.space.moveTo(this, this.radiusOfTrajectory * Math.cos(this.angularPosition), this.radiusOfTrajectory * Math.sin(this.angularPosition));
 		
 	} // End update()
 	

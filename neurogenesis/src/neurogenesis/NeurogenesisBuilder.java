@@ -42,11 +42,17 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		
 		ContinuousSpaceFactory spaceFactory =
 				ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
-		ContinuousSpace<Object> space =
-				spaceFactory.createContinuousSpace("space", context,
+		ContinuousSpace<Object> arenaSpace =
+				spaceFactory.createContinuousSpace("arena space", context,
 						new RandomCartesianAdder<Object>(),
-						new repast.simphony.space.continuous.WrapAroundBorders(),
-						50, 50);
+						new repast.simphony.space.continuous.InfiniteBorders<Object>(),
+						new double[]{51, 51}, new double[]{25, 25});
+		
+		ContinuousSpace<Object> brainSpace =
+				spaceFactory.createContinuousSpace("brain space", context,
+						new RandomCartesianAdder<Object>(),
+						new repast.simphony.space.continuous.InfiniteBorders<Object>(),
+						new double[]{51, 51, 51}, new double[]{25, 25, 25});
 		
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
 		Grid<Object> grid = gridFactory.createGrid("grid", context,
@@ -60,41 +66,42 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 			context.add(new Zombie(space, grid));
 		} */
 
-		LightSensor leftLightSensor = new LightSensor(Math.PI / -12);
-		LightSensor rightLightSensor = new LightSensor(Math.PI / 12);		
+		LightSensor leftLightSensor = new LightSensor(arenaSpace, Math.PI / -12);
+		LightSensor rightLightSensor = new LightSensor(arenaSpace, Math.PI / 12);
+		context.add(leftLightSensor);
+		context.add(rightLightSensor);
+		
 		LightSensor[] lightSensors = 
 				new LightSensor[] { leftLightSensor, rightLightSensor };
 		
 		Robot robot = new Robot(5, 0, Math.PI / 4, Math.PI / 6, lightSensors);
+		context.add(robot);
+		arenaSpace.moveTo(robot, 0, 0);
 		
-		LightSource lightSource = new LightSource(10, 0, Math.PI / 6, 10);
+		LightSource lightSource = new LightSource(arenaSpace, 10, 0, Math.PI / 12, 10);
+		context.add(lightSource);
 		
-		ExperimentSimulator experimentSimulator = 
-				new ExperimentSimulator(robot, lightSource);
-		context.add(experimentSimulator);
+		ArenaSimulator arenaSimulator = new ArenaSimulator(robot, lightSource);
+		context.add(arenaSimulator);
 		
 		InputNeuron inputNeuron1 = 
-				new InputNeuron(neuralNetwork, leftLightSensor);
+				new InputNeuron(neuralNetwork, leftLightSensor, arenaSpace, grid);
 		context.add(inputNeuron1);
 		InputNeuron inputNeuron2 = 
-				new InputNeuron(neuralNetwork, rightLightSensor);
+				new InputNeuron(neuralNetwork, rightLightSensor, arenaSpace, grid);
 		context.add(inputNeuron2);
 		
-		MotorNeuron motorNeuron = new MotorNeuron(neuralNetwork);
+		OutputNeuron motorNeuron = new OutputNeuron(neuralNetwork, arenaSpace, grid);
 		context.add(motorNeuron);
 		neuralNetwork.addEdge(inputNeuron1, motorNeuron);
 		neuralNetwork.addEdge(inputNeuron2, motorNeuron);
 		
-/*		int humanCount = (Integer) params.getValue("human.count");
-		for (int i = 0; i < humanCount; i++) {
-			int energy = RandomHelper.nextIntFromTo(4, 10);
-			context.add(new Human(space, grid, energy));
-		}
-
 		for (Object obj : context) {
-			NdPoint pt = space.getLocation(obj);
-			grid.moveTo(obj, (int) pt.getX(), (int) pt.getY());
-		} */
+			if (obj instanceof Neuron) {
+				NdPoint pt = arenaSpace.getLocation(obj);
+				grid.moveTo(obj, (int) pt.getX(), (int) pt.getY());
+			}
+		}
 		
 		return context;
 	}

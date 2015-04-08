@@ -115,7 +115,10 @@ public class Robot {
 		}
 		
 		// Calculates new position.
-		this.angularPosition = this.angularPosition + this.angularVelocity;
+		this.angularPosition = 
+				(this.angularPosition + this.angularVelocity) % (2 * Math.PI);
+		
+		System.out.println("Robot's angular position: " + this.angularPosition);
 		
 	} // End of update()
 	

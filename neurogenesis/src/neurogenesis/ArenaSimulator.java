@@ -9,7 +9,7 @@ import repast.simphony.engine.schedule.ScheduledMethod;
  * @author bob
  *
  */
-public class ExperimentSimulator {
+public class ArenaSimulator {
 
 	private final Robot robot;
 	
@@ -23,16 +23,17 @@ public class ExperimentSimulator {
 	 * @param newRobot
 	 * @param newLightSource
 	 */
-	public ExperimentSimulator(final Robot newRobot, 
+	public ArenaSimulator(final Robot newRobot, 
 			final LightSource newLightSource) {
 		
 		this.robot = newRobot;
 		this.lightSource = newLightSource;
 		
 		this.maxIlluminationDistance = 
-				Math.sqrt(Math.pow(this.lightSource.getRadiusOfTrajectory(), 2) 
-						- (2 * this.lightSource.getRadiusOfTrajectory() 
-								* this.robot.getRadius()));
+				Math.sqrt((this.lightSource.getRadiusOfTrajectory() 
+						- this.robot.getRadius()) 
+						* (this.robot.getRadius() 
+						+ this.lightSource.getRadiusOfTrajectory()));
 				
 	} // End of ExperimentSimulator()
 	
@@ -64,12 +65,24 @@ public class ExperimentSimulator {
 	}
 	
 	
+	public double getLightSourceAngularPosition() {
+		return this.lightSource.getAngularPosition();
+	}
+	
+	
+	public double getRobotAngularPosition() {
+		return this.robot.getAngularPosition();
+	}
+	
+	
 	/**
 	 * 
 	 */
 	@ScheduledMethod(start = 1, interval = 1)
 	public void update() {
 
+		System.out.println("Updating arena...");
+		
 		// Constant velocity.
 		this.robot.update(0);
 		this.lightSource.update();
@@ -86,13 +99,15 @@ public class ExperimentSimulator {
 							- this.robot.getAngularPosition(sensor)))
 					+ Math.pow(this.robot.getRadius(), 2);
 			
+			System.out.println("Distance: " + Math.sqrt(distanceSquared) + ", Max: " + this.maxIlluminationDistance);
+			
 			double lightIntensity = 0;
 			if (Math.sqrt(distanceSquared) <= this.maxIlluminationDistance) {
 				lightIntensity = 
 					this.lightSource.getLightIntensity() / distanceSquared;
 			}
 			
-			sensor.update(lightIntensity);
+			sensor.update(this.robot, lightIntensity);
 			
 		} // End of for()
 		
