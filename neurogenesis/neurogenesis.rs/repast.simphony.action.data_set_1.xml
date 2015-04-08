@@ -1,0 +1,40 @@
+<repast.simphony.data2.engine.DataSetDescriptor>
+  <name>Angular Position</name>
+  <type>AGGREGATE</type>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <pType>LAST</pType>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+    <hashCode>1618742386</hashCode>
+  </scheduleParams>
+  <atEnd>false</atEnd>
+  <methodDataSources class="linked-hash-map">
+    <entry>
+      <string>LightAngularPosition</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>LightAngularPosition</id>
+        <className>neurogenesis.ArenaSimulator</className>
+        <methodName>getLightSourceAngularPosition</methodName>
+        <aggType>MAX</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>RobotAngularPosition</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>RobotAngularPosition</id>
+        <className>neurogenesis.ArenaSimulator</className>
+        <methodName>getRobotAngularPosition</methodName>
+        <aggType>MAX</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+  </methodDataSources>
+  <countSources class="linked-hash-map"/>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>
