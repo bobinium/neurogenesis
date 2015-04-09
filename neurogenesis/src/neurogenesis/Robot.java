@@ -101,6 +101,15 @@ public class Robot {
 	
 	/**
 	 * 
+	 * @return
+	 */
+	public int getSize() {
+		return this.radius * 2 * 15000;
+	}
+	
+	
+	/**
+	 * 
 	 * @param deltaAngularVelocity
 	 */
 	public void update(final double deltaAngularVelocity) {
@@ -108,8 +117,8 @@ public class Robot {
 		// Calculates new velocity.
 		double newAngularVelocity = 
 				this.angularVelocity + deltaAngularVelocity;
-		if (newAngularVelocity > this.maxAngularVelocity) {
-			this.angularVelocity = this.maxAngularVelocity;
+		if (Math.abs(newAngularVelocity) > this.maxAngularVelocity) {
+			//this.angularVelocity = this.maxAngularVelocity;
 		} else {
 			this.angularVelocity = newAngularVelocity;
 		}
@@ -118,7 +127,7 @@ public class Robot {
 		this.angularPosition = 
 				(this.angularPosition + this.angularVelocity) % (2 * Math.PI);
 		
-		System.out.println("Robot's angular position: " + this.angularPosition);
+		System.out.println("Robot's angular position: " + this.angularPosition / Math.PI);
 		
 	} // End of update()
 	

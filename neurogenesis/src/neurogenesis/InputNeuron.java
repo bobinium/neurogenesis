@@ -52,8 +52,16 @@ public class InputNeuron extends Neuron {
 	
 	/**
 	 * 
+	 * @return
 	 */
-	@ScheduledMethod(start = 1, interval = 1)
+	public double getActivation() {
+		return this.lightSensor.getLightIntensity();
+	}
+	
+	
+	/**
+	 * 
+	 */
 	public void step() {
 		
 	}

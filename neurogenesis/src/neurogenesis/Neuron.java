@@ -36,4 +36,11 @@ public abstract class Neuron {
 	} // End of Neuron()
 
 	
+	/**
+	 * 
+	 * @return
+	 */
+	public abstract double getActivation();
+	
+	
 } // End of Neuron class

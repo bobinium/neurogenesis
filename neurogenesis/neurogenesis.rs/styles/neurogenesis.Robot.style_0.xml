@@ -1,10 +1,11 @@
 <repast.simphony.visualization.editedStyle.DefaultEditedStyleData2D>
   <shapeWkt>circle</shapeWkt>
-  <size>15.0</size>
-  <sizeMax>15.0</sizeMax>
+  <size>150.0</size>
+  <sizeMax>1000.0</sizeMax>
   <sizeMin>1.0</sizeMin>
-  <sizeScale>2.0</sizeScale>
-  <label></label>
+  <sizeScale>1.0</sizeScale>
+  <sizeMethodName>getSize</sizeMethodName>
+  <label>Robot</label>
   <labelPosition>bottom</labelPosition>
   <labelPrecision>3</labelPrecision>
   <labelOffset>5.0</labelOffset>
@@ -17,9 +18,9 @@
     <float>0.0</float>
   </labelColor>
   <color>
-    <float>0.08235294</float>
-    <float>0.08235294</float>
-    <float>0.12941177</float>
+    <float>0.81960785</float>
+    <float>0.81960785</float>
+    <float>0.87058824</float>
   </color>
   <colorMax>
     <float>10.0</float>

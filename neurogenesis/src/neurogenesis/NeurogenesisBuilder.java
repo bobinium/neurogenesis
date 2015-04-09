@@ -52,7 +52,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 				spaceFactory.createContinuousSpace("brain space", context,
 						new RandomCartesianAdder<Object>(),
 						new repast.simphony.space.continuous.InfiniteBorders<Object>(),
-						new double[]{51, 51, 51}, new double[]{25, 25, 25});
+						new double[]{50, 50, 50}, new double[]{25, 25, 25});
 		
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
 		Grid<Object> grid = gridFactory.createGrid("grid", context,
@@ -70,19 +70,21 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		LightSensor rightLightSensor = new LightSensor(arenaSpace, Math.PI / 12);
 		context.add(leftLightSensor);
 		context.add(rightLightSensor);
-		
+
 		LightSensor[] lightSensors = 
 				new LightSensor[] { leftLightSensor, rightLightSensor };
 		
-		Robot robot = new Robot(5, 0, Math.PI / 4, Math.PI / 6, lightSensors);
+		Robot robot = new Robot(3, 0, Math.PI / 12, 0, lightSensors);
 		context.add(robot);
 		arenaSpace.moveTo(robot, 0, 0);
 		
-		LightSource lightSource = new LightSource(arenaSpace, 10, 0, Math.PI / 12, 10);
+		LightSource lightSource = new LightSource(arenaSpace, 10, Math.PI, Math.PI / 36, 10);
 		context.add(lightSource);
-		
-		ArenaSimulator arenaSimulator = new ArenaSimulator(robot, lightSource);
-		context.add(arenaSimulator);
+		arenaSpace.moveTo(lightSource, 
+				lightSource.getRadiusOfTrajectory() 
+				* Math.cos(lightSource.getAngularPosition()), 
+				lightSource.getRadiusOfTrajectory() 
+				* Math.sin(lightSource.getAngularPosition()));
 		
 		InputNeuron inputNeuron1 = 
 				new InputNeuron(neuralNetwork, leftLightSensor, arenaSpace, grid);
@@ -93,9 +95,24 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		
 		OutputNeuron motorNeuron = new OutputNeuron(neuralNetwork, arenaSpace, grid);
 		context.add(motorNeuron);
-		neuralNetwork.addEdge(inputNeuron1, motorNeuron);
-		neuralNetwork.addEdge(inputNeuron2, motorNeuron);
+		neuralNetwork.addEdge(inputNeuron1, motorNeuron, -1);
+		neuralNetwork.addEdge(inputNeuron2, motorNeuron, 1);
 		
+		ArenaSimulator arenaSimulator = 
+				new ArenaSimulator(robot, lightSource, motorNeuron);
+		context.add(arenaSimulator);
+		
+		arenaSpace.moveTo(leftLightSensor, 
+				robot.getRadius() 
+				* Math.cos(robot.getAngularPosition(leftLightSensor)), 
+				robot.getRadius() 
+				* Math.sin(robot.getAngularPosition(leftLightSensor)));
+		arenaSpace.moveTo(rightLightSensor, 
+				robot.getRadius() 
+				* Math.cos(robot.getAngularPosition(rightLightSensor)), 
+				robot.getRadius() 
+				* Math.sin(robot.getAngularPosition(rightLightSensor)));
+				
 		for (Object obj : context) {
 			if (obj instanceof Neuron) {
 				NdPoint pt = arenaSpace.getLocation(obj);

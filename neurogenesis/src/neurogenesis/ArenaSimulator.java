@@ -17,6 +17,8 @@ public class ArenaSimulator {
 	
 	private final double maxIlluminationDistance;
 	
+	private final OutputNeuron motorNeuron;
+	
 	
 	/**
 	 * 
@@ -24,10 +26,12 @@ public class ArenaSimulator {
 	 * @param newLightSource
 	 */
 	public ArenaSimulator(final Robot newRobot, 
-			final LightSource newLightSource) {
+			final LightSource newLightSource,
+			final OutputNeuron newMotorNeuron) {
 		
 		this.robot = newRobot;
 		this.lightSource = newLightSource;
+		this.motorNeuron = newMotorNeuron;
 		
 		this.maxIlluminationDistance = 
 				Math.sqrt((this.lightSource.getRadiusOfTrajectory() 
@@ -84,16 +88,18 @@ public class ArenaSimulator {
 		System.out.println("Updating arena...");
 		
 		// Constant velocity.
-		this.robot.update(0);
+		this.robot.update(this.motorNeuron.getActivation());
 		this.lightSource.update();
 		
 		LightSensor[] lightSensors = this.robot.getLightSensors();
 		
 		for (LightSensor sensor : lightSensors) {
 			
+			System.out.println("Sensor angular position: " + this.robot.getAngularPosition(sensor) / Math.PI);
+			
 			double distanceSquared = 
 					Math.pow(this.lightSource.getRadiusOfTrajectory(), 2) 
-					+ (2 * this.lightSource.getRadiusOfTrajectory()
+					- (2 * this.lightSource.getRadiusOfTrajectory()
 							* this.robot.getRadius()
 							* Math.cos(this.lightSource.getAngularPosition()
 							- this.robot.getAngularPosition(sensor)))
