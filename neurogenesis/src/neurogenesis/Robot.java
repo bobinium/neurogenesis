@@ -94,7 +94,8 @@ public class Robot {
 	 */
 	public double getAngularPosition(final LightSensor lightSensor) {
 		
-		return this.angularPosition + lightSensor.getAngularRelativePosition();
+		return normaliseAngularPosition(this.angularPosition 
+				+ lightSensor.getAngularRelativePosition());
 		
 	} // End of getAngularPosition(LightSensor)
 	
@@ -117,19 +118,41 @@ public class Robot {
 		// Calculates new velocity.
 		double newAngularVelocity = 
 				this.angularVelocity + deltaAngularVelocity;
-		if (Math.abs(newAngularVelocity) > this.maxAngularVelocity) {
-			//this.angularVelocity = this.maxAngularVelocity;
+		if (newAngularVelocity > this.maxAngularVelocity) {
+			this.angularVelocity = this.maxAngularVelocity;
+		} else if (newAngularVelocity < -this.maxAngularVelocity) {
+			this.angularVelocity = -this.maxAngularVelocity;
 		} else {
 			this.angularVelocity = newAngularVelocity;
 		}
 		
 		// Calculates new position.
-		this.angularPosition = 
-				(this.angularPosition + this.angularVelocity) % (2 * Math.PI);
+		this.angularPosition = normaliseAngularPosition(this.angularPosition 
+				+ this.angularVelocity);
 		
 		System.out.println("Robot's angular position: " + this.angularPosition / Math.PI);
+		System.out.println("Robot's angular velocity: " + this.angularVelocity);
 		
 	} // End of update()
 	
+	
+	
+	/**
+	 * 
+	 * @param rawPosition
+	 * @return
+	 */
+	private double normaliseAngularPosition(final double rawAngularPosition) {
+		
+		double normalisedAngularPosition = rawAngularPosition % (2 * Math.PI);
+		if (normalisedAngularPosition < 0) {
+			normalisedAngularPosition = 
+					(2 * Math.PI) + normalisedAngularPosition; 
+		}
+
+		return normalisedAngularPosition;
+		
+	}
+
 	
 } // End of Robot class

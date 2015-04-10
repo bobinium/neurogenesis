@@ -1,6 +1,6 @@
 <context id="neurogenesis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://repast.org/scenario/context">
   	<projection type="continuous space" id="arena space"/>
   	<projection type="continuous space" id="brain space"/>
-  	<projection type="grid" id="grid"/>
+  	<projection type="grid" id="brain grid"/>
   	<projection type="network" id="neural network"/>  	
 </context>
