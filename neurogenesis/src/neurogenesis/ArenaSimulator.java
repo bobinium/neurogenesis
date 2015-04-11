@@ -3,6 +3,7 @@
  */
 package neurogenesis;
 
+import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 
 /**
@@ -82,7 +83,8 @@ public class ArenaSimulator {
 	/**
 	 * 
 	 */
-	@ScheduledMethod(start = 1, interval = 1)
+	@ScheduledMethod(start = 1, interval = 1, 
+			priority = ScheduleParameters.FIRST_PRIORITY)
 	public void update() {
 
 		System.out.println("Updating arena...");

@@ -3,6 +3,7 @@
  */
 package neurogenesis;
 
+import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.graph.Network;
@@ -61,7 +62,8 @@ public class OutputNeuron extends Neuron {
 	/**
 	 * 
 	 */
-	@ScheduledMethod(start = 1, interval = 1)
+	@ScheduledMethod(start = 1, interval = 1, 
+			priority = ScheduleParameters.LAST_PRIORITY)
 	public void step() {
 		calculateActivation();
 	}
