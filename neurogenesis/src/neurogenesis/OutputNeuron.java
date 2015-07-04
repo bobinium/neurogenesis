@@ -10,23 +10,25 @@ import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.grid.Grid;
 
+
 /**
  * @author bob
  *
  */
 public class OutputNeuron extends Neuron {
 
+	
 	private double activation;
 	
 	/**
 	 * 
 	 * @param newNeuralNetwork
 	 */
-	public OutputNeuron(final Network<Object> newNeuralNetwork,
-			final ContinuousSpace<Object> newSpace, 
-			final Grid<Object> newGrid) {
+	public OutputNeuron(final ContinuousSpace<Object> newSpace, 
+			final Grid<Object> newGrid,
+			final Network<Object> newNeuralNetwork) {
 
-		super(newNeuralNetwork, newSpace, newGrid);
+		super(newSpace, newGrid, newNeuralNetwork);
 
 	} // End of OutputNeuron()
 	

@@ -3,6 +3,10 @@
   <type>3D</type>
   <styles>
     <entry>
+      <string>neurogenesis.UndifferentiatedCell</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
+    </entry>
+    <entry>
       <string>neurogenesis.InputNeuron</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
@@ -12,6 +16,10 @@
     </entry>
   </styles>
   <editedStyles>
+    <entry>
+      <string>neurogenesis.UndifferentiatedCell</string>
+      <string>neurogenesis.UndifferentiatedCell.style_0.xml</string>
+    </entry>
     <entry>
       <string>neurogenesis.InputNeuron</string>
       <string>neurogenesis.InputNeuron.style_2.xml</string>
@@ -41,12 +49,16 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-990371166</hashCode>
+    <hashCode>-1673615646</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>brain space</layoutProjection>
   <layoutInterval>0</layoutInterval>
   <layerOrder>
+    <entry>
+      <string>neurogenesis.UndifferentiatedCell</string>
+      <int>2</int>
+    </entry>
     <entry>
       <string>neurogenesis.InputNeuron</string>
       <int>1</int>

@@ -3,10 +3,19 @@
  */
 package neurogenesis;
 
+import java.util.List;
+
+import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.query.space.grid.GridCell;
+import repast.simphony.query.space.grid.GridCellNgh;
+import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
+import repast.simphony.space.grid.GridPoint;
+import repast.simphony.util.SimUtilities;
+
 
 /**
  * @author bob
@@ -20,12 +29,12 @@ public class InputNeuron extends Neuron {
 	 * 
 	 * @param newNeuralNetwork
 	 */
-	public InputNeuron(final Network<Object> newNeuralNetwork,
-			final LightSensor newLightSensor,
-			final ContinuousSpace<Object> newSpace,
-			final Grid<Object> newGrid) {
+	public InputNeuron(final ContinuousSpace<Object> newSpace,
+			final Grid<Object> newGrid,
+			final Network<Object> newNeuralNetwork,
+			final LightSensor newLightSensor) {
 		
-		super(newNeuralNetwork, newSpace, newGrid);
+		super(newSpace, newGrid, newNeuralNetwork);
 		
 		this.lightSensor = newLightSensor;
 		
@@ -62,9 +71,23 @@ public class InputNeuron extends Neuron {
 	/**
 	 * 
 	 */
+	@ScheduledMethod(start = 1, interval = 1, 
+			priority = ScheduleParameters.RANDOM_PRIORITY)
 	public void step() {
 		
-	}
+		// get the grid location of this Cell
+		GridPoint pt = this.grid.getLocation(this);
+		
+		// use the GridCellNgh class to create GridCells for
+		// the surrounding neighbourhood.
+		GridCellNgh<ExtracellularMatrix> nghCreator = 
+				new GridCellNgh<ExtracellularMatrix>(this.grid,
+						pt,	ExtracellularMatrix.class, 1, 1, 1);
+		List<GridCell<ExtracellularMatrix>> gridCells = 
+				nghCreator.getNeighborhood(true);
+		SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
+		
+	} // End of step()
 	
 	
 } // End of InputNeuron class

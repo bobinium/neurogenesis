@@ -7,17 +7,15 @@ import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
 
+
 /**
  * @author bob
  *
  */
-public abstract class Neuron {
+public abstract class Neuron extends Cell {
 
+	
 	protected final Network<Object> neuralNetwork;
-	
-	protected ContinuousSpace<Object> space;
-	
-	protected Grid<Object> grid;
 	
 	
 	/**
@@ -25,13 +23,13 @@ public abstract class Neuron {
 	 * @param space
 	 * @param grid
 	 */
-	public Neuron(final Network<Object> newNeuralNetwork,
-			final ContinuousSpace<Object> newSpace, 
-			final Grid<Object> newGrid) {
+	protected Neuron(final ContinuousSpace<Object> newSpace, 
+			final Grid<Object> newGrid,
+			final Network<Object> newNeuralNetwork) {
+		
+		super(newSpace, newGrid);
 		
 		this.neuralNetwork = newNeuralNetwork;
-		this.space = newSpace;
-		this.grid = newGrid;
 		
 	} // End of Neuron()
 
