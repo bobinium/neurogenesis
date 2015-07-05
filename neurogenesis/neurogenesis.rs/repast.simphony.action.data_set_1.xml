@@ -1,5 +1,5 @@
 <repast.simphony.data2.engine.DataSetDescriptor>
-  <name>Angular Position</name>
+  <name>Average Light Received</name>
   <type>AGGREGATE</type>
   <inclTick>true</inclTick>
   <inclBatchRun>false</inclBatchRun>
@@ -11,26 +11,17 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>1618742386</hashCode>
+    <hashCode>-950595835</hashCode>
   </scheduleParams>
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
-      <string>LightAngularPosition</string>
+      <string>AverageLight</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>LightAngularPosition</id>
-        <className>neurogenesis.ArenaSimulator</className>
-        <methodName>getLightSourceAngularPosition</methodName>
-        <aggType>MAX</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>RobotAngularPosition</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>RobotAngularPosition</id>
-        <className>neurogenesis.ArenaSimulator</className>
-        <methodName>getRobotAngularPosition</methodName>
-        <aggType>MAX</aggType>
+        <id>AverageLight</id>
+        <className>neurogenesis.LightSensor</className>
+        <methodName>getLightIntensity</methodName>
+        <aggType>MEAN</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

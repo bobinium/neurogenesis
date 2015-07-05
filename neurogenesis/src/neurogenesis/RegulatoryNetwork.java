@@ -12,18 +12,13 @@ public class RegulatoryNetwork {
 	private RegulatoryUnit[] regulatoryUnits;;
 	
 	
-	private GeneticElement[] inputElements;
-	
-	
 	private Map<GeneticElement, Double> outputElements = new HashMap<GeneticElement, Double>();
 	
 	
 	public RegulatoryNetwork(final RegulatoryUnit[] newRegulatoryUnits, 
-			final GeneticElement[] newInputElements, 
 			final GeneticElement[] newOutputElements) {
 		
 		this.regulatoryUnits = newRegulatoryUnits;	
-		this.inputElements = newInputElements;
 		
 		for (GeneticElement outputElement : newOutputElements) {
 			this.outputElements.put(outputElement, 0.01);
@@ -37,12 +32,18 @@ public class RegulatoryNetwork {
 	}
 	
 	
-	public void updateNetwork(final Map<GeneticElement, Double> inputElementConcentration) {
+	public void updateNetwork(final Map<GeneticElement, Double> inputElements) {
 		
 		Map<GeneticElement, Double> products = new HashMap<GeneticElement, Double>();
 		
-		for (GeneticElement inputElement : inputElements) {
-			products.put(inputElement, inputElementConcentration.get(inputElement));
+		for (GeneticElement inputElement : inputElements.keySet()) {
+			if (inputElement.getType() == GeneticElement.ELEMENT_TYPE_SPECIAL_FOOD) {
+				System.out.println("Food is there!");
+			}
+			double concentration = 
+					(inputElements.get(inputElement) == null) 
+					? 0 : inputElements.get(inputElement);
+			products.put(inputElement, concentration);
 		}
 		
 		for (RegulatoryUnit regulatoryUnit : this.regulatoryUnits) {
@@ -57,7 +58,7 @@ public class RegulatoryNetwork {
 		
 		for (RegulatoryUnit regulatoryUnit : this.regulatoryUnits) {
 			
-			regulatoryUnit.updateConcentration(products);
+			regulatoryUnit.updateConcentration(products, inputElements);
 			System.out.println("Unit #" + ++count + " concentration: " + regulatoryUnit.getConcentration());
 			
 		}
@@ -110,7 +111,6 @@ public class RegulatoryNetwork {
 		}
 		
 		RegulatoryNetwork newNetwork = new RegulatoryNetwork(newUnits.toArray(new RegulatoryUnit[newUnits.size()]), 
-				this.inputElements, 
 				this.outputElements.keySet().toArray(new GeneticElement[this.outputElements.size()]));
 		
 		return newNetwork;

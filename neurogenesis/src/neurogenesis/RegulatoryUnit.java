@@ -60,9 +60,13 @@ public class RegulatoryUnit {
 	}
 	
 	
-	public void updateConcentration(final Map<GeneticElement, Double> products) {
+	public void updateConcentration(final Map<GeneticElement, Double> products, final Map<GeneticElement, Double> inputElements) {
 		
 		double activation = 0;
+		
+		double totalCost = 0;
+		
+		GeneticElement foodElement = null;
 		
 		System.out.println("Number of cis-elements: " + this.cisElements.length);
 		
@@ -71,6 +75,19 @@ public class RegulatoryUnit {
 			System.out.println("Number of trans-elements: " + products.size());
 			
 			for (GeneticElement transElement : products.keySet()) {
+				
+				if (transElement.getType() == GeneticElement.ELEMENT_TYPE_SPECIAL_FOOD) {
+					foodElement = transElement;
+					System.out.println("Food available: " + inputElements.get(transElement));
+					System.out.println("Concentration/cost: " + getConcentration() + " / " + totalCost);
+					totalCost += Math.min(0.1, inputElements.get(foodElement));
+//					if (inputElements.get(transElement) > totalCost + getConcentration()) {
+//						System.out.println("*** Will cost: " + getConcentration());
+//						totalCost += getConcentration();
+//					} else {
+//						continue;
+//					}
+				}
 				
 				double affinityDeltaX = transElement.getAffinityX() - cisElement.getAffinityX();
 				double affinityDeltaY = transElement.getAffinityY() - cisElement.getAffinityY();
@@ -90,6 +107,11 @@ public class RegulatoryUnit {
 		System.out.println("Delta concentration: " + deltaConcentration);
 		
 		this.concentration += deltaConcentration;
+		
+		if (foodElement != null) {
+			inputElements.put(foodElement, inputElements.get(foodElement) - totalCost);
+			System.out.println("Food cost: " + totalCost + " ==> " + inputElements.get(foodElement));
+		}
 		
 	}
 	

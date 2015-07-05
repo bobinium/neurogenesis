@@ -3,18 +3,14 @@
  */
 package neurogenesis;
 
-import java.util.List;
+import java.util.Map;
 
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
-import repast.simphony.query.space.grid.GridCell;
-import repast.simphony.query.space.grid.GridCellNgh;
-import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
-import repast.simphony.util.SimUtilities;
 
 
 /**
@@ -23,7 +19,12 @@ import repast.simphony.util.SimUtilities;
  */
 public class InputNeuron extends Neuron {
 
+	public static final double LIGHT_TO_FOOD_EFFICIENCY = 0.0;
+	
 	private final LightSensor lightSensor;
+	
+	
+	private final GeneticElement food;
 	
 	/**
 	 * 
@@ -32,11 +33,13 @@ public class InputNeuron extends Neuron {
 	public InputNeuron(final ContinuousSpace<Object> newSpace,
 			final Grid<Object> newGrid,
 			final Network<Object> newNeuralNetwork,
-			final LightSensor newLightSensor) {
+			final LightSensor newLightSensor,
+			final GeneticElement newFood) {
 		
 		super(newSpace, newGrid, newNeuralNetwork);
 		
 		this.lightSensor = newLightSensor;
+		this.food = newFood;
 		
 	} // End of InputNeuron()
 	
@@ -78,14 +81,22 @@ public class InputNeuron extends Neuron {
 		// get the grid location of this Cell
 		GridPoint pt = this.grid.getLocation(this);
 		
-		// use the GridCellNgh class to create GridCells for
-		// the surrounding neighbourhood.
-		GridCellNgh<ExtracellularMatrix> nghCreator = 
-				new GridCellNgh<ExtracellularMatrix>(this.grid,
-						pt,	ExtracellularMatrix.class, 1, 1, 1);
-		List<GridCell<ExtracellularMatrix>> gridCells = 
-				nghCreator.getNeighborhood(true);
-		SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
+		for (Object obj : this.grid.getObjectsAt(pt.getX(), pt.getY(), pt.getZ())) {
+			
+			if (obj instanceof ExtracellularMatrix) {
+				 ExtracellularMatrix matrix = (ExtracellularMatrix) obj;
+				 double foodConcentration = Math.tanh(getActivation() * LIGHT_TO_FOOD_EFFICIENCY);
+				 System.out.println("New food concentration: " + foodConcentration);
+				 
+				 Map<GeneticElement, Double> concentrations = matrix.getConcentrations();
+				 
+				 double currentConcentration = (concentrations.get(this.food) == null) ? 0 : concentrations.get(this.food);
+				 
+				 concentrations.put(this.food, currentConcentration + foodConcentration);
+				 break;
+
+			}
+		}
 		
 	} // End of step()
 	

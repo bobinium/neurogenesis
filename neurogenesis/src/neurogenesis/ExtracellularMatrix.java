@@ -3,16 +3,17 @@ package neurogenesis;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
+
+import org.apache.log4j.Logger;
 
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.query.space.grid.GridCell;
 import repast.simphony.query.space.grid.GridCellNgh;
-import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
-import repast.simphony.util.SimUtilities;
 
 
 /**
@@ -22,6 +23,19 @@ import repast.simphony.util.SimUtilities;
  */
 public class ExtracellularMatrix {
 
+	private static final boolean DEBUG = false;
+	
+	/*
+	 * 
+	 */
+	private final static Logger logger = Logger.getLogger(ExtracellularMatrix.class);
+	
+	
+	/**
+	 * 
+	 */
+	public static final double DIFFUSION_RATE =  0.2;
+	
 	
 	/**
 	 * 
@@ -36,6 +50,9 @@ public class ExtracellularMatrix {
 	
 	private Map<GeneticElement, Double> concentrations = new HashMap<GeneticElement, Double>();
 
+	
+	private int colour;
+	
 	
 	/**
 	 * 
@@ -79,13 +96,19 @@ public class ExtracellularMatrix {
 		List<GridCell<ExtracellularMatrix>> gridCells = 
 				nghCreator.getNeighborhood(false);
 
+		double maxConcentration = 0;
+		
+		Stack<Map<GeneticElement, Double>> lowerConcentrations = 
+				new Stack<Map<GeneticElement, Double>>();
+		
 		for (GeneticElement product : this.concentrations.keySet()) {
 			
 			double localConcentration =	this.concentrations.get(product);
 			
-			double iGradientComponent = 0;
-			double jGradientComponent = 0;
-			double kGradientComponent = 0;
+			if (DEBUG)
+				System.out.println("Local concentration: " + localConcentration);
+			
+			double totalConcentration = 0;
 		
 			for (GridCell<ExtracellularMatrix> gridCell : gridCells) {
 			
@@ -99,35 +122,85 @@ public class ExtracellularMatrix {
 					Map<GeneticElement, Double> neighbourConcentrations = 
 							matrix.getConcentrations();
 				
-					Double neighbourConcentration = 
-							neighbourConcentrations.get(product);
+					double neighbourConcentration = 
+							(neighbourConcentrations.get(product) == null) 
+							? 0 : neighbourConcentrations.get(product);
 					
-					if ((neighbourConcentration != null) 
-							&& (localConcentration > neighbourConcentration)) {
-						
-						double neighbourGradient = 
-								localConcentration - neighbourConcentration;
-						
-						GridPoint gridPoint = gridCell.getPoint();
-						
-						int i = gridPoint.getX() - pt.getX();
-						int j = gridPoint.getY() - pt.getY();
-						int k = gridPoint.getZ() - pt.getZ();
-						
-						double iAngle = i / neighbourGradient;
-						double jAngle = j / neighbourGradient;
-						double kAngle = k / neighbourGradient;
-						
-						//iGradientComponent += neighbourGradient * i
+					if (localConcentration > neighbourConcentration) {						
+						totalConcentration += neighbourConcentration;
+						lowerConcentrations.push(neighbourConcentrations);
 					}
 					
-				} // End for() products
+				} // End for() matrices
 				
-			} // End for() matrices
+			} // End for() grid cells
 			
-		} // End for() grid cells
+			if (DEBUG)
+				System.out.println("Total concentration: " + totalConcentration);
+			
+			double averageConcentration = (lowerConcentrations.size() == 0) 
+					? 0 : totalConcentration / lowerConcentrations.size();
+			// The greater the magnitude in the difference, the greater the rate.
+			// Concentrations will tend toward the average, but not more.
+			double maxDiffusingConcentration =  (localConcentration - averageConcentration) / 2;
+			
+			if (DEBUG)
+				System.out.println("Max diffusing concentration: " + maxDiffusingConcentration);
+				
+			double diffusingConcentration = 
+					Math.tanh(maxDiffusingConcentration) * maxDiffusingConcentration;
+			
+			if (DEBUG)
+				System.out.println("Diffusing concentration: " + diffusingConcentration);
+
+			double totalConcentrationDelta = (localConcentration 
+					* lowerConcentrations.size()) - totalConcentration;
+			
+			while (!lowerConcentrations.empty()) {
+				
+				Map<GeneticElement, Double> neighbourConcentrations = 
+						lowerConcentrations.pop();
+								
+				double neighbourConcentration = 
+						(neighbourConcentrations.get(product) == null) 
+						? 0 : neighbourConcentrations.get(product);
+				
+				if (DEBUG)
+					System.out.println("Neighbour concentration: " 
+							+ neighbourConcentration);
+				
+				double newNeighbourConcentration = 
+						neighbourConcentration + diffusingConcentration 
+						* ((localConcentration - neighbourConcentration) 
+								/ totalConcentrationDelta);
+				neighbourConcentrations.put(product, 
+						newNeighbourConcentration); 
+				
+				if (DEBUG)
+					System.out.println("New neighbour concentration: " 
+							+ newNeighbourConcentration);
+
+			} // End of while()
+			
+			double newLocalConcentration = localConcentration - diffusingConcentration;
+			
+			if (DEBUG)
+				System.out.println("New local concentration: " + newLocalConcentration);
+			
+			this.concentrations.put(product, newLocalConcentration);
+			maxConcentration = Math.max(maxConcentration, newLocalConcentration);
+			
+		} // End for() products
+		
+		//System.out.println("Max concentration: " + maxConcentration);
+		this.colour = (int) (maxConcentration * 256);
+		//System.out.println("New matrix colour: " + this.colour);
 		
 	} // End of step()
 	
+	
+	public int getColour() {
+		return this.colour;
+	}
 	
 } // End of ExtracellularMatrix class

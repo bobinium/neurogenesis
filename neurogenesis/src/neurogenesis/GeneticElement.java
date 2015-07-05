@@ -11,6 +11,8 @@ public class GeneticElement {
 	
 	public static final int ELEMENT_TYPE_SPECIAL_OUT = 4;
 	
+	public static final int ELEMENT_TYPE_SPECIAL_FOOD = 5;
+	
 	
 	private int type;
 	

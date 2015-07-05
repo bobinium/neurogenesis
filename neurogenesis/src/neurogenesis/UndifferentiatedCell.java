@@ -25,6 +25,8 @@ import repast.simphony.util.SimUtilities;
  */
 public class UndifferentiatedCell extends Cell {
 
+	private Map<GeneticElement, Double> internalConcentrations = new HashMap<GeneticElement, Double>();
+	
 	
 	private RegulatoryNetwork regulatoryNetwork;
 	
@@ -72,95 +74,59 @@ public class UndifferentiatedCell extends Cell {
 		// get the grid location of this Cell
 		GridPoint pt = this.grid.getLocation(this);
 		
-		// use the GridCellNgh class to create GridCells for
-		// the surrounding neighbourhood.
-		GridCellNgh<ExtracellularMatrix> nghCreatorMorphogene = new GridCellNgh<ExtracellularMatrix>(this.grid,
-				pt,	ExtracellularMatrix.class, 1, 1, 1);
-		List<GridCell<ExtracellularMatrix>> gridCellsMorphogenes = nghCreatorMorphogene.getNeighborhood(true);
-		SimUtilities.shuffle(gridCellsMorphogenes, RandomHelper.getUniform());
-		
-		Map<GeneticElement, Double> inputElements = new HashMap<GeneticElement, Double>();
+		Map<GeneticElement, Double> externalConcentrations = null;
 
-//		for (GridCell<Morphogene> gridCellMorphogene : gridCellsMorphogenes) {
-//			for (Morphogene morphogenesList : gridCellMorphogene.items()) {
-//				Double morphogeneConcentration = morphogenesList.getConcentrations().get(morphogene);
-//				double externalConcentration = (morphogeneConcentration == null) ? 0 : morphogeneConcentration;
-//				GridPoint gridPoint = gridCellMorphogene.getPoint();
-//				System.out.println("Grid morphogenes: " + gridPoint.getX() + ", " + gridPoint.getY() + ", " + gridPoint.getZ());
-//				System.out.println("Initial external concentration: " + externalConcentration);
-//				if (internalConcentration > externalConcentration) {
-//					double deltaConcentration = internalConcentration - externalConcentration;
-//					double diffusionQty = deltaConcentration / 100;
-//					newInternalConcentration =- diffusionQty;
-//					morphogenesList.getConcentrations().put(morphogene, externalConcentration + diffusionQty);
-//					System.out.println("Final external concentration: " + (externalConcentration + diffusionQty));
-//				}
-//			}
-//		}
+		for (Object obj : this.grid.getObjectsAt(pt.getX(), pt.getY(), pt.getZ())) {			
+			if (obj instanceof ExtracellularMatrix) {
+				 ExtracellularMatrix matrix = (ExtracellularMatrix) obj;
+				 externalConcentrations = matrix.getConcentrations();
+				 break;
+			}
+		}
+
+		if (externalConcentrations == null) {
+			throw new IllegalStateException("No input elements!");
+		}
+
+		for (GeneticElement product : externalConcentrations.keySet()) {
+			
+			double externalConcentration = externalConcentrations.get(product);
+			double internalConcentration = 
+					(this.internalConcentrations.get(product) == null) 
+					? 0 : this.internalConcentrations.get(product);
+			
+			if (externalConcentration > internalConcentration) {
+				double maxDiffusingConcentration =  (externalConcentration - internalConcentration) / 2;
+				double newExternalConcentration = externalConcentration - maxDiffusingConcentration;
+				double newInternalConcentration = internalConcentration + maxDiffusingConcentration;
+				externalConcentrations.put(product, newExternalConcentration);
+				this.internalConcentrations.put(product, newInternalConcentration);
+			}
+		}
 		
-		this.regulatoryNetwork.updateNetwork(inputElements);
+		this.regulatoryNetwork.updateNetwork(this.internalConcentrations);
 		
 		Map<GeneticElement, Double> outputElements = this.regulatoryNetwork.getOutputElements();
 		
-		// Handles diffusion of morphogenes.
-		
-		for (GeneticElement morphogene : outputElements.keySet()) {
-			
-			if (morphogene != this.cellDivisionRegulator && morphogene != this.cellDeathRegulator) {
-				
-				double internalConcentration = outputElements.get(morphogene);
-				System.out.println("Initial internal concentration: " + internalConcentration);
-				
-				// use the GridCellNgh class to create GridCells for
-				// the surrounding neighbourhood.
-//				GridCellNgh<Morphogene> nghCreatorMorphogene = new GridCellNgh<Morphogene>(this.grid,
-//						pt,	Morphogene.class, 1, 1, 1);
-//				List<GridCell<Morphogene>> gridCellsMorphogenes = nghCreatorMorphogene.getNeighborhood(true);
-//				SimUtilities.shuffle(gridCellsMorphogenes, RandomHelper.getUniform());
-				
-				double newInternalConcentration = internalConcentration;
-				for (GridCell<ExtracellularMatrix> gridCellMorphogene : gridCellsMorphogenes) {
-					for (ExtracellularMatrix morphogenesList : gridCellMorphogene.items()) {
-						Double morphogeneConcentration = morphogenesList.getConcentrations().get(morphogene);
-						double externalConcentration = (morphogeneConcentration == null) ? 0 : morphogeneConcentration;
-						GridPoint gridPoint = gridCellMorphogene.getPoint();
-						System.out.println("Grid morphogenes: " + gridPoint.getX() + ", " + gridPoint.getY() + ", " + gridPoint.getZ());
-						System.out.println("Initial external concentration: " + externalConcentration);
-						if (internalConcentration > externalConcentration) {
-							double deltaConcentration = internalConcentration - externalConcentration;
-							double diffusionQty = deltaConcentration / 100;
-							newInternalConcentration =- diffusionQty;
-							morphogenesList.getConcentrations().put(morphogene, externalConcentration + diffusionQty);
-							System.out.println("Final external concentration: " + (externalConcentration + diffusionQty));
-						}
-					}
-				}
-				
-				outputElements.put(morphogene, newInternalConcentration);
-				System.out.println("Final internal concentration: " + newInternalConcentration);
-				
-			}
-		}
-
 		// Handles cell death.
-		if (this.cellDeathRegulator != null) {
-			
-			double cellDeathConcentration = outputElements.get(this.cellDeathRegulator);
-			
-			if (cellDeathConcentration > 0.9) {
-				
-				System.out.println("*** Cell death ***");
-				this.alive = false;
-				
-				outputElements.put(this.cellDeathRegulator, 0.01);
-				
-				Context<Object> context = ContextUtils.getContext(this);
-				context.remove(this);
-				return;
-
-			}
-		
-		}
+//		if (this.cellDeathRegulator != null) {
+//			
+//			double cellDeathConcentration = outputElements.get(this.cellDeathRegulator);
+//			
+//			if (cellDeathConcentration > 0.9) {
+//				
+//				System.out.println("*** Cell death ***");
+//				this.alive = false;
+//				
+//				outputElements.put(this.cellDeathRegulator, 0.01);
+//				
+//				Context<Object> context = ContextUtils.getContext(this);
+//				context.remove(this);
+//				return;
+//
+//			}
+//		
+//		}
 		
 		// Handles cellular division.
 		if (this.cellDivisionRegulator != null) {
