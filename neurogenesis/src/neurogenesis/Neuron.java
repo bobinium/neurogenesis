@@ -12,10 +12,9 @@ import repast.simphony.space.grid.Grid;
  * @author bob
  *
  */
-public abstract class Neuron extends Cell {
+public class Neuron extends RegulatedCell {
 
-	
-	protected final Network<Object> neuralNetwork;
+	protected static Network<Object> neuralNetwork;
 	
 	
 	/**
@@ -24,12 +23,12 @@ public abstract class Neuron extends Cell {
 	 * @param grid
 	 */
 	protected Neuron(final ContinuousSpace<Object> newSpace, 
-			final Grid<Object> newGrid,
-			final Network<Object> newNeuralNetwork) {
+			final Grid<Object> newGrid) {
+//			final Network<Object> newNeuralNetwork) {
 		
 		super(newSpace, newGrid);
 		
-		this.neuralNetwork = newNeuralNetwork;
+//		this.neuralNetwork = newNeuralNetwork;
 		
 	} // End of Neuron()
 
@@ -38,7 +37,9 @@ public abstract class Neuron extends Cell {
 	 * 
 	 * @return
 	 */
-	public abstract double getActivation();
+	public double getActivation() {
+		return 0;
+	};
 	
 	
 } // End of Neuron class

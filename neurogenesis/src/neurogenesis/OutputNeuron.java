@@ -28,7 +28,7 @@ public class OutputNeuron extends Neuron {
 			final Grid<Object> newGrid,
 			final Network<Object> newNeuralNetwork) {
 
-		super(newSpace, newGrid, newNeuralNetwork);
+		super(newSpace, newGrid);
 
 	} // End of OutputNeuron()
 	

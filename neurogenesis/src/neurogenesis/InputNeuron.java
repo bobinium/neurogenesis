@@ -19,12 +19,10 @@ import repast.simphony.space.grid.GridPoint;
  */
 public class InputNeuron extends Neuron {
 
-	public static final double LIGHT_TO_FOOD_EFFICIENCY = 0.0;
+	public static final double LIGHT_TO_ENERGY_EFFICIENCY = 0.1;
 	
 	private final LightSensor lightSensor;
 	
-	
-	private final GeneticElement food;
 	
 	/**
 	 * 
@@ -33,13 +31,11 @@ public class InputNeuron extends Neuron {
 	public InputNeuron(final ContinuousSpace<Object> newSpace,
 			final Grid<Object> newGrid,
 			final Network<Object> newNeuralNetwork,
-			final LightSensor newLightSensor,
-			final GeneticElement newFood) {
+			final LightSensor newLightSensor) {
 		
-		super(newSpace, newGrid, newNeuralNetwork);
+		super(newSpace, newGrid);
 		
 		this.lightSensor = newLightSensor;
-		this.food = newFood;
 		
 	} // End of InputNeuron()
 	
@@ -85,14 +81,17 @@ public class InputNeuron extends Neuron {
 			
 			if (obj instanceof ExtracellularMatrix) {
 				 ExtracellularMatrix matrix = (ExtracellularMatrix) obj;
-				 double foodConcentration = Math.tanh(getActivation() * LIGHT_TO_FOOD_EFFICIENCY);
+				 double foodConcentration = Math.tanh(getActivation() * LIGHT_TO_ENERGY_EFFICIENCY);
 				 System.out.println("New food concentration: " + foodConcentration);
 				 
 				 Map<GeneticElement, Double> concentrations = matrix.getConcentrations();
 				 
-				 double currentConcentration = (concentrations.get(this.food) == null) ? 0 : concentrations.get(this.food);
+				 double currentConcentration = 
+						 (concentrations.get(ENERGY_REGULATOR) == null) 
+						 ? 0 : concentrations.get(ENERGY_REGULATOR);
 				 
-				 concentrations.put(this.food, currentConcentration + foodConcentration);
+				 concentrations.put(ENERGY_REGULATOR, 
+						 currentConcentration + foodConcentration);
 				 break;
 
 			}

@@ -3,29 +3,47 @@ package neurogenesis;
 public class GeneticElement {
 
 	
+	/**
+	 * 
+	 */
 	public static final int ELEMENT_TYPE_CIS = 1;
 	
+	/**
+	 * 
+	 */
 	public static final int ELEMENT_TYPE_TRANS = 2;
 	
+	/**
+	 * 
+	 */
 	public static final int ELEMENT_TYPE_SPECIAL_IN = 3;
-	
+
+	/**
+	 * 
+	 */
 	public static final int ELEMENT_TYPE_SPECIAL_OUT = 4;
 	
-	public static final int ELEMENT_TYPE_SPECIAL_FOOD = 5;
 	
-	
+	//
 	private int type;
 	
-	
+	//
 	private double affinityX;
 	
-	
+	//
 	private double affinityY;
 	
-	
+	//
 	private int sign;
 	
 	
+	/**
+	 * 
+	 * @param newType
+	 * @param newAffinityX
+	 * @param newAffinityY
+	 * @param newSign
+	 */
 	public GeneticElement(final int newType, final double newAffinityX, 
 			final double newAffinityY, final int newSign) {
 		
@@ -37,23 +55,40 @@ public class GeneticElement {
 	} // End of GeneticElement()
 	
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getType() {
 		return this.type;
 	}
 	
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public double getAffinityX() {
 		return this.affinityX;
 	}
 	
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public double getAffinityY() {
 		return this.affinityY;
 	}
 	
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getSign() {
 		return this.sign;
 	}
+
 	
 } // End of GeneticElement class

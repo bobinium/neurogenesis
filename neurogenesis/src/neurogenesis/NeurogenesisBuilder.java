@@ -142,6 +142,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		NetworkBuilder<Object> netBuilder = 
 				new NetworkBuilder<Object>("neural network", context, true);
 		Network<Object> neuralNetwork = netBuilder.buildNetwork();
+		Neuron.neuralNetwork = neuralNetwork;
 		
 		ContinuousSpaceFactory spaceFactory =
 				ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
@@ -199,13 +200,11 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		
 		/* Setup the initial input and output cells */
 		
-		GeneticElement foodElement = new GeneticElement(GeneticElement.ELEMENT_TYPE_SPECIAL_FOOD, 0, 0, 1);
-		
 		InputNeuron leftInputNeuron = 
-				new InputNeuron(brainSpace, brainGrid, neuralNetwork, leftLightSensor, foodElement);
+				new InputNeuron(brainSpace, brainGrid, neuralNetwork, leftLightSensor);
 		context.add(leftInputNeuron);
 		InputNeuron rightInputNeuron = 
-				new InputNeuron(brainSpace, brainGrid, neuralNetwork, rightLightSensor, foodElement);
+				new InputNeuron(brainSpace, brainGrid, neuralNetwork, rightLightSensor);
 		context.add(rightInputNeuron);
 		
 		OutputNeuron motorNeuron = new OutputNeuron(brainSpace, brainGrid, neuralNetwork);
@@ -241,13 +240,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		
 		// Cellular growth regulatory unit.
 		
-		GeneticElement cisElementFood = new GeneticElement(GeneticElement.ELEMENT_TYPE_CIS, 10, 10, 1);
-		GeneticElement transElementGrowth = new GeneticElement(GeneticElement.ELEMENT_TYPE_TRANS, 10, 10, 1);
-		
-		RegulatoryUnit growthUnit = new RegulatoryUnit(new GeneticElement[] { cisElementFood, transElementGrowth});
-		
-		GeneticElement cellDivisionRegulator = 
-				new GeneticElement(GeneticElement.ELEMENT_TYPE_SPECIAL_OUT, 10, 10, 1);
+		RegulatoryUnit growthUnit = new RegulatoryUnit(10, 10, 1, 10, 10, 1);
 		
 		GeneticElement cellDeathRegulator = 
 				new GeneticElement(GeneticElement.ELEMENT_TYPE_SPECIAL_OUT, 5, 5, 1);
@@ -255,11 +248,9 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		GeneticElement SAMregulator = new GeneticElement(GeneticElement.ELEMENT_TYPE_SPECIAL_OUT, 5, 5, 1);
 		
 		RegulatoryNetwork alphaNetwork = new RegulatoryNetwork(
-				new RegulatoryUnit[] { growthUnit }, 
-				new GeneticElement[] { cellDivisionRegulator });
+				new RegulatoryUnit[] { growthUnit });
 		
-		UndifferentiatedCell motherCell = new UndifferentiatedCell(brainSpace, brainGrid, alphaNetwork, 
-				cellDivisionRegulator, null); //cellDeathRegulator);
+		UndifferentiatedCell motherCell = new UndifferentiatedCell(brainSpace, brainGrid, alphaNetwork);
 		context.add(motherCell);
 		brainSpace.moveTo(motherCell,  0, 0, 0);
 		
@@ -271,13 +262,12 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		for (int x = -BRAIN_GRID_QUADRANT_SIZE; x <= BRAIN_GRID_QUADRANT_SIZE; x++) {
 			for (int y = -BRAIN_GRID_QUADRANT_SIZE; y <= BRAIN_GRID_QUADRANT_SIZE; y++) {
 				for (int z = -BRAIN_GRID_QUADRANT_SIZE; z <= BRAIN_GRID_QUADRANT_SIZE; z++) {
-					ExtracellularMatrix morphogenesList = new ExtracellularMatrix(brainSpace, brainGrid);
-					context.add(morphogenesList);
-					brainSpace.moveTo(morphogenesList, x, y, z);
-					brainGrid.moveTo(morphogenesList, x, y, z);
-//					if (x == -BRAIN_GRID_QUADRANT_SIZE + 1 && y == -BRAIN_GRID_QUADRANT_SIZE + 1 && z == -BRAIN_GRID_QUADRANT_SIZE + 1) {
-//						morphogenesList.getConcentrations().put(cellDeathRegulator, 1.0);
-//					}
+					ExtracellularMatrix extracellularMatrix = 
+							new ExtracellularMatrix(brainSpace, brainGrid);
+					extracellularMatrix.getConcentrations().put(RegulatedCell.ENERGY_REGULATOR, 0.05);
+					context.add(extracellularMatrix);
+					brainSpace.moveTo(extracellularMatrix, x, y, z);
+					brainGrid.moveTo(extracellularMatrix, x, y, z);
 				}
 			}
 		}

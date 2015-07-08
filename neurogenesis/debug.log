@@ -480,3 +480,43 @@ Caused by: java.lang.NullPointerException
 	at neurogenesis.RegulatoryNetwork.updateNetwork(RegulatoryNetwork.java:66)
 	at neurogenesis.UndifferentiatedCell.step(UndifferentiatedCell.java:107)
 	... 10 more
+FATAL [Thread-6] 2015-07-08 01:45:12,829 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (10.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:72)
+	at repast.simphony.engine.controller.ScheduledMethodControllerAction$ScheduleMethodAllAction.execute(ScheduledMethodControllerAction.java:333)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.reflect.InvocationTargetException
+	at neurogenesis.UndifferentiatedCell$$FastClassByCGLIB$$d19bcbe.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:69)
+	... 7 more
+Caused by: java.lang.IllegalStateException: Only one cell per grid unit!
+	at neurogenesis.RegulatedCell.findPartnerCells(RegulatedCell.java:111)
+	at neurogenesis.UndifferentiatedCell.step(UndifferentiatedCell.java:228)
+	... 10 more
+FATAL [Thread-6] 2015-07-08 01:47:50,977 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (6.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:72)
+	at repast.simphony.engine.controller.ScheduledMethodControllerAction$ScheduleMethodAllAction.execute(ScheduledMethodControllerAction.java:333)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.reflect.InvocationTargetException
+	at neurogenesis.UndifferentiatedCell$$FastClassByCGLIB$$d19bcbe.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:69)
+	... 7 more
+Caused by: java.lang.IllegalStateException: Only one cell per grid unit!
+	at neurogenesis.RegulatedCell.findPartnerCells(RegulatedCell.java:111)
+	at neurogenesis.UndifferentiatedCell.step(UndifferentiatedCell.java:228)
+	... 10 more

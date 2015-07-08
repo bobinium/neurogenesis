@@ -2,6 +2,7 @@ package neurogenesis;
 
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.grid.Grid;
+import repast.simphony.space.grid.GridPoint;
 
 
 /**
@@ -11,8 +12,14 @@ import repast.simphony.space.grid.Grid;
  */
 public abstract class Cell {
 
+	/**
+	 * 
+	 */
 	protected final ContinuousSpace<Object> space;
 	
+	/**
+	 * 
+	 */
 	protected final Grid<Object> grid;
 	
 	
@@ -30,4 +37,28 @@ public abstract class Cell {
 	} // End of Cell()
 
 
+	/**
+	 * 
+	 * @param gridPoint
+	 * @return
+	 */
+	protected boolean isFreeGridCell(GridPoint gridPoint) {
+		
+		boolean free = true;
+		
+		for (Object obj : this.grid.getObjectsAt(
+				gridPoint.getX(), gridPoint.getY(), gridPoint.getZ())) {
+			
+			if (obj instanceof Cell) {
+				free = false;
+				break;
+			}
+			
+		} // End for()
+		
+		return free;
+		
+	} // End of isFreeGridCell()
+
+	
 } // End of Cell class

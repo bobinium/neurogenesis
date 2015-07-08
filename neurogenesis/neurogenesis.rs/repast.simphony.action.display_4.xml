@@ -1,46 +1,36 @@
 <repast.simphony.visualization.engine.CartesianDisplayDescriptor>
-  <name>Brain Display</name>
-  <type>3D</type>
+  <name>Arena Display</name>
+  <type>2D</type>
   <styles>
     <entry>
-      <string>neurogenesis.UndifferentiatedCell</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
+      <string>neurogenesis.LightSensor</string>
+      <string>repast.simphony.visualizationOGL2D.DefaultStyleOGL2D</string>
     </entry>
     <entry>
-      <string>neurogenesis.InputNeuron</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
+      <string>neurogenesis.LightSource</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
     </entry>
     <entry>
-      <string>neurogenesis.OutputNeuron</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
+      <string>neurogenesis.Robot</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
-      <string>neurogenesis.UndifferentiatedCell</string>
-      <string>neurogenesis.UndifferentiatedCell.style_0.xml</string>
+      <string>neurogenesis.LightSensor</string>
+      <null/>
     </entry>
     <entry>
-      <string>neurogenesis.InputNeuron</string>
-      <string>neurogenesis.InputNeuron.style_2.xml</string>
+      <string>neurogenesis.LightSource</string>
+      <string>neurogenesis.LightSource.style_1.xml</string>
     </entry>
     <entry>
-      <string>neurogenesis.OutputNeuron</string>
-      <string>neurogenesis.OutputNeuron.style_2.xml</string>
+      <string>neurogenesis.Robot</string>
+      <string>neurogenesis.Robot.style_0.xml</string>
     </entry>
   </editedStyles>
-  <netStyles>
-    <entry>
-      <string>neural network</string>
-      <string>repast.simphony.visualization.editedStyle.EditedEdgeStyle3D</string>
-    </entry>
-  </netStyles>
-  <editedNetStyles>
-    <entry>
-      <string>neural network</string>
-      <string>neuralnetwork.style_1.xml</string>
-    </entry>
-  </editedNetStyles>
+  <netStyles/>
+  <editedNetStyles/>
   <frequency>ON_MOVE</frequency>
   <schedParams>
     <start>1.0</start>
@@ -49,50 +39,38 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-1673615646</hashCode>
+    <hashCode>1346794106</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
-  <layoutProjection>brain space</layoutProjection>
+  <layoutProjection>arena space</layoutProjection>
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
-      <string>neurogenesis.UndifferentiatedCell</string>
+      <string>neurogenesis.LightSensor</string>
       <int>2</int>
     </entry>
     <entry>
-      <string>neurogenesis.InputNeuron</string>
+      <string>neurogenesis.LightSource</string>
       <int>1</int>
     </entry>
     <entry>
-      <string>neurogenesis.OutputNeuron</string>
+      <string>neurogenesis.Robot</string>
       <int>0</int>
     </entry>
   </layerOrder>
   <projections>
     <repast.simphony.scenario.data.ProjectionData>
-      <id>brain space</id>
+      <id>arena space</id>
       <attributes/>
       <type>continuous space</type>
     </repast.simphony.scenario.data.ProjectionData>
-    <repast.simphony.scenario.data.ProjectionData>
-      <id>neural network</id>
-      <attributes/>
-      <type>network</type>
-    </repast.simphony.scenario.data.ProjectionData>
   </projections>
   <visualizationProperties class="repast.simphony.visualization.UnitSizeLayoutProperties">
-    <unitSize>0.06</unitSize>
+    <unitSize>15.0</unitSize>
   </visualizationProperties>
   <projectionDescriptors>
     <entry>
-      <string>neural network</string>
-      <repast.simphony.visualization.engine.DefaultProjectionDescriptor>
-        <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData[2]"/>
-        <props/>
-      </repast.simphony.visualization.engine.DefaultProjectionDescriptor>
-    </entry>
-    <entry>
-      <string>brain space</string>
+      <string>arena space</string>
       <repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
         <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData"/>
         <props>
@@ -100,16 +78,16 @@
             <string>repast.simphony.visualization.continuous.ContinuousDecorator</string>
             <map>
               <entry>
+                <string>COLOR</string>
+                <int>-16777216</int>
+              </entry>
+              <entry>
                 <string>UNIT_SIZE</string>
-                <float>0.06</float>
+                <float>15.0</float>
               </entry>
               <entry>
                 <string>SHOW</string>
                 <boolean>true</boolean>
-              </entry>
-              <entry>
-                <string>COLOR</string>
-                <int>-1</int>
               </entry>
             </map>
           </entry>
@@ -119,9 +97,9 @@
   </projectionDescriptors>
   <props/>
   <backgroundColor>
-    <red>0</red>
-    <green>0</green>
-    <blue>0</blue>
+    <red>255</red>
+    <green>255</green>
+    <blue>255</blue>
     <alpha>255</alpha>
   </backgroundColor>
   <valueLayers/>
