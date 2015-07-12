@@ -264,7 +264,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 				for (int z = -BRAIN_GRID_QUADRANT_SIZE; z <= BRAIN_GRID_QUADRANT_SIZE; z++) {
 					ExtracellularMatrix extracellularMatrix = 
 							new ExtracellularMatrix(brainSpace, brainGrid);
-					extracellularMatrix.getConcentrations().put(RegulatedCell.ENERGY_REGULATOR, 0.05);
+					extracellularMatrix.getConcentrations().put(RegulatedCell.ENERGY_REGULATOR, 0.02);
 					context.add(extracellularMatrix);
 					brainSpace.moveTo(extracellularMatrix, x, y, z);
 					brainGrid.moveTo(extracellularMatrix, x, y, z);
