@@ -122,4 +122,4 @@ public class ArenaSimulator {
 	} // End of update()
 	
 	
-} // End of ExperimentSimulator class
+} // End of ArenaSimulator class

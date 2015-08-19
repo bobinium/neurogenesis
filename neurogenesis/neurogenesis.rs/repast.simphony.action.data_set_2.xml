@@ -1,0 +1,71 @@
+<repast.simphony.data2.engine.DataSetDescriptor>
+  <name>Cell Population</name>
+  <type>AGGREGATE</type>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <pType>LAST</pType>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+    <hashCode>-913074578</hashCode>
+  </scheduleParams>
+  <atEnd>false</atEnd>
+  <methodDataSources class="linked-hash-map">
+    <entry>
+      <string>Dead</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Dead</id>
+        <className>neurogenesis.UndifferentiatedCell</className>
+        <methodName>getStatusFlagDead</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Dividing</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Dividing</id>
+        <className>neurogenesis.UndifferentiatedCell</className>
+        <methodName>getStatusFlagDividing</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Differentiating</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Differentiating</id>
+        <className>neurogenesis.UndifferentiatedCell</className>
+        <methodName>getStatusFlagDifferentiating</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+  </methodDataSources>
+  <countSources class="linked-hash-map">
+    <entry>
+      <string>Total</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>neurogenesis.Cell</typeName>
+        <id>Total</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+    <entry>
+      <string>Undifferentiated</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>neurogenesis.UndifferentiatedCell</typeName>
+        <id>Undifferentiated</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+    <entry>
+      <string>Neurons</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>neurogenesis.Neuron</typeName>
+        <id>Neurons</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+  </countSources>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>

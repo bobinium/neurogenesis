@@ -22,6 +22,12 @@ public abstract class RegulatedCell extends Cell {
 	/**
 	 * 
 	 */
+	public static final double REGULATOR_UNIVERSAL_THRESHOLD = 0.95;
+	
+	
+	/**
+	 * 
+	 */
 	public static final GeneticElement ENERGY_REGULATOR = 
 			new GeneticElement(GeneticElement.ELEMENT_TYPE_SPECIAL_IN, 0, 0, 1);
 	
@@ -88,6 +94,24 @@ public abstract class RegulatedCell extends Cell {
 	} // End of Cell()
 
 
+	/**
+	 * 
+	 * @return
+	 */
+	public double getCellDivisionConcentration() {
+		return this.cellDivisionConcentration;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isAttached() {
+		return this.attached;
+	}
+	
+	
 	/**
 	 * 
 	 * @return

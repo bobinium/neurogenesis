@@ -26,16 +26,7 @@ public class UndifferentiatedCell extends RegulatedCell {
 
 
 	//
-	private static final double CELL_DIVISION_THRESHOLD = 0.8;
-	
-	//
-	private static final double CELL_DEATH_THRESHOLD = 0.9;
-
-	//
-	private static final double CELL_ADHESION_THRESHOLD = 0.5;
-
-	//
-	private static final double CELL_DIFFERENTIATION_THRESHOLD = 0.9;
+	private static final double BASE_ENERGY_COST = 0.001;
 	
 	//
 	private Map<GeneticElement, Double> internalConcentrations = 
@@ -50,6 +41,8 @@ public class UndifferentiatedCell extends RegulatedCell {
 	//
 	private boolean alive = true;
 		
+	//
+	private CellState cellState = CellState.ALIVE;
 	
 	/**
 	 * 
@@ -74,11 +67,49 @@ public class UndifferentiatedCell extends RegulatedCell {
 	
 	/**
 	 * 
+	 * @return
+	 */
+	public int getStatusFlagAlive() {
+		return (this.cellState == CellState.ALIVE) ? 1 :0;
+	}
+
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getStatusFlagDead() {
+		return (this.cellState == CellState.DEAD) ? 1 :0;
+	}
+
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getStatusFlagDividing() {
+		return (this.cellState == CellState.DIVIDING) ? 1 :0;
+	}
+
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getStatusFlagDifferentiating() {
+		return (this.cellState == CellState.DIFFERENTIATING) ? 1 :0;
+	}
+
+	
+	/**
+	 * 
 	 */
 	@ScheduledMethod(start = 1, interval = 1, 
 			priority = ScheduleParameters.RANDOM_PRIORITY)
 	public void step() {
 
+		this.cellState = CellState.ALIVE;
+		
 		// get the grid location of this Cell
 		GridPoint pt = this.grid.getLocation(this);
 		
@@ -122,7 +153,7 @@ public class UndifferentiatedCell extends RegulatedCell {
 		} // end for()
 		
 		// Update the regulatory network.
-		double energyCost = 
+		double energyCost = BASE_ENERGY_COST +
 				this.regulatoryNetwork.updateNetwork(this.internalConcentrations);
 		
 		// Handles energy spent.
@@ -138,15 +169,15 @@ public class UndifferentiatedCell extends RegulatedCell {
 		
 		// Handles cell death.
 			
-		double deltaConcentration =
-				this.regulatoryNetwork.calculateOutputConcentrationDelta(
-						CELL_DEATH_REGULATOR, this.cellDeathConcentration);
+		double deltaConcentration = 0;
+//				this.regulatoryNetwork.calculateOutputConcentrationDelta(
+//						CELL_DEATH_REGULATOR, this.cellDeathConcentration);
 		this.cellDeathConcentration += deltaConcentration;
 		
 		System.out.println("Cell death regulator concentration: " 
 				+ this.cellDeathConcentration);
 
-		if (this.cellDeathConcentration > CELL_DEATH_THRESHOLD) {
+		if (this.cellDeathConcentration > REGULATOR_UNIVERSAL_THRESHOLD) {
 			
 			this.alive = false;
 			
@@ -154,6 +185,7 @@ public class UndifferentiatedCell extends RegulatedCell {
 			Context<Object> context = ContextUtils.getContext(this);
 			context.remove(this);
 			System.out.println("****** Cell death event ******");
+			this.cellState = CellState.DEAD;
 			return;
 
 		} // End if()
@@ -172,7 +204,7 @@ public class UndifferentiatedCell extends RegulatedCell {
 		System.out.println("Cell division regulator concentration: " 
 				+ this.cellDivisionConcentration);
 		
-		if (this.cellDivisionConcentration > CELL_DIVISION_THRESHOLD) {
+		if (this.cellDivisionConcentration > REGULATOR_UNIVERSAL_THRESHOLD) {
 			
 			GridPoint pointWithNoCell = findFreeGridCell(pt);
 			
@@ -187,11 +219,14 @@ public class UndifferentiatedCell extends RegulatedCell {
 				@SuppressWarnings("unchecked")
 				Context<Object> context = ContextUtils.getContext(this);
 				context.add(daughterCell);
-				this.space.moveTo(daughterCell, pointWithNoCell.getX(), 
-						pointWithNoCell.getY(), pointWithNoCell.getZ());
+				this.space.moveTo(daughterCell, 
+						pointWithNoCell.getX() + 0.5, 
+						pointWithNoCell.getY() + 0.5, 
+						pointWithNoCell.getZ() + 0.5);
 				this.grid.moveTo(daughterCell, pointWithNoCell.getX(), 
 						pointWithNoCell.getY(), pointWithNoCell.getZ());
 				System.out.println("****** Cell division event ******");
+				this.cellState = CellState.DIVIDING;
 
 				return;
 				
@@ -211,7 +246,7 @@ public class UndifferentiatedCell extends RegulatedCell {
 		
 		if (this.attached) {
 			
-			if (this.cellAdhesionConcentration > CELL_ADHESION_THRESHOLD) {
+			if (this.cellAdhesionConcentration > REGULATOR_UNIVERSAL_THRESHOLD) {
 			} else {
 				
 				this.attached = false;
@@ -222,10 +257,10 @@ public class UndifferentiatedCell extends RegulatedCell {
 			
 		} else {
 			
-			if (this.cellAdhesionConcentration > CELL_ADHESION_THRESHOLD) {
+			if (this.cellAdhesionConcentration > REGULATOR_UNIVERSAL_THRESHOLD) {
 				
 				List<RegulatedCell> partnerCells = 
-						findPartnerCells(pt, CELL_ADHESION_THRESHOLD);
+						findPartnerCells(pt, REGULATOR_UNIVERSAL_THRESHOLD);
 				
 				if (partnerCells.size() > 0) {
 					
@@ -257,7 +292,7 @@ public class UndifferentiatedCell extends RegulatedCell {
 		System.out.println("Cell differentiation regulator concentration: " 
 				+ this.cellDifferentiationConcentration);
 		
-		if (this.cellDifferentiationConcentration > CELL_DIFFERENTIATION_THRESHOLD) {
+		if (this.cellDifferentiationConcentration > REGULATOR_UNIVERSAL_THRESHOLD) {
 			
 			// should use factory!
 			Neuron neuron = new Neuron(this.space, this.grid);
@@ -266,9 +301,10 @@ public class UndifferentiatedCell extends RegulatedCell {
 			Context<Object> context = ContextUtils.getContext(this);
 			context.remove(this);
 			context.add(neuron);
-			this.space.moveTo(neuron, pt.getX(), pt.getY(), pt.getZ());
+			this.space.moveTo(neuron, pt.getX() + 0.5, pt.getY() + 0.5, pt.getZ() + 0.5);
 			this.grid.moveTo(neuron, pt.getX(),	pt.getY(), pt.getZ());
 			System.out.println("****** Cell differentiation event ******");
+			this.cellState = CellState.DIFFERENTIATING;
 
 			return;
 				
@@ -319,9 +355,10 @@ public class UndifferentiatedCell extends RegulatedCell {
 			} // End for() gridCells
 
 			if (pointWithMostElements != null) {
-				this.space.moveTo(this, pointWithMostElements.getX(), 
-						pointWithMostElements.getY(), 
-						pointWithMostElements.getZ());
+				this.space.moveTo(this, 
+						pointWithMostElements.getX() + 0.5, 
+						pointWithMostElements.getY() + 0.5, 
+						pointWithMostElements.getZ() + 0.5);
 				this.grid.moveTo(this, pointWithMostElements.getX(), 
 						pointWithMostElements.getY(), 
 						pointWithMostElements.getZ());
@@ -418,5 +455,24 @@ public class UndifferentiatedCell extends RegulatedCell {
 		return newCell;
 		
 	} // End of clone()
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getFoodConcentration() {
+		return this.internalConcentrations.get(ENERGY_REGULATOR);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getWasteConcentration() {
+		return this.cellDeathConcentration;
+	}
+	
 	
 } // End of UndifferentiatedCell class

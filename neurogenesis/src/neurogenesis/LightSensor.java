@@ -44,11 +44,23 @@ public class LightSensor {
 	
 	/**
 	 * 
+	 * @return
+	 */
+	public String getLabel() {
+		return this.angularRelativePosition > 0 ? "Left" : "Right";
+	}
+	
+	
+	/**
+	 * 
 	 */
 	public void update(final Robot robot, final double newLightIntensity) {
 		
-		this.space.moveTo(this, robot.getRadius() * Math.cos(robot.getAngularPosition(this)), robot.getRadius() * Math.sin(robot.getAngularPosition(this)));
-		System.out.println("Updating sensor with intensity "  + newLightIntensity);
+		this.space.moveTo(this, 
+				robot.getRadius() * Math.cos(robot.getAngularPosition(this)), 
+				robot.getRadius() * Math.sin(robot.getAngularPosition(this)));
+		System.out.println("Updating sensor with intensity "  
+				+ newLightIntensity);
 		this.lightIntensity = newLightIntensity;
 		
 	}

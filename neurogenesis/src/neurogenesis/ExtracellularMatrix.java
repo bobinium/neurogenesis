@@ -203,4 +203,14 @@ public class ExtracellularMatrix {
 		return this.colour;
 	}
 	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getFoodConcentration() {
+		return this.concentrations.get(RegulatedCell.ENERGY_REGULATOR);
+	}
+	
+	
 } // End of ExtracellularMatrix class
