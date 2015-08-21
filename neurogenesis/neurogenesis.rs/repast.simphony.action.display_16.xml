@@ -16,7 +16,7 @@
     </entry>
     <entry>
       <string>neurogenesis.UndifferentiatedCell</string>
-      <string>neurogenesis.UndifferentiatedCellStyle3D</string>
+      <string>neurogenesis.brain.UndifferentiatedCellStyle3D</string>
     </entry>
   </styles>
   <editedStyles>
@@ -57,7 +57,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-864981591</hashCode>
+    <hashCode>-820450082</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>brain space</layoutProjection>

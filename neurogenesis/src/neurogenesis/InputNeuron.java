@@ -5,6 +5,7 @@ package neurogenesis;
 
 import java.util.Map;
 
+import neurogenesis.brain.CellProduct;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -84,13 +85,13 @@ public class InputNeuron extends Neuron {
 				 double foodConcentration = Math.tanh(getActivation() * LIGHT_TO_ENERGY_EFFICIENCY);
 				 System.out.println("New food concentration: " + foodConcentration);
 				 
-				 Map<GeneticElement, Double> concentrations = matrix.getConcentrations();
+				 Map<CellProduct, Double> concentrations = matrix.getConcentrations();
 				 
 				 double currentConcentration = 
-						 (concentrations.get(ENERGY_REGULATOR) == null) 
-						 ? 0 : concentrations.get(ENERGY_REGULATOR);
+						 (concentrations.get(CellProduct.FOOD) == null) 
+						 ? 0 : concentrations.get(CellProduct.FOOD);
 				 
-				 concentrations.put(ENERGY_REGULATOR, 
+				 concentrations.put(CellProduct.FOOD, 
 						 currentConcentration + foodConcentration);
 				 break;
 

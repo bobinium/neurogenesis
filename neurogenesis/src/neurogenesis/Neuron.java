@@ -3,6 +3,7 @@
  */
 package neurogenesis;
 
+import neurogenesis.brain.RegulatedCell;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;

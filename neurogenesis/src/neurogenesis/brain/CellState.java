@@ -1,4 +1,4 @@
-package neurogenesis;
+package neurogenesis.brain;
 
 public enum CellState {
 

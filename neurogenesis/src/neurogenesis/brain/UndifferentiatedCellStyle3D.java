@@ -1,10 +1,11 @@
-package neurogenesis;
+package neurogenesis.brain;
 
 import java.awt.Color;
 import java.awt.Font;
 
 import javax.media.j3d.Shape3D;
 
+import neurogenesis.UndifferentiatedCell;
 import repast.simphony.visualization.visualization3D.AppearanceFactory;
 import repast.simphony.visualization.visualization3D.ShapeFactory;
 import repast.simphony.visualization.visualization3D.style.Style3D;
@@ -26,19 +27,19 @@ public class UndifferentiatedCellStyle3D implements Style3D<UndifferentiatedCell
 	public TaggedBranchGroup getBranchGroup(UndifferentiatedCell agent, 
 			TaggedBranchGroup taggedGroup) {
 		
-		if (taggedGroup == null || taggedGroup.getTag() == null) {
+		//if (taggedGroup == null || taggedGroup.getTag() == null) {
 			taggedGroup = new TaggedBranchGroup("DEFAULT");
 			Shape3D shape;
 			if (agent.isAttached()) {
-				shape = ShapeFactory.createCube(.03F, "DEAFULT");
+				shape = ShapeFactory.createCube(.03f, "DEFAULT");
 			} else {
 				shape = ShapeFactory.createSphere(.03f, "DEFAULT");
 			}
 		    taggedGroup.getBranchGroup().addChild(shape);
 		    return taggedGroup;
-		}
+		//}
 		    
-		return null;
+		//return null;
 		
 	} // End of getBranchGroup()
 

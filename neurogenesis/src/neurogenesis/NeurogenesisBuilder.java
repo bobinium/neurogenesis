@@ -3,6 +3,10 @@
  */
 package neurogenesis;
 
+import java.util.Map;
+
+import neurogenesis.brain.CellProduct;
+import neurogenesis.brain.GenomeFactory;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
@@ -32,7 +36,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	/**
 	 * 
 	 */
-	public static final int BRAIN_GRID_QUADRANT_SIZE = 10;
+	public static final int BRAIN_GRID_QUADRANT_SIZE = 3;
 	
 	
 	/**
@@ -301,42 +305,62 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		
 		/* Setup the gene regulatory network */
 		
-		// Cellular growth regulatory unit.
+		GenomeFactory genomeFactory = new GenomeFactory();
+
+		for (int x = -2; x <= 2; x++) {
+			
+			for (int y = -2; y <= 2; y++) {
+				
+				for (int z = -2; z <= 2; z++) {
+					
+					UndifferentiatedCell motherCell = new UndifferentiatedCell(brainSpace, 
+							brainGrid, genomeFactory.getNewGenome());
+					motherCell.setGenerationId(x + "," + y + "," + z);
+					context.add(motherCell);
+					brainSpace.moveTo(motherCell, x + 0.5, y + 0.5, z + 0.5);
+
+				}
+				
+			}
+			
+		}
 		
-		RegulatoryUnit growthUnit = new RegulatoryUnit(10, 10, 1, 10, 10, 1);
-		
-		GeneticElement cellDeathRegulator = 
-				new GeneticElement(GeneticElement.ELEMENT_TYPE_SPECIAL_OUT, 5, 5, 1);
-		
-		GeneticElement SAMregulator = new GeneticElement(GeneticElement.ELEMENT_TYPE_SPECIAL_OUT, 5, 5, 1);
-		
-		RegulatoryNetwork alphaNetwork = new RegulatoryNetwork(
-				new RegulatoryUnit[] { growthUnit });
-		
-		UndifferentiatedCell motherCell = 
-				new UndifferentiatedCell(brainSpace, brainGrid, alphaNetwork);
-		context.add(motherCell);
-		brainSpace.moveTo(motherCell,  MOTHER_CELL_GRID_POS_X + 0.5,
-				MOTHER_CELL_GRID_POS_Y + 0.5, MOTHER_CELL_GRID_POS_Y + 0.5);
-		
+//		UndifferentiatedCell motherCell1 = new UndifferentiatedCell(brainSpace, 
+//				brainGrid, genomeFactory.getNewGenome());
+//		context.add(motherCell1);
+//		brainSpace.moveTo(motherCell1, MOTHER_CELL_GRID_POS_X + 0.5,
+//				MOTHER_CELL_GRID_POS_Y + 0.5, MOTHER_CELL_GRID_POS_Y + 0.5);
+				
 		for (Object obj : context) {
 			NdPoint pt = brainSpace.getLocation(obj);
 			brainGrid.moveTo(obj, (int) pt.getX(), (int) pt.getY(), (int) pt.getZ());
 		}
 		
 		for (int x = -BRAIN_GRID_QUADRANT_SIZE; x <= BRAIN_GRID_QUADRANT_SIZE; x++) {
+			
 			for (int y = -BRAIN_GRID_QUADRANT_SIZE; y <= BRAIN_GRID_QUADRANT_SIZE; y++) {
+				
 				for (int z = -BRAIN_GRID_QUADRANT_SIZE; z <= BRAIN_GRID_QUADRANT_SIZE; z++) {
+					
 					ExtracellularMatrix extracellularMatrix = 
 							new ExtracellularMatrix(brainSpace, brainGrid);
-					extracellularMatrix.getConcentrations().put(RegulatedCell.ENERGY_REGULATOR, 0.1);
+					
+					Map<CellProduct, Double> concentrations = 
+							extracellularMatrix.getConcentrations();
+					
+					concentrations.put(CellProduct.FOOD, 0.1);
+					
 					context.add(extracellularMatrix);
 					brainSpace.moveTo(extracellularMatrix,
 							x + 0.5, y + 0.5, z + 0.5);
 					brainGrid.moveTo(extracellularMatrix, x, y, z);
+					
 				}
+				
 			}
+			
 		}
+		
 		return context;
 	}
 

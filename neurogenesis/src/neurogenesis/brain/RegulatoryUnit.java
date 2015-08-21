@@ -1,4 +1,4 @@
-package neurogenesis;
+package neurogenesis.brain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class RegulatoryUnit {
 	private double concentration = 0.01;
 	
 	
-	private RegulatoryUnit() {
+	RegulatoryUnit() {
 		
 	}
 	
@@ -35,11 +35,11 @@ public class RegulatoryUnit {
 			final double transAffinityY, final int transSign) {
 	
 		this.cisElements.add(new GeneticElement(
-				GeneticElement.ELEMENT_TYPE_CIS, 
+				GeneticElement.Type.CIS, 
 				cisAffinityX, cisAffinityY, cisSign));
 
 		this.transElements.add(new GeneticElement(
-				GeneticElement.ELEMENT_TYPE_TRANS, 
+				GeneticElement.Type.TRANS, 
 				transAffinityX, transAffinityY, transSign));
 		
 	} // End of RegulatoryUnit()
@@ -81,15 +81,15 @@ public class RegulatoryUnit {
 	 * @param affinityY
 	 * @param sign
 	 */
-	public void addGeneticElement(final int type, 
+	public void addGeneticElement(final GeneticElement.Type type, 
 			final double affinityX, final double affinityY, final int sign) {
 		
 		switch (type) {
-		case GeneticElement.ELEMENT_TYPE_CIS:
+		case CIS:
 			this.cisElements.add(
 					new GeneticElement(type, affinityX, affinityY, sign));
 			break;
-		case GeneticElement.ELEMENT_TYPE_TRANS:
+		case TRANS:
 			this.transElements.add(
 					new GeneticElement(type, affinityX, affinityY, sign));
 			break;
@@ -106,7 +106,7 @@ public class RegulatoryUnit {
 	 * @param inputElements
 	 * @param externalProducts
 	 */
-	public double updateConcentrations(
+	public void updateConcentrations(
 			final Map<GeneticElement, Double> inputElements,
 			final Map<GeneticElement, Double> outputElements) {
 		
@@ -115,34 +115,35 @@ public class RegulatoryUnit {
 		System.out.println("Number of cis-elements: " + this.cisElements.size());
 		System.out.println("Number of input elements: "	+ inputElements.size());
 		
-		for (GeneticElement cisElement : this.cisElements) {
-		
-			for (GeneticElement inputElement : inputElements.keySet()) {
-				
-				double affinityDeltaX = inputElement.getAffinityX() - cisElement.getAffinityX();
-				double affinityDeltaY = inputElement.getAffinityY() - cisElement.getAffinityY();
-					
-				double affinity = Math.sqrt(Math.pow(affinityDeltaX, 2) + Math.pow(affinityDeltaY, 2));
-				System.out.println("Affinity: " + affinity);
-				
-				activation += affinity * inputElements.get(inputElement) * inputElement.getSign();
-			
+		for (GeneticElement cisElement : this.cisElements) {		
+			for (GeneticElement inputElement : inputElements.keySet()) {				
+				double affinity = 
+						inputElement.getAffinityForCisElement(cisElement);
+				activation += affinity * inputElements.get(inputElement);			
 			}
-
 		}
 		
 		System.out.println("Activation: " + activation);
+		System.out.println("Current concentration: " + this.concentration);
 		
-		double deltaConcentration = Math.tanh(activation / 2) - this.concentration;
+//		double deltaConcentration = 
+//				Math.tanh(activation / 2) - this.concentration;
+		double deltaConcentration = Math.tanh(activation / 2) 
+				* ((activation >= 0) ? 1 - this.concentration 
+						: this.concentration) * RegulatoryNetwork.DELTA_INTEGRATION_RATE;
 		System.out.println("Delta concentration: " + deltaConcentration);
+
 		this.concentration += deltaConcentration;
+
+		if (this.concentration < 0) {
+			throw new IllegalStateException(
+					"Regulatory unit concentration is negative! (" 
+							+ this.concentration + ")");
+		}
 		
 		for (GeneticElement transElement : this.transElements) {		
 			outputElements.put(transElement, this.concentration);
 		}
-		
-		double energyCost = Math.abs(deltaConcentration);
-		return energyCost;
 		
 	} // End of updateConcentrations()
 	
@@ -153,8 +154,17 @@ public class RegulatoryUnit {
 	public RegulatoryUnit clone() {
 		
 		RegulatoryUnit newUnit = new RegulatoryUnit();
-		newUnit.cisElements = this.cisElements;
-		newUnit.transElements = this.transElements;
+		
+		newUnit.cisElements = new ArrayList<GeneticElement>();
+		for (GeneticElement element : this.cisElements) {
+			newUnit.cisElements.add(element.clone());
+		}
+		
+		newUnit.transElements = new ArrayList<GeneticElement>();
+		for (GeneticElement element : this.transElements) {
+			newUnit.transElements.add(element.clone());
+		}
+		
 		newUnit.concentration = this.concentration;
 		
 		return newUnit;

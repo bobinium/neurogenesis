@@ -3,7 +3,8 @@ package neurogenesis;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
+
+import neurogenesis.brain.CellProduct;
 
 import org.apache.log4j.Logger;
 
@@ -23,35 +24,46 @@ import repast.simphony.space.grid.GridPoint;
  */
 public class ExtracellularMatrix {
 
-	private static final boolean DEBUG = false;
+
+	// PROPERTIES ==============================================================
 	
-	/*
-	 * 
-	 */
-	private final static Logger logger = Logger.getLogger(ExtracellularMatrix.class);
+
+	// CONSTANTS ---------------------------------------------------------------
 	
 	
 	/**
-	 * 
+	 * The rate at which chemicals diffuses between grid cells.
 	 */
 	public static final double DIFFUSION_RATE =  0.2;
 	
 	
 	/**
-	 * 
+	 * The rate at which chemicals naturally decay.
 	 */
-	protected final ContinuousSpace<Object> space;
-	
-	/**
-	 * 
-	 */
-	protected final Grid<Object> grid;
+	public static final double DECAY_RATE = 0.001;
 
 	
-	private Map<GeneticElement, Double> concentrations = new HashMap<GeneticElement, Double>();
+	private static final boolean DEBUG = false;
+	
+	
+	// INSTANCE VARIABLES ------------------------------------------------------
+	
+	
+	//
+	private final static Logger logger = Logger.getLogger(ExtracellularMatrix.class);	
+		
+	// The 3D continuous space to which this object belong.
+	private final ContinuousSpace<Object> space;
+	
+	// The 3D grid to which this object belong.
+	private final Grid<Object> grid;
+
+	// Contains the current concentration of each chemical in this grid cell.
+	private Map<CellProduct, Double> concentrations = 
+			new HashMap<CellProduct, Double>();
 
 	
-	private int colour;
+	// CONSTRUCTORS ============================================================
 	
 	
 	/**
@@ -65,15 +77,56 @@ public class ExtracellularMatrix {
 		this.space = newSpace;
 		this.grid = newGrid;
 		
+		for (CellProduct product : CellProduct.values()) {
+			this.concentrations.put(product, 0.0);
+		}
+		
 	} // End of ExtracellularMatrix()
 
 
+	// METHODS =================================================================
 	
 	/**
 	 * 
 	 * @return
 	 */
-	public Map<GeneticElement, Double> getConcentrations() {
+	public final double getFoodConcentration() {
+		return this.concentrations.get(CellProduct.FOOD);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final double getWasteConcentration() {
+		return this.concentrations.get(CellProduct.WASTE);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final double getSamConcentration() {
+		return this.concentrations.get(CellProduct.SAM);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final double getMutagenConcentration() {
+		return this.concentrations.get(CellProduct.MUTAGEN);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Map<CellProduct, Double> getConcentrations() {
 		return this.concentrations;
 	}
 
@@ -96,121 +149,75 @@ public class ExtracellularMatrix {
 		List<GridCell<ExtracellularMatrix>> gridCells = 
 				nghCreator.getNeighborhood(false);
 
-		double maxConcentration = 0;
-		
-		Stack<Map<GeneticElement, Double>> lowerConcentrations = 
-				new Stack<Map<GeneticElement, Double>>();
-		
-		for (GeneticElement product : this.concentrations.keySet()) {
+		// Apply diffusion and decay to each product in this grid cell.
+		for (CellProduct product : this.concentrations.keySet()) {
 			
 			double localConcentration =	this.concentrations.get(product);
 			
-			if (DEBUG)
-				System.out.println("Local concentration: " + localConcentration);
+			// Applies decay rate.
+			localConcentration -= localConcentration * DECAY_RATE;
 			
-			double totalConcentration = 0;
-		
+			if (DEBUG) {
+				System.out.println("Local concentration: " 
+						+ localConcentration);
+			}
+			
+			double newLocalConcentration = localConcentration;
+			
 			for (GridCell<ExtracellularMatrix> gridCell : gridCells) {
 			
-				if (gridCell.size() > 1) {
+				if (gridCell.size() != 1) {
 					throw new IllegalStateException(
 							"One extracellular matrix per grid cell allowed!");
 				}
 				
-				for (ExtracellularMatrix matrix : gridCell.items()) {
+				ExtracellularMatrix neighbourMatrix = 
+						gridCell.items().iterator().next();
 				
-					Map<GeneticElement, Double> neighbourConcentrations = 
-							matrix.getConcentrations();
+				Map<CellProduct, Double> neighbourConcentrations = 
+							neighbourMatrix.getConcentrations();
 				
-					double neighbourConcentration = 
-							(neighbourConcentrations.get(product) == null) 
-							? 0 : neighbourConcentrations.get(product);
-					
-					if (localConcentration > neighbourConcentration) {						
-						totalConcentration += neighbourConcentration;
-						lowerConcentrations.push(neighbourConcentrations);
-					}
-					
-				} // End for() matrices
-				
-			} // End for() grid cells
-			
-			if (DEBUG)
-				System.out.println("Total concentration: " + totalConcentration);
-			
-			double averageConcentration = (lowerConcentrations.size() == 0) 
-					? 0 : totalConcentration / lowerConcentrations.size();
-			// The greater the magnitude in the difference, the greater the rate.
-			// Concentrations will tend toward the average, but not more.
-			double maxDiffusingConcentration =  (localConcentration - averageConcentration) / 2;
-			
-			if (DEBUG)
-				System.out.println("Max diffusing concentration: " + maxDiffusingConcentration);
-				
-			double diffusingConcentration = 
-					Math.tanh(maxDiffusingConcentration) * maxDiffusingConcentration;
-			
-			if (DEBUG)
-				System.out.println("Diffusing concentration: " + diffusingConcentration);
-
-			double totalConcentrationDelta = (localConcentration 
-					* lowerConcentrations.size()) - totalConcentration;
-			
-			while (!lowerConcentrations.empty()) {
-				
-				Map<GeneticElement, Double> neighbourConcentrations = 
-						lowerConcentrations.pop();
-								
 				double neighbourConcentration = 
-						(neighbourConcentrations.get(product) == null) 
-						? 0 : neighbourConcentrations.get(product);
-				
-				if (DEBUG)
-					System.out.println("Neighbour concentration: " 
-							+ neighbourConcentration);
-				
-				double newNeighbourConcentration = 
-						neighbourConcentration + diffusingConcentration 
-						* ((localConcentration - neighbourConcentration) 
-								/ totalConcentrationDelta);
-				neighbourConcentrations.put(product, 
-						newNeighbourConcentration); 
-				
-				if (DEBUG)
-					System.out.println("New neighbour concentration: " 
-							+ newNeighbourConcentration);
-
-			} // End of while()
-			
-			double newLocalConcentration = localConcentration - diffusingConcentration;
-			
-			if (DEBUG)
-				System.out.println("New local concentration: " + newLocalConcentration);
+						neighbourConcentrations.get(product);
+					
+				if (localConcentration > neighbourConcentration) {
+					
+					double equilibriumConcentration =
+							(localConcentration + neighbourConcentration) / 2;
+					
+					double diffusingConcentration =
+							(localConcentration - equilibriumConcentration) 
+							* DIFFUSION_RATE;
+					
+					// Proceed only if we have the concentration to spare.
+					if (diffusingConcentration < newLocalConcentration) {
+						
+						newLocalConcentration -= diffusingConcentration;
+						double newNeighbourConcentration =
+								neighbourConcentration + diffusingConcentration;
+						
+						neighbourConcentrations.put(product, 
+								newNeighbourConcentration);
+						
+					} // End if()
+					
+				} // End if()
+					
+			} // End for() grid cells
+						
+			if (DEBUG) {
+				System.out.println("New local concentration: " 
+						+ newLocalConcentration);
+			}
 			
 			this.concentrations.put(product, newLocalConcentration);
-			maxConcentration = Math.max(maxConcentration, newLocalConcentration);
 			
 		} // End for() products
 		
 		//System.out.println("Max concentration: " + maxConcentration);
-		this.colour = (int) (maxConcentration * 256);
 		//System.out.println("New matrix colour: " + this.colour);
 		
 	} // End of step()
-	
-	
-	public int getColour() {
-		return this.colour;
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public double getFoodConcentration() {
-		return this.concentrations.get(RegulatedCell.ENERGY_REGULATOR);
-	}
 	
 	
 } // End of ExtracellularMatrix class
