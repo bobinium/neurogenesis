@@ -3,7 +3,7 @@
  */
 package neurogenesis;
 
-import neurogenesis.OutputNeuron;
+import neurogenesis.brain.OutputNeuron;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 

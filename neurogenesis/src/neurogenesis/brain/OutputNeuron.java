@@ -1,7 +1,7 @@
 /**
  * 
  */
-package neurogenesis;
+package neurogenesis.brain;
 
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -18,27 +18,20 @@ import repast.simphony.space.grid.Grid;
 public class OutputNeuron extends Neuron {
 
 	
-	private double activation;
-	
 	/**
 	 * 
 	 * @param newNeuralNetwork
 	 */
 	public OutputNeuron(final ContinuousSpace<Object> newSpace, 
 			final Grid<Object> newGrid,
-			final Network<Object> newNeuralNetwork) {
+			final RegulatoryNetwork newRegulatoryNetwork,
+			final Network<Object> newNeuralNetwork,
+			final Network<Object> newNeuritesNetwork) {
 
-		super(newSpace, newGrid);
+		super(newSpace, newGrid, newRegulatoryNetwork, 
+				newNeuralNetwork, newNeuritesNetwork);
 
 	} // End of OutputNeuron()
-	
-	
-	/**
-	 * 
-	 */
-	public double getActivation() {
-		return this.activation;
-	}
 	
 	
 	/**
@@ -48,7 +41,7 @@ public class OutputNeuron extends Neuron {
 		
 		double netInput = 0;
 		
-		for (Object obj : this.neuralNetwork.getAdjacent(this)) {
+		for (Object obj : this.neuralNetwork.getPredecessors(this)) {
 			if (obj instanceof Neuron) {
 				Neuron neuron = (Neuron) obj;
 				RepastEdge<Object> edge = this.neuralNetwork.getEdge(neuron, this);
@@ -58,7 +51,20 @@ public class OutputNeuron extends Neuron {
 		
 		// Bipolar sigmoid function.
 		this.activation = (2 / (1 + Math.pow(Math.E, -1 * netInput))) - 1;
-	}
+		
+		// Ajust the weight using the Hebbian rule.
+		for (Object obj : this.neuralNetwork.getPredecessors(this)) {
+			if (obj instanceof Neuron) {
+				Neuron neuron = (Neuron) obj;
+				RepastEdge<Object> edge = this.neuralNetwork.getEdge(neuron, this);
+				double newWeight = LEARNING_RATE * this.activation 
+						* (neuron.activation - neuron.activation 
+								* edge.getWeight());
+				edge.setWeight(newWeight);
+			}
+		}
+		
+	} // End of calculateActivation()
 	
 	
 	/**
@@ -67,7 +73,20 @@ public class OutputNeuron extends Neuron {
 	@ScheduledMethod(start = 1, interval = 1, 
 			priority = ScheduleParameters.LAST_PRIORITY)
 	public void step() {
+		
 		calculateActivation();
-	}
+
+		CellMembraneChannel channel = this.membraneChannels.get(CellProductType.SAM);
+		channel.setConcentration(0.9);
+		channel.setOpenForOutput(true);
+		
+		expelProductsToMatrix();
+		
+		initialiseNeurites();
+		
+		this.cellGrowthRegulator = 0.9;
+		cellDendritesGrowthHandler();
+		
+	} // End of step()
 	
 } // End of OutputNeuron class

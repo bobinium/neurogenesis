@@ -2,5 +2,6 @@
   	<projection type="continuous space" id="arena space"/>
   	<projection type="continuous space" id="brain space"/>
   	<projection type="grid" id="brain grid"/>
-  	<projection type="network" id="neural network"/>  	
+  	<projection type="network" id="neural network"/> 
+  	<projection type="network" id="neurites network"/>	
 </context>

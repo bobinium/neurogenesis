@@ -112,8 +112,8 @@ public class RegulatoryUnit {
 		
 		double activation = 0;
 		
-		System.out.println("Number of cis-elements: " + this.cisElements.size());
-		System.out.println("Number of input elements: "	+ inputElements.size());
+		//System.out.println("Number of cis-elements: " + this.cisElements.size());
+		//System.out.println("Number of input elements: "	+ inputElements.size());
 		
 		for (GeneticElement cisElement : this.cisElements) {		
 			for (GeneticElement inputElement : inputElements.keySet()) {				
@@ -131,7 +131,7 @@ public class RegulatoryUnit {
 		double deltaConcentration = Math.tanh(activation / 2) 
 				* ((activation >= 0) ? 1 - this.concentration 
 						: this.concentration) * RegulatoryNetwork.DELTA_INTEGRATION_RATE;
-		System.out.println("Delta concentration: " + deltaConcentration);
+		//System.out.println("Delta concentration: " + deltaConcentration);
 
 		this.concentration += deltaConcentration;
 
@@ -146,6 +146,34 @@ public class RegulatoryUnit {
 		}
 		
 	} // End of updateConcentrations()
+	
+	
+	/**
+	 * 
+	 * @param currentElement
+	 * @param newElement
+	 */
+	public void replaceCisElement(final GeneticElement currentElement, 
+			final GeneticElement newElement) {
+		
+		this.cisElements.remove(currentElement);
+		this.cisElements.add(newElement);
+		
+	} // End of replaceCisElement()
+	
+	
+	/**
+	 * 
+	 * @param currentElement
+	 * @param newElement
+	 */
+	public void replaceTransElement(final GeneticElement currentElement, 
+			final GeneticElement newElement) {
+		
+		this.transElements.remove(currentElement);
+		this.transElements.add(newElement);
+		
+	} // End of replaceCisElement()
 	
 	
 	/**

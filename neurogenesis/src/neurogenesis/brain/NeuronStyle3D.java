@@ -1,4 +1,4 @@
-package neurogenesis;
+package neurogenesis.brain;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -26,19 +26,19 @@ public class NeuronStyle3D implements Style3D<Neuron> {
 	public TaggedBranchGroup getBranchGroup(Neuron agent, 
 			TaggedBranchGroup taggedGroup) {
 		
-		if (taggedGroup == null || taggedGroup.getTag() == null) {
+		//if (taggedGroup == null || taggedGroup.getTag() == null) {
 			taggedGroup = new TaggedBranchGroup("DEFAULT");
 			Shape3D shape;
 			if (agent.isAttached()) {
-				shape = ShapeFactory.createCube(.03F, "DEAFULT");
+				shape = ShapeFactory.createCube(.03f, "DEFAULT");
 			} else {
 				shape = ShapeFactory.createSphere(.03f, "DEFAULT");
 			}
 		    taggedGroup.getBranchGroup().addChild(shape);
 		    return taggedGroup;
-		}
+		//}
 		    
-		return null;
+		//return null;
 		
 	} // End of getBranchGroup()
 

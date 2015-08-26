@@ -21,7 +21,7 @@ public class GenomeFactory {
 	
 	private static final int MAX_NUMBER_GENES = 20;
 	
-	private static final double MAX_AFFINITY = 10.0;
+	public static final double MAX_AFFINITY = 10.0;
 	
 	
 	/**
@@ -162,15 +162,6 @@ public class GenomeFactory {
 		return new GeneticElement(type, affinityX, affinityY, sign);
 		
 	} // End of getNewGeneticElement()
-	
-	
-	/**
-	 * 
-	 * @param regulatoryNetwork
-	 */
-	public void mutate(final RegulatoryNetwork regulatoryNetwork) {
-		
-	} // End of mutate()
 	
 	
 } // End of GenomeFactory

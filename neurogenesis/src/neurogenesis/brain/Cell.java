@@ -1,4 +1,4 @@
-package neurogenesis;
+package neurogenesis.brain;
 
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.grid.Grid;
@@ -12,6 +12,7 @@ import repast.simphony.space.grid.GridPoint;
  */
 public abstract class Cell {
 
+	
 	/**
 	 * 
 	 */
@@ -34,9 +35,21 @@ public abstract class Cell {
 		this.space = newSpace;
 		this.grid = newGrid;
 		
-	} // End of Cell()
+	} // End of Cell(ContinuousSpace, Grid)
 
 
+	/**
+	 * 
+	 * @param motherCell
+	 */
+	protected Cell(final Cell motherCell) {
+	
+		this.space = motherCell.space;
+		this.grid = motherCell.grid;
+		
+	} // End of Cell(Cell)
+	
+	
 	/**
 	 * 
 	 * @param gridPoint
@@ -60,5 +73,11 @@ public abstract class Cell {
 		
 	} // End of isFreeGridCell()
 
+
+	/**
+	 * 
+	 */
+	protected abstract Cell clone();
+	
 	
 } // End of Cell class

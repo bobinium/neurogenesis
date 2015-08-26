@@ -3,50 +3,58 @@
   <type>3D</type>
   <styles>
     <entry>
-      <string>neurogenesis.InputNeuron</string>
+      <string>neurogenesis.brain.NeuriteJunction</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
     <entry>
-      <string>neurogenesis.OutputNeuron</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
-    </entry>
-    <entry>
-      <string>neurogenesis.Neuron</string>
-      <string>neurogenesis.NeuronStyle3D</string>
-    </entry>
-    <entry>
-      <string>neurogenesis.UndifferentiatedCell</string>
+      <string>neurogenesis.brain.UndifferentiatedCell</string>
       <string>neurogenesis.brain.UndifferentiatedCellStyle3D</string>
+    </entry>
+    <entry>
+      <string>neurogenesis.brain.InputNeuron</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
+    </entry>
+    <entry>
+      <string>neurogenesis.brain.OutputNeuron</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
+    </entry>
+    <entry>
+      <string>neurogenesis.brain.Neuron</string>
+      <string>neurogenesis.brain.NeuronStyle3D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
-      <string>neurogenesis.InputNeuron</string>
-      <string>neurogenesis.InputNeuron.style_2.xml</string>
+      <string>neurogenesis.brain.NeuriteJunction</string>
+      <string>neurogenesis.brain.NeuriteJunction.style_0.xml</string>
     </entry>
     <entry>
-      <string>neurogenesis.OutputNeuron</string>
-      <string>neurogenesis.OutputNeuron.style_2.xml</string>
-    </entry>
-    <entry>
-      <string>neurogenesis.Neuron</string>
+      <string>neurogenesis.brain.UndifferentiatedCell</string>
       <null/>
     </entry>
     <entry>
-      <string>neurogenesis.UndifferentiatedCell</string>
+      <string>neurogenesis.brain.InputNeuron</string>
+      <string>neurogenesis.brain.InputNeuron.style_1.xml</string>
+    </entry>
+    <entry>
+      <string>neurogenesis.brain.OutputNeuron</string>
+      <string>neurogenesis.brain.OutputNeuron.style_0.xml</string>
+    </entry>
+    <entry>
+      <string>neurogenesis.brain.Neuron</string>
       <null/>
     </entry>
   </editedStyles>
   <netStyles>
     <entry>
-      <string>neural network</string>
+      <string>neurites network</string>
       <string>repast.simphony.visualization.editedStyle.EditedEdgeStyle3D</string>
     </entry>
   </netStyles>
   <editedNetStyles>
     <entry>
-      <string>neural network</string>
-      <string>neuralnetwork.style_1.xml</string>
+      <string>neurites network</string>
+      <string>neuritesnetwork.style_0.xml</string>
     </entry>
   </editedNetStyles>
   <frequency>ON_MOVE</frequency>
@@ -57,26 +65,30 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-820450082</hashCode>
+    <hashCode>1413579747</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>brain space</layoutProjection>
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
-      <string>neurogenesis.InputNeuron</string>
+      <string>neurogenesis.brain.NeuriteJunction</string>
+      <int>4</int>
+    </entry>
+    <entry>
+      <string>neurogenesis.brain.UndifferentiatedCell</string>
       <int>3</int>
     </entry>
     <entry>
-      <string>neurogenesis.OutputNeuron</string>
+      <string>neurogenesis.brain.InputNeuron</string>
       <int>2</int>
     </entry>
     <entry>
-      <string>neurogenesis.Neuron</string>
+      <string>neurogenesis.brain.OutputNeuron</string>
       <int>1</int>
     </entry>
     <entry>
-      <string>neurogenesis.UndifferentiatedCell</string>
+      <string>neurogenesis.brain.Neuron</string>
       <int>0</int>
     </entry>
   </layerOrder>
@@ -87,7 +99,7 @@
       <type>continuous space</type>
     </repast.simphony.scenario.data.ProjectionData>
     <repast.simphony.scenario.data.ProjectionData>
-      <id>neural network</id>
+      <id>neurites network</id>
       <attributes/>
       <type>network</type>
     </repast.simphony.scenario.data.ProjectionData>
@@ -122,7 +134,7 @@
       </repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
     </entry>
     <entry>
-      <string>neural network</string>
+      <string>neurites network</string>
       <repast.simphony.visualization.engine.DefaultProjectionDescriptor>
         <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData[2]"/>
         <props/>

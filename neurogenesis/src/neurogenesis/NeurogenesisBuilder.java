@@ -5,8 +5,14 @@ package neurogenesis;
 
 import java.util.Map;
 
-import neurogenesis.brain.CellProduct;
+import neurogenesis.brain.CellFactory;
+import neurogenesis.brain.CellProductType;
+import neurogenesis.brain.ExtracellularMatrix;
 import neurogenesis.brain.GenomeFactory;
+import neurogenesis.brain.InputNeuron;
+import neurogenesis.brain.Neuron;
+import neurogenesis.brain.OutputNeuron;
+import neurogenesis.brain.UndifferentiatedCell;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
@@ -36,7 +42,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	/**
 	 * 
 	 */
-	public static final int BRAIN_GRID_QUADRANT_SIZE = 3;
+	public static final int BRAIN_GRID_QUADRANT_SIZE = 10;
 	
 	
 	/**
@@ -208,7 +214,10 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		NetworkBuilder<Object> netBuilder = 
 				new NetworkBuilder<Object>("neural network", context, true);
 		Network<Object> neuralNetwork = netBuilder.buildNetwork();
-		Neuron.neuralNetwork = neuralNetwork;
+		
+		netBuilder = 
+				new NetworkBuilder<Object>("neurites network", context, true);
+		Network<Object> neuritesNetwork = netBuilder.buildNetwork();
 		
 		ContinuousSpaceFactory spaceFactory =
 				ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
@@ -242,6 +251,11 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 			context.add(new Zombie(space, grid));
 		} */
 
+		CellFactory.setContinuousSpace(brainSpace);
+		CellFactory.setGrid(brainGrid);
+		CellFactory.setNeuralNetwork(neuralNetwork);
+		CellFactory.setNeuritesNetwork(neuritesNetwork);
+		
 		/* Setup the arena */
 		
 		LightSensor leftLightSensor = new LightSensor(arenaSpace, Math.PI / 12);
@@ -267,13 +281,16 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		/* Setup the initial input and output cells */
 		
 		InputNeuron leftInputNeuron = 
-				new InputNeuron(brainSpace, brainGrid, neuralNetwork, leftLightSensor);
+				new InputNeuron(brainSpace, brainGrid, null, neuralNetwork, 
+						neuritesNetwork, leftLightSensor);
 		context.add(leftInputNeuron);
 		InputNeuron rightInputNeuron = 
-				new InputNeuron(brainSpace, brainGrid, neuralNetwork, rightLightSensor);
+				new InputNeuron(brainSpace, brainGrid, null, neuralNetwork, 
+						neuritesNetwork, rightLightSensor);
 		context.add(rightInputNeuron);
 		
-		OutputNeuron motorNeuron = new OutputNeuron(brainSpace, brainGrid, neuralNetwork);
+		OutputNeuron motorNeuron = new OutputNeuron(brainSpace, brainGrid, 
+				null, neuralNetwork, neuritesNetwork);
 		context.add(motorNeuron);
 		//neuralNetwork.addEdge(leftInputNeuron, motorNeuron, 1);
 		//neuralNetwork.addEdge(rightInputNeuron, motorNeuron, -1);
@@ -305,16 +322,14 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		
 		/* Setup the gene regulatory network */
 		
-		GenomeFactory genomeFactory = new GenomeFactory();
-
-		for (int x = -2; x <= 2; x++) {
+		for (int x = -5; x <= 5; x++) {
 			
-			for (int y = -2; y <= 2; y++) {
+			for (int y = -5; y <= 5; y++) {
 				
-				for (int z = -2; z <= 2; z++) {
+				for (int z = -5; z <= 5; z++) {
 					
-					UndifferentiatedCell motherCell = new UndifferentiatedCell(brainSpace, 
-							brainGrid, genomeFactory.getNewGenome());
+					UndifferentiatedCell motherCell = 
+							CellFactory.getNewUndifferentiatedCell(); 
 					motherCell.setGenerationId(x + "," + y + "," + z);
 					context.add(motherCell);
 					brainSpace.moveTo(motherCell, x + 0.5, y + 0.5, z + 0.5);
@@ -324,6 +339,12 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 			}
 			
 		}
+		
+//		GenomeFactory genomeFactory = new GenomeFactory();
+//		Neuron neuron = new Neuron(brainSpace, brainGrid, 
+//				genomeFactory.getNewGenome(), neuritesNetwork, neuritesNetwork);
+//		context.add(neuron);
+//		brainSpace.moveTo(neuron, 0, 0, 0);
 		
 //		UndifferentiatedCell motherCell1 = new UndifferentiatedCell(brainSpace, 
 //				brainGrid, genomeFactory.getNewGenome());
@@ -345,10 +366,11 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 					ExtracellularMatrix extracellularMatrix = 
 							new ExtracellularMatrix(brainSpace, brainGrid);
 					
-					Map<CellProduct, Double> concentrations = 
+					Map<CellProductType, Double> concentrations = 
 							extracellularMatrix.getConcentrations();
 					
-					concentrations.put(CellProduct.FOOD, 0.1);
+					concentrations.put(CellProductType.FOOD, 0.2);
+					//concentrations.put(CellProduct.MUTAGEN, 0.5);
 					
 					context.add(extracellularMatrix);
 					brainSpace.moveTo(extracellularMatrix,

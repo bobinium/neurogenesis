@@ -1,10 +1,8 @@
-package neurogenesis;
+package neurogenesis.brain;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import neurogenesis.brain.CellProduct;
 
 import org.apache.log4j.Logger;
 
@@ -59,8 +57,8 @@ public class ExtracellularMatrix {
 	private final Grid<Object> grid;
 
 	// Contains the current concentration of each chemical in this grid cell.
-	private Map<CellProduct, Double> concentrations = 
-			new HashMap<CellProduct, Double>();
+	private Map<CellProductType, Double> concentrations = 
+			new HashMap<CellProductType, Double>();
 
 	
 	// CONSTRUCTORS ============================================================
@@ -71,14 +69,14 @@ public class ExtracellularMatrix {
 	 * @param space
 	 * @param grid
 	 */
-	protected ExtracellularMatrix(final ContinuousSpace<Object> newSpace, 
+	public ExtracellularMatrix(final ContinuousSpace<Object> newSpace, 
 			final Grid<Object> newGrid) {
 		
 		this.space = newSpace;
 		this.grid = newGrid;
 		
-		for (CellProduct product : CellProduct.values()) {
-			this.concentrations.put(product, 0.0);
+		for (CellProductType substanceType : CellProductType.values()) {
+			this.concentrations.put(substanceType, 0.0);
 		}
 		
 	} // End of ExtracellularMatrix()
@@ -91,7 +89,7 @@ public class ExtracellularMatrix {
 	 * @return
 	 */
 	public final double getFoodConcentration() {
-		return this.concentrations.get(CellProduct.FOOD);
+		return this.concentrations.get(CellProductType.FOOD);
 	}
 	
 	
@@ -100,7 +98,7 @@ public class ExtracellularMatrix {
 	 * @return
 	 */
 	public final double getWasteConcentration() {
-		return this.concentrations.get(CellProduct.WASTE);
+		return this.concentrations.get(CellProductType.WASTE);
 	}
 	
 	
@@ -109,7 +107,7 @@ public class ExtracellularMatrix {
 	 * @return
 	 */
 	public final double getSamConcentration() {
-		return this.concentrations.get(CellProduct.SAM);
+		return this.concentrations.get(CellProductType.SAM);
 	}
 	
 	
@@ -118,7 +116,7 @@ public class ExtracellularMatrix {
 	 * @return
 	 */
 	public final double getMutagenConcentration() {
-		return this.concentrations.get(CellProduct.MUTAGEN);
+		return this.concentrations.get(CellProductType.MUTAGEN);
 	}
 	
 	
@@ -126,7 +124,7 @@ public class ExtracellularMatrix {
 	 * 
 	 * @return
 	 */
-	public Map<CellProduct, Double> getConcentrations() {
+	public Map<CellProductType, Double> getConcentrations() {
 		return this.concentrations;
 	}
 
@@ -150,9 +148,9 @@ public class ExtracellularMatrix {
 				nghCreator.getNeighborhood(false);
 
 		// Apply diffusion and decay to each product in this grid cell.
-		for (CellProduct product : this.concentrations.keySet()) {
+		for (CellProductType substanceType : this.concentrations.keySet()) {
 			
-			double localConcentration =	this.concentrations.get(product);
+			double localConcentration =	this.concentrations.get(substanceType);
 			
 			// Applies decay rate.
 			localConcentration -= localConcentration * DECAY_RATE;
@@ -174,11 +172,11 @@ public class ExtracellularMatrix {
 				ExtracellularMatrix neighbourMatrix = 
 						gridCell.items().iterator().next();
 				
-				Map<CellProduct, Double> neighbourConcentrations = 
+				Map<CellProductType, Double> neighbourConcentrations = 
 							neighbourMatrix.getConcentrations();
 				
 				double neighbourConcentration = 
-						neighbourConcentrations.get(product);
+						neighbourConcentrations.get(substanceType);
 					
 				if (localConcentration > neighbourConcentration) {
 					
@@ -196,7 +194,7 @@ public class ExtracellularMatrix {
 						double newNeighbourConcentration =
 								neighbourConcentration + diffusingConcentration;
 						
-						neighbourConcentrations.put(product, 
+						neighbourConcentrations.put(substanceType, 
 								newNeighbourConcentration);
 						
 					} // End if()
@@ -210,7 +208,7 @@ public class ExtracellularMatrix {
 						+ newLocalConcentration);
 			}
 			
-			this.concentrations.put(product, newLocalConcentration);
+			this.concentrations.put(substanceType, newLocalConcentration);
 			
 		} // End for() products
 		

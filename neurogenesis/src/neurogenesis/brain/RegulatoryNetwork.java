@@ -1,9 +1,12 @@
 package neurogenesis.brain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import repast.simphony.random.RandomHelper;
 
 
 public class RegulatoryNetwork {
@@ -122,13 +125,13 @@ public class RegulatoryNetwork {
 			
 		} // End of for() trans elements
 
-		System.out.println("Activation (output): " + activation);
+		//System.out.println("Activation (output): " + activation);
 			
 		double deltaConcentration = Math.tanh(activation / 2) 
 					* ((activation >= 0) ? 1 - currentConcentration 
 							: currentConcentration) * DELTA_INTEGRATION_RATE;
-		System.out.println("Delta concentration (output): " 
-							+ deltaConcentration);
+		//System.out.println("Delta concentration (output): " 
+		//					+ deltaConcentration);
 		
 		return deltaConcentration;
 		
@@ -157,18 +160,163 @@ public class RegulatoryNetwork {
 			
 		} // End of for() trans elements
 
-		System.out.println("Activation (output): " + activation);
+		//System.out.println("Activation (output): " + activation);
 		
 		// cost
 		double deltaConcentration = -1 * activation 
 				/ (Math.sqrt(10 * 10 + 10 * 10) 
 						* this.networkConcentrations.size());
-		System.out.println("Delta concentration energy: " + deltaConcentration);
+		//System.out.println("Delta concentration energy: " + deltaConcentration);
 		
 		return deltaConcentration;
 		
 	} // End of calculateEnergyConcentrationDelta()
 
+
+	/**
+	 * 
+	 * @return
+	 */
+	private int getGenomeLength() {
+		
+		int genomeLength = this.inputElements.length 
+				+ this.outputElements.length;
+		
+		for (RegulatoryUnit regulatoryUnit : this.regulatoryUnits) {
+			genomeLength += regulatoryUnit.getCisElements().length
+					+ regulatoryUnit.getTransElements().length;
+		}
+		
+		return genomeLength;
+		
+	} // End of getGenomeLength()
+	
+	
+	/**
+	 * 
+	 */
+	public void mutate() {
+		
+		int genomeLength = getGenomeLength();
+		
+		int selectedGeneticElementPos = 
+				RandomHelper.nextIntFromTo(0, genomeLength - 1);
+		GeneticElement selectedGeneticElement = null;
+		
+		if (selectedGeneticElementPos < this.inputElements.length) {
+			
+			selectedGeneticElement = 
+					this.inputElements[selectedGeneticElementPos];
+			this.inputElements[selectedGeneticElementPos] = 
+					mutateGeneticElement(selectedGeneticElement);
+			
+		} else {
+			
+			selectedGeneticElementPos -= this.inputElements.length;
+			
+			if (selectedGeneticElementPos < this.outputElements.length) {
+			
+				selectedGeneticElement = 
+						this.outputElements[selectedGeneticElementPos];
+				this.outputElements[selectedGeneticElementPos] = 
+						mutateGeneticElement(selectedGeneticElement);
+			
+			} else {
+			
+				selectedGeneticElementPos -= this.outputElements.length;
+			
+				for (RegulatoryUnit regulatoryUnit : this.regulatoryUnits) {
+		
+					int cisLength = regulatoryUnit.getCisElements().length;
+					int transLength = regulatoryUnit.getTransElements().length;
+				
+					if (selectedGeneticElementPos < cisLength) {
+					
+						selectedGeneticElement = regulatoryUnit
+								.getCisElements()[selectedGeneticElementPos];
+						regulatoryUnit.replaceCisElement(selectedGeneticElement, 
+								mutateGeneticElement(selectedGeneticElement));
+						break;
+					
+					} else {
+						
+						selectedGeneticElementPos -= cisLength;
+						
+						if (selectedGeneticElementPos < transLength) {
+						
+							selectedGeneticElement = regulatoryUnit
+									.getTransElements()
+									[selectedGeneticElementPos];
+							regulatoryUnit.replaceTransElement(
+									selectedGeneticElement, 
+									mutateGeneticElement(
+											selectedGeneticElement));
+							break;
+
+						} else {
+					
+							selectedGeneticElementPos -= transLength;
+					
+						} // End if()
+						
+					} // End if()
+					
+				} // End if()
+				
+			} // End for()
+
+		} // End if()
+		
+	} // End of mutate()
+	
+	
+	/**
+	 * 
+	 * @param geneticElement
+	 * @return
+	 */
+	private GeneticElement mutateGeneticElement(
+			final GeneticElement geneticElement) {
+		
+		GeneticElement.Type newType = geneticElement.getType();
+		double newAffinityX = geneticElement.getAffinityX();
+		double newAffinityY = geneticElement.getAffinityY();
+		int newSign = geneticElement.getSign();
+		
+		// 133 bits for a genetic element.
+		int bitPos = RandomHelper.nextIntFromTo(0, 132);
+
+		if (bitPos < 4) {
+				
+			// Genetic element type field.
+			int typePos = RandomHelper
+					.nextIntFromTo(0, GeneticElement.Type.values().length - 1);
+			newType = GeneticElement.Type.values()[typePos];
+				
+		} else if (bitPos < 68) {
+			
+			newAffinityX = RandomHelper
+					.nextDoubleFromTo(0, GenomeFactory.MAX_AFFINITY);
+			
+		} else if (bitPos < 132) {
+			
+			newAffinityY = RandomHelper
+					.nextDoubleFromTo(0, GenomeFactory.MAX_AFFINITY);
+			
+		} else {
+			
+			int randomInt = RandomHelper.nextIntFromTo(0, 1);
+			newSign = (randomInt == 0) ? -1 : 1;
+			
+		} // End if()
+					
+		GeneticElement newGeneticElement = new GeneticElement(newType, 
+				newAffinityX, newAffinityY, newSign);
+
+		return newGeneticElement;
+		
+	} // End of mutateGeneticElement()
+	
 	
 	/**
 	 * 
@@ -205,6 +353,6 @@ public class RegulatoryNetwork {
 		
 		return newNetwork;
 		
-	}
+	} // End of clone()
 	
 } // End of RegulatoryNetwork class

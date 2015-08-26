@@ -1,5 +1,5 @@
 <repast.simphony.data2.engine.DataSetDescriptor>
-  <name>Cell Population</name>
+  <name>Neurite Junctions</name>
   <type>AGGREGATE</type>
   <inclTick>true</inclTick>
   <inclBatchRun>false</inclBatchRun>
@@ -11,30 +11,16 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>1308323097</hashCode>
+    <hashCode>-662170536</hashCode>
   </scheduleParams>
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map"/>
   <countSources class="linked-hash-map">
     <entry>
-      <string>Undifferentiated Cells</string>
+      <string>Neurite Junctions</string>
       <repast.simphony.data2.engine.CountSourceDefinition>
-        <typeName>neurogenesis.brain.UndifferentiatedCell</typeName>
-        <id>Undifferentiated Cells</id>
-      </repast.simphony.data2.engine.CountSourceDefinition>
-    </entry>
-    <entry>
-      <string>Neurons</string>
-      <repast.simphony.data2.engine.CountSourceDefinition>
-        <typeName>neurogenesis.brain.Neuron</typeName>
-        <id>Neurons</id>
-      </repast.simphony.data2.engine.CountSourceDefinition>
-    </entry>
-    <entry>
-      <string>Total</string>
-      <repast.simphony.data2.engine.CountSourceDefinition>
-        <typeName>neurogenesis.brain.Cell</typeName>
-        <id>Total</id>
+        <typeName>neurogenesis.brain.NeuriteJunction</typeName>
+        <id>Neurite Junctions</id>
       </repast.simphony.data2.engine.CountSourceDefinition>
     </entry>
   </countSources>
