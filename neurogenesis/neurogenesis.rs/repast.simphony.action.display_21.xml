@@ -18,7 +18,7 @@
   <editedStyles>
     <entry>
       <string>neurogenesis.brain.InputNeuron</string>
-      <string>neurogenesis.brain.InputNeuron.style_3.xml</string>
+      <string>neurogenesis.brain.InputNeuron.style_4.xml</string>
     </entry>
     <entry>
       <string>neurogenesis.brain.OutputNeuron</string>
@@ -26,7 +26,7 @@
     </entry>
     <entry>
       <string>neurogenesis.brain.Neuron</string>
-      <string>neurogenesis.brain.Neuron.style_4.xml</string>
+      <string>neurogenesis.brain.Neuron.style_5.xml</string>
     </entry>
   </editedStyles>
   <netStyles>
@@ -49,7 +49,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-1501655406</hashCode>
+    <hashCode>-150878114</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>brain space</layoutProjection>

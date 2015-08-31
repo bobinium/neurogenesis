@@ -185,12 +185,12 @@ public class RegulatoryUnit {
 		
 		newUnit.cisElements = new ArrayList<GeneticElement>();
 		for (GeneticElement element : this.cisElements) {
-			newUnit.cisElements.add(element.clone());
+			newUnit.cisElements.add(element); //.clone());
 		}
 		
 		newUnit.transElements = new ArrayList<GeneticElement>();
 		for (GeneticElement element : this.transElements) {
-			newUnit.transElements.add(element.clone());
+			newUnit.transElements.add(element); //.clone());
 		}
 		
 		newUnit.concentration = this.concentration;

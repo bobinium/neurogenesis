@@ -1,13 +1,14 @@
 package neurogenesis.brain;
 
+
 public class NeuriteJunction {
 
 	public enum Type {
-		DENDRITE, AXON
+		NEURON, DENDRITE, AXON
 	}
 	
 	//
-	private final Type type;
+	private Type type;
 	
 	
 	//
@@ -18,13 +19,19 @@ public class NeuriteJunction {
 	private boolean synapse = false;
 	
 	
+	//
+	private final int depth;
+	
+	
 	/**
 	 * 
 	 */
-	public NeuriteJunction(final Type newType, final Neuron newNeuron) {
+	public NeuriteJunction(final Type newType, 
+			final Neuron newNeuron, final int newDepth) { 
 		
 		this.type = newType;
 		this.neuron = newNeuron;
+		this.depth = newDepth;
 		
 	} // End of NeuriteJunction()
 	
@@ -33,7 +40,7 @@ public class NeuriteJunction {
 	 * 
 	 * @return
 	 */
-	public Type getType() {
+	public final Type getType() {
 		return this.type;
 	}
 	
@@ -42,7 +49,7 @@ public class NeuriteJunction {
 	 * 
 	 * @return
 	 */
-	public Neuron getNeuron() {
+	public final Neuron getNeuron() {
 		return this.neuron;
 	}
 	
@@ -51,7 +58,7 @@ public class NeuriteJunction {
 	 * 
 	 * @return
 	 */
-	public boolean isSynapse() {
+	public final boolean isSynapse() {
 		return this.synapse;
 	}
 	
@@ -60,9 +67,18 @@ public class NeuriteJunction {
 	 * 
 	 * @param newValue
 	 */
-	public void setSynapse(final boolean newValue) {
+	public final void setSynapse(final boolean newValue) {
 		this.synapse = newValue;
 	}
 	
 	
-} // End of NeuriteJunction
+	/**
+	 * 
+	 * @return
+	 */
+	public final int getDepth() {
+		return this.depth;
+	}
+	
+	
+} // End of NeuriteJunction class

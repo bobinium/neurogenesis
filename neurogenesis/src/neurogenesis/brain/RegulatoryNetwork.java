@@ -333,12 +333,12 @@ public class RegulatoryNetwork {
 		
 		List<GeneticElement> newInputElements = new ArrayList<GeneticElement>();
 		for (GeneticElement element : this.inputElements) {
-			newInputElements.add(element.clone());
+			newInputElements.add(element); //.clone());
 		}
 		
 		List<GeneticElement> newOutputElements = new ArrayList<GeneticElement>();
 		for (GeneticElement element : this.outputElements) {
-			newInputElements.add(element.clone());
+			newInputElements.add(element); //.clone());
 		}
 		
 		newNetwork.regulatoryUnits = 
@@ -346,6 +346,10 @@ public class RegulatoryNetwork {
 		newNetwork.networkConcentrations = 
 				(Map<GeneticElement, Double>) ((HashMap<GeneticElement, Double>) 
 						this.networkConcentrations).clone();
+		
+//		newNetwork.inputElements = this.inputElements.clone();
+//		newNetwork.outputElements = this.outputElements.clone();
+		
 		newNetwork.inputElements = newInputElements.toArray(
 				new GeneticElement[newInputElements.size()]);
 		newNetwork.outputElements = newOutputElements.toArray(

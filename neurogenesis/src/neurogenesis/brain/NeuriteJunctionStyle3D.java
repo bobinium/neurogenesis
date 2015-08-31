@@ -104,10 +104,34 @@ public class NeuriteJunctionStyle3D implements Style3D<NeuriteJunction> {
 			TaggedAppearance taggedAppearance, Object shapeID) {
 		
 		if (taggedAppearance == null || taggedAppearance.getTag() == null) {
+			
 			taggedAppearance = new TaggedAppearance("DEFAULT");
+
+			Color agentColour = Color.WHITE;
+			switch (agent.getType()) { 
+			case NEURON:
+				if (agent.getNeuron() instanceof InputNeuron) {
+					agentColour = Color.YELLOW;
+				} else if (agent.getNeuron() instanceof OutputNeuron) {
+					agentColour = Color.RED;
+				} else {
+					agentColour = Color.CYAN;
+				}
+				break;
+			case DENDRITE:
+				agentColour = (agent.getNeuron() instanceof OutputNeuron) 
+						? Color.GREEN : Color.BLUE;
+				break;
+			case AXON:
+				agentColour = (agent.getNeuron() instanceof InputNeuron)
+						? Color.MAGENTA : Color.RED;
+				break;
+			}
+			
 			AppearanceFactory.setMaterialAppearance(
 					taggedAppearance.getAppearance(), 
-					agent.getType() == NeuriteJunction.Type.DENDRITE ? Color.BLUE : Color.RED);
+					agentColour);
+			
 	    }
 	    
 	    return taggedAppearance;
@@ -123,7 +147,9 @@ public class NeuriteJunctionStyle3D implements Style3D<NeuriteJunction> {
 //		float size = (float) (MINIMUM_CELL_SIZE 
 //				+ (agent.getCellDivisionConcentration() 
 //						* (1 - MINIMUM_CELL_SIZE)));
-		return new float[] { 0.1f, 0.1f, 0.1f };
+		float size = 
+				(agent.getType() == NeuriteJunction.Type.NEURON) ? 1.0f : 0.1f;
+		return new float[] { size, size, size };
 		
 	} // End of getScale()
 	

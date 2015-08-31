@@ -19,7 +19,7 @@ public class GenomeFactory {
 	
 	private static final int MIN_NUMBER_GENES = 2;
 	
-	private static final int MAX_NUMBER_GENES = 20;
+	private static final int MAX_NUMBER_GENES = 5;
 	
 	public static final double MAX_AFFINITY = 10.0;
 	
@@ -28,13 +28,15 @@ public class GenomeFactory {
 	 * 
 	 * @return
 	 */
-	public RegulatoryNetwork getNewGenome() {
+	public RegulatoryNetwork getNewGenome(final int genomeSize) {
 
 		List<RegulatoryUnit> regulatoryUnits = new ArrayList<RegulatoryUnit>();
 		
-		for (int i = MIN_NUMBER_GENES; 
-				i <= RandomHelper.nextIntFromTo(MIN_NUMBER_GENES, 
-						MAX_NUMBER_GENES); i++) {
+//		for (int i = MIN_NUMBER_GENES; 
+//				i <= RandomHelper.nextIntFromTo(MIN_NUMBER_GENES, 
+//						MAX_NUMBER_GENES); i++) {
+			
+		for (int i = 1;	i <= genomeSize; i++) {
 			
 			regulatoryUnits.add(getNewGene());
 			

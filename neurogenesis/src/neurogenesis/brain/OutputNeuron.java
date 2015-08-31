@@ -82,9 +82,8 @@ public class OutputNeuron extends Neuron {
 		
 		expelProductsToMatrix();
 		
-		initialiseNeurites();
-		
-		this.cellGrowthRegulator = 0.9;
+		this.cellGrowthRegulator = 0.05;
+		initialiseNeurites(false, true);
 		cellDendritesGrowthHandler();
 		
 	} // End of step()

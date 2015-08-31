@@ -6,35 +6,11 @@
       <string>neurogenesis.brain.NeuriteJunction</string>
       <string>neurogenesis.brain.NeuriteJunctionStyle3D</string>
     </entry>
-    <entry>
-      <string>neurogenesis.brain.InputNeuron</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.OutputNeuron</string>
-      <string>repast.simphony.visualization.visualization3D.style.DefaultStyle3D</string>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.Neuron</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
-    </entry>
   </styles>
   <editedStyles>
     <entry>
       <string>neurogenesis.brain.NeuriteJunction</string>
       <null/>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.InputNeuron</string>
-      <string>neurogenesis.brain.InputNeuron.style_2.xml</string>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.OutputNeuron</string>
-      <null/>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.Neuron</string>
-      <string>neurogenesis.brain.Neuron.style_3.xml</string>
     </entry>
   </editedStyles>
   <netStyles>
@@ -46,7 +22,7 @@
   <editedNetStyles>
     <entry>
       <string>neurites network</string>
-      <string>neuritesnetwork.style_1.xml</string>
+      <string>neuritesnetwork.style_2.xml</string>
     </entry>
   </editedNetStyles>
   <frequency>ON_MOVE</frequency>
@@ -57,7 +33,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-1482449593</hashCode>
+    <hashCode>-1448503804</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>brain space</layoutProjection>
@@ -65,18 +41,6 @@
   <layerOrder>
     <entry>
       <string>neurogenesis.brain.NeuriteJunction</string>
-      <int>3</int>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.InputNeuron</string>
-      <int>2</int>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.OutputNeuron</string>
-      <int>1</int>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.Neuron</string>
       <int>0</int>
     </entry>
   </layerOrder>

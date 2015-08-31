@@ -97,17 +97,35 @@ public class CellFactory {
 	 * 
 	 * @return
 	 */
-	public static UndifferentiatedCell getNewUndifferentiatedCell() {
+	public static UndifferentiatedCell getNewUndifferentiatedCell(
+			final int genomeSize) {
 		
 		GenomeFactory genomeFactory = new GenomeFactory();
 		
 		UndifferentiatedCell newCell = 
 				new UndifferentiatedCell(continuousSpace, grid, 
-						genomeFactory.getNewGenome());
+						genomeFactory.getNewGenome(genomeSize));
 		
 		return newCell;
 		
 	} // End of getNewUndifferentiatedCell()
+	
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Neuron getNewNeuron(final int genomeSize) {
+		
+		GenomeFactory genomeFactory = new GenomeFactory();
+		
+		Neuron newCell = new Neuron(continuousSpace, grid, 
+						genomeFactory.getNewGenome(genomeSize), 
+						neuralNetwork, neuritesNetwork);
+		
+		return newCell;
+		
+	} // End of getNewNeuron()
 	
 
 	/**

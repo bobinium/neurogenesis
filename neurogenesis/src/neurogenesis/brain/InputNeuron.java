@@ -109,8 +109,8 @@ public class InputNeuron extends Neuron {
 		
 		} // End if()
 		
-		this.cellGrowthRegulator = 0.3;
-		initialiseNeurites();
+		this.cellGrowthRegulator = 0.1;
+		initialiseNeurites(true, false);
 		cellAxonGrowthHandler();
 		
 	} // End of step()

@@ -42,19 +42,19 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	/**
 	 * 
 	 */
-	public static final int BRAIN_GRID_QUADRANT_SIZE = 10;
+	//public static final int BRAIN_GRID_QUADRANT_SIZE = 5;
 	
 	
 	/**
 	 * 
 	 */
-	public static final int BRAIN_GRID_SIZE = 2 * BRAIN_GRID_QUADRANT_SIZE + 1;
+	//public static final int BRAIN_GRID_SIZE = 2 * BRAIN_GRID_QUADRANT_SIZE + 1;
 
 	
 	/**
 	 * 
 	 */
-	public static final int BRAIN_GRID_ORIGIN = BRAIN_GRID_QUADRANT_SIZE;
+	//public static final int BRAIN_GRID_ORIGIN = BRAIN_GRID_QUADRANT_SIZE;
 	
 
 	/**
@@ -80,7 +80,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	/**
 	 * 
 	 */
-	public static final int OUTPUT_NEURON_GRID_POS_Y = -BRAIN_GRID_QUADRANT_SIZE;
+	//public static final int OUTPUT_NEURON_GRID_POS_Y = -BRAIN_GRID_QUADRANT_SIZE;
 	
 	/**
 	 * 
@@ -209,6 +209,17 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	@SuppressWarnings("rawtypes")
 	public Context build(Context<Object> context) {
 
+		// Get the paramters of the model.
+		
+		Parameters params = RunEnvironment.getInstance().getParameters();
+		final int paramGenomeSize = (Integer) params.getValue("genome.size");
+		
+		final int paramBrainGridQuadrantSize = 
+				(Integer) params.getValue("quadrant.size");
+		final int paramBrainGridSize = 2 * paramBrainGridQuadrantSize + 1;
+		final int paramBrainGridOrigin = paramBrainGridQuadrantSize;
+		final int paramOutputNeuronGridPosY = -paramBrainGridQuadrantSize;
+		
 		context.setId("neurogenesis");
 		
 		NetworkBuilder<Object> netBuilder = 
@@ -231,26 +242,20 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 				spaceFactory.createContinuousSpace("brain space", context,
 						new RandomCartesianAdder<Object>(),
 						new repast.simphony.space.continuous.StrictBorders(),
-						new double[] { BRAIN_GRID_SIZE, 
-							BRAIN_GRID_SIZE, BRAIN_GRID_SIZE }, 
-						new double[] { BRAIN_GRID_ORIGIN, 
-							BRAIN_GRID_ORIGIN, BRAIN_GRID_ORIGIN });
+						new double[] { paramBrainGridSize, 
+							paramBrainGridSize, paramBrainGridSize }, 
+						new double[] { paramBrainGridOrigin, 
+							paramBrainGridOrigin, paramBrainGridOrigin });
 		
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
 		Grid<Object> brainGrid = gridFactory.createGrid("brain grid", context,
 				new GridBuilderParameters<Object>(new StrictBorders(),
 						new SimpleGridAdder<Object>(), true, 
-						new int[] { BRAIN_GRID_SIZE, 
-							BRAIN_GRID_SIZE, BRAIN_GRID_SIZE }, 
-						new int[] { BRAIN_GRID_ORIGIN, 
-							BRAIN_GRID_ORIGIN, BRAIN_GRID_ORIGIN }));
+						new int[] { paramBrainGridSize, 
+							paramBrainGridSize, paramBrainGridSize }, 
+						new int[] { paramBrainGridOrigin, 
+							paramBrainGridOrigin, paramBrainGridOrigin }));
 		
-		Parameters params = RunEnvironment.getInstance().getParameters();
-/*		int zombieCount = (Integer) params.getValue("zombie.count");
-		for (int i = 0; i < zombieCount; i++) {
-			context.add(new Zombie(space, grid));
-		} */
-
 		CellFactory.setContinuousSpace(brainSpace);
 		CellFactory.setGrid(brainGrid);
 		CellFactory.setNeuralNetwork(neuralNetwork);
@@ -283,15 +288,17 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		InputNeuron leftInputNeuron = 
 				new InputNeuron(brainSpace, brainGrid, null, neuralNetwork, 
 						neuritesNetwork, leftLightSensor);
-		context.add(leftInputNeuron);
+		//context.add(leftInputNeuron);
+		
 		InputNeuron rightInputNeuron = 
 				new InputNeuron(brainSpace, brainGrid, null, neuralNetwork, 
 						neuritesNetwork, rightLightSensor);
-		context.add(rightInputNeuron);
+		//context.add(rightInputNeuron);
 		
 		OutputNeuron motorNeuron = new OutputNeuron(brainSpace, brainGrid, 
 				null, neuralNetwork, neuritesNetwork);
 		context.add(motorNeuron);
+		
 		//neuralNetwork.addEdge(leftInputNeuron, motorNeuron, 1);
 		//neuralNetwork.addEdge(rightInputNeuron, motorNeuron, -1);
 		
@@ -311,34 +318,59 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 				* Math.sin(robot.getAngularPosition(rightLightSensor)));
 				
 		brainSpace.moveTo(motorNeuron, OUTPUT_NEURON_GRID_POS_X + 0.5, 
-				OUTPUT_NEURON_GRID_POS_Y + 0.5, OUTPUT_NEURON_GRID_POS_Z + 0.5);
-		final int offsetInputNeuronPos = BRAIN_GRID_SIZE / 3;
-		brainSpace.moveTo(leftInputNeuron, 
-				BRAIN_GRID_QUADRANT_SIZE - offsetInputNeuronPos + 0.5, 0.5, 
-				BRAIN_GRID_QUADRANT_SIZE + 0.5);
-		brainSpace.moveTo(rightInputNeuron, 
-				-BRAIN_GRID_QUADRANT_SIZE + offsetInputNeuronPos + 0.5, 0.5, 
-				BRAIN_GRID_QUADRANT_SIZE + 0.5);
+				paramOutputNeuronGridPosY + 0.5, OUTPUT_NEURON_GRID_POS_Z + 0.5);
+		brainGrid.moveTo(motorNeuron, OUTPUT_NEURON_GRID_POS_X, 
+				paramOutputNeuronGridPosY, OUTPUT_NEURON_GRID_POS_Z);
+		
+		final int offsetInputNeuronPos = paramBrainGridSize / 3;
+		
+//		brainSpace.moveTo(leftInputNeuron, 
+//				paramBrainGridQuadrantSize - offsetInputNeuronPos + 0.5, 0.5, 
+//				paramBrainGridQuadrantSize + 0.5);
+//		brainGrid.moveTo(leftInputNeuron, 
+//				paramBrainGridQuadrantSize - offsetInputNeuronPos, 0,
+//				paramBrainGridQuadrantSize);
+//		
+//		brainSpace.moveTo(rightInputNeuron, 
+//				-paramBrainGridQuadrantSize + offsetInputNeuronPos + 0.5, 0.5, 
+//				paramBrainGridQuadrantSize + 0.5);
+//		brainGrid.moveTo(rightInputNeuron, 
+//				-paramBrainGridQuadrantSize + offsetInputNeuronPos, 0,
+//				paramBrainGridQuadrantSize);
 		
 		/* Setup the gene regulatory network */
 		
-		for (int x = -5; x <= 5; x++) {
-			
-			for (int y = -5; y <= 5; y++) {
-				
-				for (int z = -5; z <= 5; z++) {
-					
-					UndifferentiatedCell motherCell = 
-							CellFactory.getNewUndifferentiatedCell(); 
-					motherCell.setGenerationId(x + "," + y + "," + z);
-					context.add(motherCell);
-					brainSpace.moveTo(motherCell, x + 0.5, y + 0.5, z + 0.5);
-
-				}
-				
-			}
-			
-		}
+		Neuron.count = 0;
+		
+//		Neuron neuron1 = CellFactory.getNewNeuron(paramGenomeSize);
+//		context.add(neuron1);
+//		brainSpace.moveTo(neuron1, paramBrainGridQuadrantSize - offsetInputNeuronPos + 0.5, 0.5, 0.5);
+//		brainGrid.moveTo(neuron1, paramBrainGridQuadrantSize - offsetInputNeuronPos, 0, 0);
+		
+//		Neuron neuron2 = CellFactory.getNewNeuron(paramGenomeSize);
+//		context.add(neuron2);
+//		brainSpace.moveTo(neuron2, -paramBrainGridQuadrantSize + offsetInputNeuronPos + 0.5, 0.5, 0.5);
+//		brainGrid.moveTo(neuron2, -paramBrainGridQuadrantSize + offsetInputNeuronPos, 0, 0);
+		
+//		final int s = 2;
+//		for (int x = -s; x <= s; x++) {
+//			
+//			for (int y = -s; y <= s; y++) {
+//				
+//				for (int z = -s; z <= s; z++) {
+//					
+//					UndifferentiatedCell motherCell = CellFactory
+//							.getNewUndifferentiatedCell(paramGenomeSize); 
+//					motherCell.setGenerationId(x + "," + y + "," + z);
+//					context.add(motherCell);
+//					brainSpace.moveTo(motherCell, x + 0.5, y + 0.5, z + 0.5);
+//					brainGrid.moveTo(motherCell, x, y, z);
+//
+//				}
+//				
+//			}
+//			
+//		}
 		
 //		GenomeFactory genomeFactory = new GenomeFactory();
 //		Neuron neuron = new Neuron(brainSpace, brainGrid, 
@@ -352,16 +384,16 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 //		brainSpace.moveTo(motherCell1, MOTHER_CELL_GRID_POS_X + 0.5,
 //				MOTHER_CELL_GRID_POS_Y + 0.5, MOTHER_CELL_GRID_POS_Y + 0.5);
 				
-		for (Object obj : context) {
-			NdPoint pt = brainSpace.getLocation(obj);
-			brainGrid.moveTo(obj, (int) pt.getX(), (int) pt.getY(), (int) pt.getZ());
-		}
+//		for (Object obj : context) {
+//			NdPoint pt = brainSpace.getLocation(obj);
+//			brainGrid.moveTo(obj, (int) pt.getX(), (int) pt.getY(), (int) pt.getZ());
+//		}
 		
-		for (int x = -BRAIN_GRID_QUADRANT_SIZE; x <= BRAIN_GRID_QUADRANT_SIZE; x++) {
+		for (int x = -paramBrainGridQuadrantSize; x <= paramBrainGridQuadrantSize; x++) {
 			
-			for (int y = -BRAIN_GRID_QUADRANT_SIZE; y <= BRAIN_GRID_QUADRANT_SIZE; y++) {
+			for (int y = -paramBrainGridQuadrantSize; y <= paramBrainGridQuadrantSize; y++) {
 				
-				for (int z = -BRAIN_GRID_QUADRANT_SIZE; z <= BRAIN_GRID_QUADRANT_SIZE; z++) {
+				for (int z = -paramBrainGridQuadrantSize; z <= paramBrainGridQuadrantSize; z++) {
 					
 					ExtracellularMatrix extracellularMatrix = 
 							new ExtracellularMatrix(brainSpace, brainGrid);
@@ -377,13 +409,13 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 							x + 0.5, y + 0.5, z + 0.5);
 					brainGrid.moveTo(extracellularMatrix, x, y, z);
 					
-				}
+				} // End of for(z)
 				
-			}
+			} // End of for(y)
 			
-		}
+		} // End of for(x)
 		
 		return context;
 	}
 
-}
+} // End of NeurogenesisBuilder class
