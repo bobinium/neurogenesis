@@ -1,7 +1,6 @@
 <repast.simphony.data2.engine.DataSetDescriptor>
-  <name>Sensors Illumination</name>
-  <type>NON_AGGREGATE</type>
-  <sourceType>neurogenesis.LightSensor</sourceType>
+  <name>Angular Delta</name>
+  <type>AGGREGATE</type>
   <inclTick>true</inclTick>
   <inclBatchRun>false</inclBatchRun>
   <inclRandomSeed>false</inclRandomSeed>
@@ -12,24 +11,35 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>315593184</hashCode>
+    <hashCode>568280188</hashCode>
   </scheduleParams>
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
-      <string>Label</string>
+      <string>Angle Delta</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Label</id>
-        <className>neurogenesis.LightSensor</className>
-        <methodName>getLabel</methodName>
+        <id>Angle Delta</id>
+        <className>neurogenesis.ArenaSimulator</className>
+        <methodName>getAngleDeltaLightAndRobot</methodName>
+        <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>LightIntensity</string>
+      <string>Angle Delta Sign</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>LightIntensity</id>
-        <className>neurogenesis.LightSensor</className>
-        <methodName>getLightIntensity</methodName>
+        <id>Angle Delta Sign</id>
+        <className>neurogenesis.ArenaSimulator</className>
+        <methodName>getSignAngleDeltaLightAndRobot</methodName>
+        <aggType>MAX</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Average Angle Delta</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Average Angle Delta</id>
+        <className>neurogenesis.ArenaSimulator</className>
+        <methodName>getAverageAngleDelta</methodName>
+        <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

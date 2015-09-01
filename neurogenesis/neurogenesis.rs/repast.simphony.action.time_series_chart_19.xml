@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
-  <name>Angular Position</name>
-  <dataSet>Angular Position</dataSet>
+  <name>Adhesion Molecules</name>
+  <dataSet>Adhesion Molecules</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
-  <yAxisLabel>sin(x) - cos(x)</yAxisLabel>
-  <chartTitle>Angular Position</chartTitle>
+  <yAxisLabel>Concentration</yAxisLabel>
+  <chartTitle>Adhesion Molecules Concentration</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,9 +21,9 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>Light Source cos(x)</string>
+      <string>CAM</string>
       <SeriesData>
-        <label>Light Source cos(x)</label>
+        <label>CAM</label>
         <color>
           <red>255</red>
           <green>0</green>
@@ -33,33 +33,9 @@
       </SeriesData>
     </entry>
     <entry>
-      <string>Robot cos(x)</string>
+      <string>SAM</string>
       <SeriesData>
-        <label>Robot cos(x)</label>
-        <color>
-          <red>255</red>
-          <green>0</green>
-          <blue>255</blue>
-          <alpha>255</alpha>
-        </color>
-      </SeriesData>
-    </entry>
-    <entry>
-      <string>Robot sin(x)</string>
-      <SeriesData>
-        <label>Robot sin(x)</label>
-        <color>
-          <red>0</red>
-          <green>255</green>
-          <blue>0</blue>
-          <alpha>255</alpha>
-        </color>
-      </SeriesData>
-    </entry>
-    <entry>
-      <string>Light Source sin(x)</string>
-      <SeriesData>
-        <label>Light Source sin(x)</label>
+        <label>SAM</label>
         <color>
           <red>0</red>
           <green>0</green>

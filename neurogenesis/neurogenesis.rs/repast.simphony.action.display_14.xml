@@ -1,44 +1,28 @@
 <repast.simphony.visualization.engine.CartesianDisplayDescriptor>
-  <name>Neural Network Display</name>
+  <name>Neurons Display</name>
   <type>3D</type>
   <styles>
     <entry>
-      <string>neurogenesis.brain.InputNeuron</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.OutputNeuron</string>
-      <string>repast.simphony.visualization.visualization3D.style.DefaultStyle3D</string>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.Neuron</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
+      <string>neurogenesis.brain.NeuriteJunction</string>
+      <string>neurogenesis.brain.NeuriteJunctionStyle3D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
-      <string>neurogenesis.brain.InputNeuron</string>
-      <string>neurogenesis.brain.InputNeuron.style_4.xml</string>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.OutputNeuron</string>
+      <string>neurogenesis.brain.NeuriteJunction</string>
       <null/>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.Neuron</string>
-      <string>neurogenesis.brain.Neuron.style_5.xml</string>
     </entry>
   </editedStyles>
   <netStyles>
     <entry>
-      <string>neural network</string>
-      <string>neurogenesis.brain.NeuralNetworkEdgeStyle3D</string>
+      <string>neurites network</string>
+      <string>repast.simphony.visualization.editedStyle.EditedEdgeStyle3D</string>
     </entry>
   </netStyles>
   <editedNetStyles>
     <entry>
-      <string>neural network</string>
-      <null/>
+      <string>neurites network</string>
+      <string>neuritesnetwork.style_2.xml</string>
     </entry>
   </editedNetStyles>
   <frequency>ON_MOVE</frequency>
@@ -49,22 +33,14 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-150878114</hashCode>
+    <hashCode>-1448503804</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>brain space</layoutProjection>
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
-      <string>neurogenesis.brain.InputNeuron</string>
-      <int>2</int>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.OutputNeuron</string>
-      <int>1</int>
-    </entry>
-    <entry>
-      <string>neurogenesis.brain.Neuron</string>
+      <string>neurogenesis.brain.NeuriteJunction</string>
       <int>0</int>
     </entry>
   </layerOrder>
@@ -75,7 +51,7 @@
       <type>continuous space</type>
     </repast.simphony.scenario.data.ProjectionData>
     <repast.simphony.scenario.data.ProjectionData>
-      <id>neural network</id>
+      <id>neurites network</id>
       <attributes/>
       <type>network</type>
     </repast.simphony.scenario.data.ProjectionData>
@@ -93,10 +69,6 @@
             <string>repast.simphony.visualization.continuous.ContinuousDecorator</string>
             <map>
               <entry>
-                <string>COLOR</string>
-                <int>-1</int>
-              </entry>
-              <entry>
                 <string>UNIT_SIZE</string>
                 <float>0.06</float>
               </entry>
@@ -104,13 +76,17 @@
                 <string>SHOW</string>
                 <boolean>true</boolean>
               </entry>
+              <entry>
+                <string>COLOR</string>
+                <int>-1</int>
+              </entry>
             </map>
           </entry>
         </props>
       </repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
     </entry>
     <entry>
-      <string>neural network</string>
+      <string>neurites network</string>
       <repast.simphony.visualization.engine.DefaultProjectionDescriptor>
         <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData[2]"/>
         <props/>

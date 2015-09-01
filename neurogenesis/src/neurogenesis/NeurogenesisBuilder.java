@@ -332,6 +332,8 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		setupInitialPopulation(context);
 		setupInitialEnvironment(context);
 		
+		RunEnvironment.getInstance().endAt(10000);
+		
 		return context;
 		
 	} // End of build()

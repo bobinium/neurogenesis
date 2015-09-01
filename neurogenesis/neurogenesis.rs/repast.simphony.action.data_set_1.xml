@@ -1,6 +1,7 @@
 <repast.simphony.data2.engine.DataSetDescriptor>
-  <name>Energy</name>
-  <type>AGGREGATE</type>
+  <name>Sensors Illumination</name>
+  <type>NON_AGGREGATE</type>
+  <sourceType>neurogenesis.LightSensor</sourceType>
   <inclTick>true</inclTick>
   <inclBatchRun>false</inclBatchRun>
   <inclRandomSeed>false</inclRandomSeed>
@@ -11,26 +12,24 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-1266605891</hashCode>
+    <hashCode>315593184</hashCode>
   </scheduleParams>
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
-      <string>Extracellular Matrix</string>
+      <string>Label</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Extracellular Matrix</id>
-        <className>neurogenesis.brain.ExtracellularMatrix</className>
-        <methodName>getFoodConcentration</methodName>
-        <aggType>SUM</aggType>
+        <id>Label</id>
+        <className>neurogenesis.LightSensor</className>
+        <methodName>getLabel</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>Undifferentiated Cells</string>
+      <string>LightIntensity</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Undifferentiated Cells</id>
-        <className>neurogenesis.brain.UndifferentiatedCell</className>
-        <methodName>getFoodConcentration</methodName>
-        <aggType>SUM</aggType>
+        <id>LightIntensity</id>
+        <className>neurogenesis.LightSensor</className>
+        <methodName>getLightIntensity</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

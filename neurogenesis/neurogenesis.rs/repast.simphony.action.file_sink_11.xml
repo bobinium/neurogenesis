@@ -1,0 +1,14 @@
+<repast.simphony.data2.engine.FileSinkDescriptor>
+  <name>Angular Delta</name>
+  <dataSet>Angular Delta</dataSet>
+  <delimiter>,</delimiter>
+  <format>TABULAR</format>
+  <sourceIds class="linked-hash-set">
+    <string>tick</string>
+    <string>Angle Delta</string>
+    <string>Angle Delta Sign</string>
+    <string>Average Angle Delta</string>
+  </sourceIds>
+  <fileName>AngulaDeltaOutput.txt</fileName>
+  <addTimeStamp>true</addTimeStamp>
+</repast.simphony.data2.engine.FileSinkDescriptor>

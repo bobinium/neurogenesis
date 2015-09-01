@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
-  <name>Adhesion Molecules</name>
-  <dataSet>Adhesion Molecules</dataSet>
+  <name>Mutagen</name>
+  <dataSet>Mutagen</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
   <yAxisLabel>Concentration</yAxisLabel>
-  <chartTitle>Adhesion Molecules Concentration</chartTitle>
+  <chartTitle>Mutagen</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,25 +21,25 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>CAM</string>
+      <string>Extracellular</string>
       <SeriesData>
-        <label>CAM</label>
+        <label>Extracellular</label>
         <color>
-          <red>255</red>
+          <red>0</red>
           <green>0</green>
-          <blue>0</blue>
+          <blue>255</blue>
           <alpha>255</alpha>
         </color>
       </SeriesData>
     </entry>
     <entry>
-      <string>SAM</string>
+      <string>Intracellular</string>
       <SeriesData>
-        <label>SAM</label>
+        <label>Intracellular</label>
         <color>
-          <red>0</red>
+          <red>255</red>
           <green>0</green>
-          <blue>255</blue>
+          <blue>0</blue>
           <alpha>255</alpha>
         </color>
       </SeriesData>

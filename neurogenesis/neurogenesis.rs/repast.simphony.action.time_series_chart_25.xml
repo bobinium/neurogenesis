@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
-  <name>Waste</name>
-  <dataSet>Waste</dataSet>
+  <name>Angular Delta</name>
+  <dataSet>Angular Delta</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
-  <yAxisLabel>Concentration</yAxisLabel>
-  <chartTitle>Waste Concentration</chartTitle>
+  <yAxisLabel>Angle (radians)</yAxisLabel>
+  <chartTitle>Angular Delta</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,9 +21,21 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>Cellular Waste</string>
+      <string>Average Angle Delta</string>
       <SeriesData>
-        <label>Cellular Waste</label>
+        <label>Average Angle Delta</label>
+        <color>
+          <red>0</red>
+          <green>255</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>Angle Delta Sign</string>
+      <SeriesData>
+        <label>Angle Delta Sign</label>
         <color>
           <red>255</red>
           <green>0</green>
@@ -33,9 +45,9 @@
       </SeriesData>
     </entry>
     <entry>
-      <string>Extracellular Matrix Waste</string>
+      <string>Angle Delta</string>
       <SeriesData>
-        <label>Extracellular Matrix Waste</label>
+        <label>Angle Delta</label>
         <color>
           <red>0</red>
           <green>0</green>

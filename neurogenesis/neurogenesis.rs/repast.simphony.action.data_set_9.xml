@@ -1,5 +1,5 @@
 <repast.simphony.data2.engine.DataSetDescriptor>
-  <name>Angular Delta</name>
+  <name>Angular Position</name>
   <type>AGGREGATE</type>
   <inclTick>true</inclTick>
   <inclBatchRun>false</inclBatchRun>
@@ -11,34 +11,43 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>568280188</hashCode>
+    <hashCode>1918093963</hashCode>
   </scheduleParams>
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
-      <string>Angle Delta</string>
+      <string>Light Source sin(x)</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Angle Delta</id>
-        <className>neurogenesis.ArenaSimulator</className>
-        <methodName>getAngleDeltaLightAndRobot</methodName>
+        <id>Light Source sin(x)</id>
+        <className>neurogenesis.LightSource</className>
+        <methodName>getSineOfAngularPosition</methodName>
         <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>Angle Delta Sign</string>
+      <string>Light Source cos(x)</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Angle Delta Sign</id>
-        <className>neurogenesis.ArenaSimulator</className>
-        <methodName>getSignAngleDeltaLightAndRobot</methodName>
+        <id>Light Source cos(x)</id>
+        <className>neurogenesis.LightSource</className>
+        <methodName>getCosineOfAngularPosition</methodName>
         <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>Average Angle Delta</string>
+      <string>Robot sin(x)</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Average Angle Delta</id>
-        <className>neurogenesis.ArenaSimulator</className>
-        <methodName>getAverageAngleDelta</methodName>
+        <id>Robot sin(x)</id>
+        <className>neurogenesis.Robot</className>
+        <methodName>getSineOfAngularPosition</methodName>
+        <aggType>MAX</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Robot cos(x)</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Robot cos(x)</id>
+        <className>neurogenesis.Robot</className>
+        <methodName>getCosineOfAngularPosition</methodName>
         <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
