@@ -1,0 +1,49 @@
+<repast.simphony.data2.engine.DataSetDescriptor>
+  <name>Angular Delta</name>
+  <type>AGGREGATE</type>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <pType>LAST</pType>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+    <hashCode>568280188</hashCode>
+  </scheduleParams>
+  <atEnd>false</atEnd>
+  <methodDataSources class="linked-hash-map">
+    <entry>
+      <string>Angle Delta</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Angle Delta</id>
+        <className>neurogenesis.ArenaSimulator</className>
+        <methodName>getAngleDeltaLightAndRobot</methodName>
+        <aggType>MAX</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Angle Delta Sign</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Angle Delta Sign</id>
+        <className>neurogenesis.ArenaSimulator</className>
+        <methodName>getSignAngleDeltaLightAndRobot</methodName>
+        <aggType>MAX</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Average Angle Delta</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Average Angle Delta</id>
+        <className>neurogenesis.ArenaSimulator</className>
+        <methodName>getAverageAngleDelta</methodName>
+        <aggType>MAX</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+  </methodDataSources>
+  <countSources class="linked-hash-map"/>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>
