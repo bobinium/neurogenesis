@@ -4,6 +4,7 @@
 package neurogenesis.brain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -427,7 +428,8 @@ public class Neuron extends GeneRegulatedCell {
 					
 					if (this.dendriteLeaves.size() > MAX_DENDRITE_LEAVES) {
 						
-						this.dendriteLeaves.sort(new NeuriteDepthComparator());
+						Collections.sort(this.dendriteLeaves, 
+								new NeuriteDepthComparator());
 						//NeuriteJunction dendriteLeafToRemove = 
 						//		this.dendriteLeaves.get(MAX_DENDRITE_LEAVES);
 						this.dendriteLeaves.remove(MAX_DENDRITE_LEAVES);
