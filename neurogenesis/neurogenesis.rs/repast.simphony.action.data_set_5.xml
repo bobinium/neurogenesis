@@ -1,5 +1,5 @@
 <repast.simphony.data2.engine.DataSetDescriptor>
-  <name>Extracellular Matrix</name>
+  <name>Mutagen</name>
   <type>AGGREGATE</type>
   <inclTick>true</inclTick>
   <inclBatchRun>false</inclBatchRun>
@@ -11,89 +11,26 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>288886478</hashCode>
+    <hashCode>-1548753840</hashCode>
   </scheduleParams>
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
-      <string>Minimum Food</string>
+      <string>Extracellular</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Minimum Food</id>
+        <id>Extracellular</id>
         <className>neurogenesis.brain.ExtracellularMatrix</className>
-        <methodName>getFoodConcentration</methodName>
-        <aggType>MIN</aggType>
+        <methodName>getMutagenConcentration</methodName>
+        <aggType>SUM</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>Maximum Food</string>
+      <string>Intracellular</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Maximum Food</id>
-        <className>neurogenesis.brain.ExtracellularMatrix</className>
-        <methodName>getFoodConcentration</methodName>
-        <aggType>MAX</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Mean Food</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Mean Food</id>
-        <className>neurogenesis.brain.ExtracellularMatrix</className>
-        <methodName>getFoodConcentration</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Minimum Waste</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Minimum Waste</id>
-        <className>neurogenesis.brain.ExtracellularMatrix</className>
-        <methodName>getWasteConcentration</methodName>
-        <aggType>MIN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Maximum Waste</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Maximum Waste</id>
-        <className>neurogenesis.brain.ExtracellularMatrix</className>
-        <methodName>getWasteConcentration</methodName>
-        <aggType>MAX</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Mean Waste</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Mean Waste</id>
-        <className>neurogenesis.brain.ExtracellularMatrix</className>
-        <methodName>getWasteConcentration</methodName>
-        <aggType>MEAN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Minimum SAM</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Minimum SAM</id>
-        <className>neurogenesis.brain.ExtracellularMatrix</className>
-        <methodName>getSamConcentration</methodName>
-        <aggType>MIN</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Maximum SAM</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Maximum SAM</id>
-        <className>neurogenesis.brain.ExtracellularMatrix</className>
-        <methodName>getSamConcentration</methodName>
-        <aggType>MAX</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Mean SAM</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Mean SAM</id>
-        <className>neurogenesis.brain.ExtracellularMatrix</className>
-        <methodName>getSamConcentration</methodName>
-        <aggType>MEAN</aggType>
+        <id>Intracellular</id>
+        <className>neurogenesis.brain.UndifferentiatedCell</className>
+        <methodName>getMutagenConcentration</methodName>
+        <aggType>SUM</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

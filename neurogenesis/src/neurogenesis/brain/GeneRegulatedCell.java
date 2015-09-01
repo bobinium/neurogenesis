@@ -331,8 +331,8 @@ public abstract class GeneRegulatedCell extends Cell {
 					this.membraneChannels.get(substanceType);
 			double internalConcentration = substanceChannel.getConcentration(); 
 			
-			System.out.println("External = " + externalConcentration 
-					+ " ==> Internal = " + internalConcentration);
+			//System.out.println("External = " + externalConcentration 
+			//		+ " ==> Internal = " + internalConcentration);
 			
 			if (substanceChannel.isOpenForInput()
 					&& (externalConcentration > internalConcentration)) {
@@ -352,8 +352,8 @@ public abstract class GeneRegulatedCell extends Cell {
 				externalConcentrations.put(substanceType, 
 						newExternalConcentration);
 				substanceChannel.setConcentration(newInternalConcentration);
-				System.out.println("New internal concentration: " 
-						+ newInternalConcentration);
+				//System.out.println("New internal concentration: " 
+				//		+ newInternalConcentration);
 				
 			} // End if()
 			
@@ -578,8 +578,8 @@ public abstract class GeneRegulatedCell extends Cell {
 			double externalConcentration = externalConcentrations
 					.get(substanceChannel.getSubstanceType());
 			
-			System.out.println("Internal = " + internalConcentration 
-					+ " ==> External = " + externalConcentration);
+			//System.out.println("Internal = " + internalConcentration 
+			//		+ " ==> External = " + externalConcentration);
 			
 			if (substanceChannel.isOpenForOutput()
 					&& (internalConcentration > externalConcentration)) {
@@ -599,8 +599,8 @@ public abstract class GeneRegulatedCell extends Cell {
 				substanceChannel.setConcentration(newInternalConcentration);
 				externalConcentrations.put(substanceChannel.getSubstanceType(), 
 						newExternalConcentration);
-				System.out.println("New internal concentration: " 
-						+ newInternalConcentration);
+				//System.out.println("New internal concentration: " 
+				//		+ newInternalConcentration);
 				
 			} // End if()
 			

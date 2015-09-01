@@ -6,13 +6,6 @@
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
-				<parameter name="population.extent" displayName="Initial Population Extent" type="int" 
-						defaultValue="2" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									values="1 2 3 4 "
-						
-		/>
 				<parameter name="quadrant.size" displayName="Grid Quadrant Size" type="int" 
 						defaultValue="5" 
 						isReadOnly="false" 

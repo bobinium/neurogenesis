@@ -29,11 +29,11 @@ public class NeuriteJunctionStyle3D implements Style3D<NeuriteJunction> {
 		//if (taggedGroup == null || taggedGroup.getTag() == null) {
 			taggedGroup = new TaggedBranchGroup("DEFAULT");
 			Shape3D shape;
-			if (agent.isSynapse()) {
-				shape = ShapeFactory.createCube(.03f, "DEFAULT");
-			} else {
+//			if (agent.isSynapse()) {
+//				shape = ShapeFactory.createCube(.03f, "DEFAULT");
+//			} else {
 				shape = ShapeFactory.createSphere(.03f, "DEFAULT");
-			}
+//			}
 		    taggedGroup.getBranchGroup().addChild(shape);
 		    return taggedGroup;
 		//}

@@ -1,5 +1,5 @@
 <repast.simphony.data2.engine.DataSetDescriptor>
-  <name>Energy</name>
+  <name>Waste</name>
   <type>AGGREGATE</type>
   <inclTick>true</inclTick>
   <inclBatchRun>false</inclBatchRun>
@@ -11,25 +11,25 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-1266605891</hashCode>
+    <hashCode>833400184</hashCode>
   </scheduleParams>
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
-      <string>Extracellular Matrix</string>
+      <string>Extracellular Matrix Waste</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Extracellular Matrix</id>
+        <id>Extracellular Matrix Waste</id>
         <className>neurogenesis.brain.ExtracellularMatrix</className>
-        <methodName>getFoodConcentration</methodName>
+        <methodName>getWasteConcentration</methodName>
         <aggType>SUM</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>Undifferentiated Cells</string>
+      <string>Cellular Waste</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Undifferentiated Cells</id>
+        <id>Cellular Waste</id>
         <className>neurogenesis.brain.UndifferentiatedCell</className>
-        <methodName>getFoodConcentration</methodName>
+        <methodName>getWasteConcentration</methodName>
         <aggType>SUM</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>

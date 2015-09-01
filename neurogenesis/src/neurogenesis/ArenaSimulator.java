@@ -22,6 +22,11 @@ public class ArenaSimulator {
 	private final OutputNeuron motorNeuron;
 	
 	
+	private double sumAverageAngleDelta = 0;
+	
+	private long tickCount = 0;
+	
+	
 	/**
 	 * 
 	 * @param newRobot
@@ -120,7 +125,53 @@ public class ArenaSimulator {
 			
 		} // End of for()
 		
+		this.sumAverageAngleDelta += getAngleDeltaLightAndRobot();
+		this.tickCount++;
+		
 	} // End of update()
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getAngleDeltaLightAndRobot() {
+		
+		double angleDelta = Math.abs(getLightSourceAngularPosition() 
+				- getRobotAngularPosition());
+		
+		return (angleDelta > Math.PI) ? 2 * Math.PI - angleDelta : angleDelta;
+		
+	} // End of getAngleDeltaLightAndRobot()
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getSignAngleDeltaLightAndRobot() {
+		
+		double angleDelta = getLightSourceAngularPosition() 
+				- getRobotAngularPosition();
+
+		if (angleDelta > Math.PI) {
+			angleDelta -= 2 * Math.PI;
+		} else if (angleDelta < -Math.PI) {
+			angleDelta += 2 * Math.PI;
+		}
+		
+		return Math.signum(angleDelta);
+
+	} // End of getSignAngleDeltaLightAndRobot()
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getAverageAngleDelta() {
+		return this.sumAverageAngleDelta / this.tickCount;
+	}
 	
 	
 } // End of ArenaSimulator class

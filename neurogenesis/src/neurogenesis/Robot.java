@@ -132,8 +132,10 @@ public class Robot {
 		this.angularPosition = normaliseAngularPosition(this.angularPosition 
 				+ this.angularVelocity);
 		
-		System.out.println("Robot's angular position: " + this.angularPosition / Math.PI);
-		System.out.println("Robot's angular velocity: " + this.angularVelocity);
+		System.out.println("Robot's angular position: " 
+				+ this.angularPosition / Math.PI);
+		System.out.println("Robot's angular velocity: " 
+				+ this.angularVelocity);
 		
 	} // End of update()
 	
@@ -156,5 +158,22 @@ public class Robot {
 		
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public double getSineOfAngularPosition() {
+		return Math.sin(this.angularPosition);
+	}
 	
+
+	/**
+	 * 
+	 * @return
+	 */
+	public double getCosineOfAngularPosition() {
+		return Math.cos(this.angularPosition);
+	}
+	
+
 } // End of Robot class

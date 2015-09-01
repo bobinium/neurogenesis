@@ -1,6 +1,7 @@
 <repast.simphony.data2.engine.DataSetDescriptor>
-  <name>Angular Position</name>
-  <type>AGGREGATE</type>
+  <name>Sensors Illumination</name>
+  <type>NON_AGGREGATE</type>
+  <sourceType>neurogenesis.LightSensor</sourceType>
   <inclTick>true</inclTick>
   <inclBatchRun>false</inclBatchRun>
   <inclRandomSeed>false</inclRandomSeed>
@@ -11,26 +12,24 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>1618742386</hashCode>
+    <hashCode>315593184</hashCode>
   </scheduleParams>
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
-      <string>LightAngularPosition</string>
+      <string>Label</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>LightAngularPosition</id>
-        <className>neurogenesis.ArenaSimulator</className>
-        <methodName>getLightSourceAngularPosition</methodName>
-        <aggType>MAX</aggType>
+        <id>Label</id>
+        <className>neurogenesis.LightSensor</className>
+        <methodName>getLabel</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>RobotAngularPosition</string>
+      <string>LightIntensity</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>RobotAngularPosition</id>
-        <className>neurogenesis.ArenaSimulator</className>
-        <methodName>getRobotAngularPosition</methodName>
-        <aggType>MAX</aggType>
+        <id>LightIntensity</id>
+        <className>neurogenesis.LightSensor</className>
+        <methodName>getLightIntensity</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

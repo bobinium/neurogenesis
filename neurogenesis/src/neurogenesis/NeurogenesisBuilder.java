@@ -8,7 +8,6 @@ import java.util.Map;
 import neurogenesis.brain.CellFactory;
 import neurogenesis.brain.CellProductType;
 import neurogenesis.brain.ExtracellularMatrix;
-import neurogenesis.brain.GenomeFactory;
 import neurogenesis.brain.InputNeuron;
 import neurogenesis.brain.Neuron;
 import neurogenesis.brain.OutputNeuron;
@@ -23,7 +22,6 @@ import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.space.continuous.ContinuousSpace;
-import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.continuous.RandomCartesianAdder;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
@@ -37,6 +35,7 @@ import repast.simphony.space.grid.StrictBorders;
  */
 public class NeurogenesisBuilder implements ContextBuilder<Object> {
 
+	
 	// CONSTANTS ***************************************************************
 	
 	/**
@@ -117,6 +116,78 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	 */
 	public static final int LEFT_INPUT_NEURON_GRID_POS_Z = 0;
 
+	
+	// INSTANCE VARIABLES ******************************************************
+	
+	
+	//
+	private int genomeSize;
+	
+	
+	//
+	private int brainGridQuadrantSize;
+	
+	
+	//
+	private int brainGridSize;
+	
+	
+	//
+	private int brainGridOrigin;
+	
+	
+	//
+	private int outputNeuronGridPosY;
+	
+	
+	//
+	private int initialPopulationExtent;
+	
+	
+	//
+	private Grid<Object> brainGrid;
+	
+	
+	//
+	private ContinuousSpace<Object> brainSpace;
+	
+	
+	//
+	private ContinuousSpace<Object> arenaSpace;
+	
+	
+	//
+	private LightSensor leftLightSensor;
+	
+	
+	//
+	private LightSensor rightLightSensor;
+	
+	
+	//
+	private ArenaSimulator arenaSimulator;
+	
+	
+	//
+	private Network<Object> neuralNetwork;
+	
+	
+	//
+	private Network<Object> neuritesNetwork;
+	
+	
+	//
+	private InputNeuron leftInputNeuron;
+	
+	
+	//
+	private InputNeuron rightInputNeuron;
+	
+	
+	//
+	private OutputNeuron motorNeuron;
+	
+	
 	//	@SuppressWarnings("rawtypes")
 //	public Context build(Context<Object> context) {
 //
@@ -209,194 +280,204 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	@SuppressWarnings("rawtypes")
 	public Context build(Context<Object> context) {
 
-		// Get the paramters of the model.
-		
-		Parameters params = RunEnvironment.getInstance().getParameters();
-		final int paramGenomeSize = (Integer) params.getValue("genome.size");
-		
-		final int paramBrainGridQuadrantSize = 
-				(Integer) params.getValue("quadrant.size");
-		final int paramBrainGridSize = 2 * paramBrainGridQuadrantSize + 1;
-		final int paramBrainGridOrigin = paramBrainGridQuadrantSize;
-		final int paramOutputNeuronGridPosY = -paramBrainGridQuadrantSize;
+		// Get the parameters of the model.
+		initialiseParameters();
 		
 		context.setId("neurogenesis");
 		
 		NetworkBuilder<Object> netBuilder = 
 				new NetworkBuilder<Object>("neural network", context, true);
-		Network<Object> neuralNetwork = netBuilder.buildNetwork();
+		this.neuralNetwork = netBuilder.buildNetwork();
 		
 		netBuilder = 
 				new NetworkBuilder<Object>("neurites network", context, true);
-		Network<Object> neuritesNetwork = netBuilder.buildNetwork();
+		this.neuritesNetwork = netBuilder.buildNetwork();
 		
 		ContinuousSpaceFactory spaceFactory =
 				ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
-		ContinuousSpace<Object> arenaSpace =
+		this.arenaSpace =
 				spaceFactory.createContinuousSpace("arena space", context,
 						new RandomCartesianAdder<Object>(),
 						new repast.simphony.space.continuous.InfiniteBorders<Object>(),
 						new double[]{50, 50}, new double[]{25, 25});
 		
-		ContinuousSpace<Object> brainSpace =
+		this.brainSpace =
 				spaceFactory.createContinuousSpace("brain space", context,
 						new RandomCartesianAdder<Object>(),
 						new repast.simphony.space.continuous.StrictBorders(),
-						new double[] { paramBrainGridSize, 
-							paramBrainGridSize, paramBrainGridSize }, 
-						new double[] { paramBrainGridOrigin, 
-							paramBrainGridOrigin, paramBrainGridOrigin });
+						new double[] { this.brainGridSize, 
+							this.brainGridSize, this.brainGridSize }, 
+						new double[] { this.brainGridOrigin, 
+							this.brainGridOrigin, this.brainGridOrigin });
 		
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
-		Grid<Object> brainGrid = gridFactory.createGrid("brain grid", context,
+		this.brainGrid = gridFactory.createGrid("brain grid", context,
 				new GridBuilderParameters<Object>(new StrictBorders(),
 						new SimpleGridAdder<Object>(), true, 
-						new int[] { paramBrainGridSize, 
-							paramBrainGridSize, paramBrainGridSize }, 
-						new int[] { paramBrainGridOrigin, 
-							paramBrainGridOrigin, paramBrainGridOrigin }));
+						new int[] { this.brainGridSize, 
+							this.brainGridSize, this.brainGridSize }, 
+						new int[] { this.brainGridOrigin, 
+							this.brainGridOrigin, this.brainGridOrigin }));
 		
-		CellFactory.setContinuousSpace(brainSpace);
-		CellFactory.setGrid(brainGrid);
-		CellFactory.setNeuralNetwork(neuralNetwork);
-		CellFactory.setNeuritesNetwork(neuritesNetwork);
-		
-		/* Setup the arena */
-		
-		LightSensor leftLightSensor = new LightSensor(arenaSpace, Math.PI / 12);
-		LightSensor rightLightSensor = new LightSensor(arenaSpace, Math.PI / -12);
-		context.add(leftLightSensor);
-		context.add(rightLightSensor);
+		CellFactory.setContinuousSpace(this.brainSpace);
+		CellFactory.setGrid(this.brainGrid);
+		CellFactory.setNeuralNetwork(this.neuralNetwork);
+		CellFactory.setNeuritesNetwork(this.neuritesNetwork);
 
-		LightSensor[] lightSensors = 
-				new LightSensor[] { leftLightSensor, rightLightSensor };
+		// Initialisation has to be in this order because of dependencies.
+		setupOutputNeuron(context);
+		setupArena(context);
+		setupInputNeurons(context);
+		
+		setupInitialPopulation(context);
+		setupInitialEnvironment(context);
+		
+		return context;
+		
+	} // End of build()
+
+	
+	/**
+	 * 
+	 */
+	private void initialiseParameters() {
+		
+		Parameters params = RunEnvironment.getInstance().getParameters();
+		
+		this.genomeSize = params.getInteger("genome.size");
+		
+		this.brainGridQuadrantSize = params.getInteger("quadrant.size");
+		this.brainGridSize = 2 * this.brainGridQuadrantSize + 1;
+		this.brainGridOrigin = this.brainGridQuadrantSize;
+		this.outputNeuronGridPosY = -this.brainGridQuadrantSize;
+
+		this.initialPopulationExtent = params.getInteger("population.extent");
+		
+		Neuron.MAX_DENDRITE_ROOTS = params.getInteger("dendrites.roots.max");
+		Neuron.MAX_DENDRITE_LEAVES = params.getInteger("dendrites.leaves.max");
+		
+	} // End of initiliseParameters()
+
+	
+	/**
+	 * 
+	 * @param context
+	 */
+	private void setupArena(final Context<Object> context) {
+		
+		this.leftLightSensor = new LightSensor(this.arenaSpace, Math.PI / 12);
+		this.rightLightSensor =	new LightSensor(this.arenaSpace, Math.PI / -12);
+		context.add(this.leftLightSensor);
+		context.add(this.rightLightSensor);
+
+		LightSensor[] lightSensors = new LightSensor[] { 
+				this.leftLightSensor, this.rightLightSensor };
 		
 		Robot robot = new Robot(3, 0, Math.PI / 12, 0, lightSensors);
 		context.add(robot);
-		arenaSpace.moveTo(robot, 0, 0);
-		
-		LightSource lightSource = new LightSource(arenaSpace, 10, Math.PI, Math.PI / 36, 10);
+		this.arenaSpace.moveTo(robot, 0, 0);
+
+		this.arenaSpace.moveTo(this.leftLightSensor, 
+				robot.getRadius() 
+				* Math.cos(robot.getAngularPosition(this.leftLightSensor)), 
+				robot.getRadius() 
+				* Math.sin(robot.getAngularPosition(this.leftLightSensor)));
+		this.arenaSpace.moveTo(this.rightLightSensor, 
+				robot.getRadius() 
+				* Math.cos(robot.getAngularPosition(this.rightLightSensor)), 
+				robot.getRadius() 
+				* Math.sin(robot.getAngularPosition(this.rightLightSensor)));
+				
+		LightSource lightSource = 
+				new LightSource(this.arenaSpace, 10, Math.PI, Math.PI / 36, 10);
 		context.add(lightSource);
-		arenaSpace.moveTo(lightSource, 
+		this.arenaSpace.moveTo(lightSource, 
 				lightSource.getRadiusOfTrajectory() 
 				* Math.cos(lightSource.getAngularPosition()), 
 				lightSource.getRadiusOfTrajectory() 
 				* Math.sin(lightSource.getAngularPosition()));
 		
-		/* Setup the initial input and output cells */
+		this.arenaSimulator = 
+				new ArenaSimulator(robot, lightSource, this.motorNeuron);
+		context.add(arenaSimulator);
 		
-		InputNeuron leftInputNeuron = 
-				new InputNeuron(brainSpace, brainGrid, null, neuralNetwork, 
-						neuritesNetwork, leftLightSensor);
-		//context.add(leftInputNeuron);
+	} // End of setupArena()
+	
+	
+	/**
+	 * 
+	 */
+	private void setupInputNeurons(final Context<Object> context) {
 		
-		InputNeuron rightInputNeuron = 
-				new InputNeuron(brainSpace, brainGrid, null, neuralNetwork, 
-						neuritesNetwork, rightLightSensor);
-		//context.add(rightInputNeuron);
+		this.leftInputNeuron = new InputNeuron(this.brainSpace, this.brainGrid, 
+				null, this.neuralNetwork, this.neuritesNetwork, 
+				this.leftLightSensor);
+		context.add(this.leftInputNeuron);
 		
-		OutputNeuron motorNeuron = new OutputNeuron(brainSpace, brainGrid, 
-				null, neuralNetwork, neuritesNetwork);
-		context.add(motorNeuron);
+		this.rightInputNeuron = new InputNeuron(this.brainSpace, this.brainGrid, 
+				null, this.neuralNetwork, this.neuritesNetwork, 
+				this.rightLightSensor);
+		context.add(this.rightInputNeuron);
+		
+		final int offsetInputNeuronPos = this.brainGridSize / 3;
+
+		this.brainSpace.moveTo(this.leftInputNeuron, 
+				this.brainGridQuadrantSize - offsetInputNeuronPos + 0.5, 0.5, 
+				this.brainGridQuadrantSize + 0.5);
+		this.brainGrid.moveTo(this.leftInputNeuron, 
+				this.brainGridQuadrantSize - offsetInputNeuronPos, 0,
+				this.brainGridQuadrantSize);
+		
+		this.brainSpace.moveTo(this.rightInputNeuron, 
+				-this.brainGridQuadrantSize + offsetInputNeuronPos + 0.5, 0.5, 
+				this.brainGridQuadrantSize + 0.5);
+		this.brainGrid.moveTo(this.rightInputNeuron, 
+				-this.brainGridQuadrantSize + offsetInputNeuronPos, 0,
+				this.brainGridQuadrantSize);
+
+	} // End of setupInputNeurons()
+	
+	
+	/**
+	 * 
+	 * @param context
+	 */
+	private void setupOutputNeuron(final Context<Object> context) {
+		
+		this.motorNeuron = new OutputNeuron(this.brainSpace, 
+				this.brainGrid, null, this.neuralNetwork, this.neuritesNetwork);
+		context.add(this.motorNeuron);
 		
 		//neuralNetwork.addEdge(leftInputNeuron, motorNeuron, 1);
 		//neuralNetwork.addEdge(rightInputNeuron, motorNeuron, -1);
 		
-		ArenaSimulator arenaSimulator = 
-				new ArenaSimulator(robot, lightSource, motorNeuron);
-		context.add(arenaSimulator);
+		this.brainSpace.moveTo(motorNeuron, OUTPUT_NEURON_GRID_POS_X + 0.5, 
+				this.outputNeuronGridPosY + 0.5, 
+				OUTPUT_NEURON_GRID_POS_Z + 0.5);
+		this.brainGrid.moveTo(motorNeuron, OUTPUT_NEURON_GRID_POS_X, 
+				this.outputNeuronGridPosY, OUTPUT_NEURON_GRID_POS_Z);
+
+	} // End of setupOutputNeurons()
+
+	
+	/**
+	 * 
+	 * @param context
+	 */
+	private void setupInitialEnvironment(final Context<Object> context) {
 		
-		arenaSpace.moveTo(leftLightSensor, 
-				robot.getRadius() 
-				* Math.cos(robot.getAngularPosition(leftLightSensor)), 
-				robot.getRadius() 
-				* Math.sin(robot.getAngularPosition(leftLightSensor)));
-		arenaSpace.moveTo(rightLightSensor, 
-				robot.getRadius() 
-				* Math.cos(robot.getAngularPosition(rightLightSensor)), 
-				robot.getRadius() 
-				* Math.sin(robot.getAngularPosition(rightLightSensor)));
-				
-		brainSpace.moveTo(motorNeuron, OUTPUT_NEURON_GRID_POS_X + 0.5, 
-				paramOutputNeuronGridPosY + 0.5, OUTPUT_NEURON_GRID_POS_Z + 0.5);
-		brainGrid.moveTo(motorNeuron, OUTPUT_NEURON_GRID_POS_X, 
-				paramOutputNeuronGridPosY, OUTPUT_NEURON_GRID_POS_Z);
-		
-		final int offsetInputNeuronPos = paramBrainGridSize / 3;
-		
-//		brainSpace.moveTo(leftInputNeuron, 
-//				paramBrainGridQuadrantSize - offsetInputNeuronPos + 0.5, 0.5, 
-//				paramBrainGridQuadrantSize + 0.5);
-//		brainGrid.moveTo(leftInputNeuron, 
-//				paramBrainGridQuadrantSize - offsetInputNeuronPos, 0,
-//				paramBrainGridQuadrantSize);
-//		
-//		brainSpace.moveTo(rightInputNeuron, 
-//				-paramBrainGridQuadrantSize + offsetInputNeuronPos + 0.5, 0.5, 
-//				paramBrainGridQuadrantSize + 0.5);
-//		brainGrid.moveTo(rightInputNeuron, 
-//				-paramBrainGridQuadrantSize + offsetInputNeuronPos, 0,
-//				paramBrainGridQuadrantSize);
-		
-		/* Setup the gene regulatory network */
-		
-		Neuron.count = 0;
-		
-//		Neuron neuron1 = CellFactory.getNewNeuron(paramGenomeSize);
-//		context.add(neuron1);
-//		brainSpace.moveTo(neuron1, paramBrainGridQuadrantSize - offsetInputNeuronPos + 0.5, 0.5, 0.5);
-//		brainGrid.moveTo(neuron1, paramBrainGridQuadrantSize - offsetInputNeuronPos, 0, 0);
-		
-//		Neuron neuron2 = CellFactory.getNewNeuron(paramGenomeSize);
-//		context.add(neuron2);
-//		brainSpace.moveTo(neuron2, -paramBrainGridQuadrantSize + offsetInputNeuronPos + 0.5, 0.5, 0.5);
-//		brainGrid.moveTo(neuron2, -paramBrainGridQuadrantSize + offsetInputNeuronPos, 0, 0);
-		
-//		final int s = 2;
-//		for (int x = -s; x <= s; x++) {
-//			
-//			for (int y = -s; y <= s; y++) {
-//				
-//				for (int z = -s; z <= s; z++) {
-//					
-//					UndifferentiatedCell motherCell = CellFactory
-//							.getNewUndifferentiatedCell(paramGenomeSize); 
-//					motherCell.setGenerationId(x + "," + y + "," + z);
-//					context.add(motherCell);
-//					brainSpace.moveTo(motherCell, x + 0.5, y + 0.5, z + 0.5);
-//					brainGrid.moveTo(motherCell, x, y, z);
-//
-//				}
-//				
-//			}
-//			
-//		}
-		
-//		GenomeFactory genomeFactory = new GenomeFactory();
-//		Neuron neuron = new Neuron(brainSpace, brainGrid, 
-//				genomeFactory.getNewGenome(), neuritesNetwork, neuritesNetwork);
-//		context.add(neuron);
-//		brainSpace.moveTo(neuron, 0, 0, 0);
-		
-//		UndifferentiatedCell motherCell1 = new UndifferentiatedCell(brainSpace, 
-//				brainGrid, genomeFactory.getNewGenome());
-//		context.add(motherCell1);
-//		brainSpace.moveTo(motherCell1, MOTHER_CELL_GRID_POS_X + 0.5,
-//				MOTHER_CELL_GRID_POS_Y + 0.5, MOTHER_CELL_GRID_POS_Y + 0.5);
-				
-//		for (Object obj : context) {
-//			NdPoint pt = brainSpace.getLocation(obj);
-//			brainGrid.moveTo(obj, (int) pt.getX(), (int) pt.getY(), (int) pt.getZ());
-//		}
-		
-		for (int x = -paramBrainGridQuadrantSize; x <= paramBrainGridQuadrantSize; x++) {
+		for (int x = -this.brainGridQuadrantSize; 
+				x <= this.brainGridQuadrantSize; x++) {
 			
-			for (int y = -paramBrainGridQuadrantSize; y <= paramBrainGridQuadrantSize; y++) {
+			for (int y = -this.brainGridQuadrantSize; 
+					y <= this.brainGridQuadrantSize; y++) {
 				
-				for (int z = -paramBrainGridQuadrantSize; z <= paramBrainGridQuadrantSize; z++) {
+				for (int z = -this.brainGridQuadrantSize; 
+						z <= this.brainGridQuadrantSize; z++) {
 					
 					ExtracellularMatrix extracellularMatrix = 
-							new ExtracellularMatrix(brainSpace, brainGrid);
+							new ExtracellularMatrix(this.brainSpace, 
+									this.brainGrid);
 					
 					Map<CellProductType, Double> concentrations = 
 							extracellularMatrix.getConcentrations();
@@ -405,9 +486,9 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 					//concentrations.put(CellProduct.MUTAGEN, 0.5);
 					
 					context.add(extracellularMatrix);
-					brainSpace.moveTo(extracellularMatrix,
+					this.brainSpace.moveTo(extracellularMatrix,
 							x + 0.5, y + 0.5, z + 0.5);
-					brainGrid.moveTo(extracellularMatrix, x, y, z);
+					this.brainGrid.moveTo(extracellularMatrix, x, y, z);
 					
 				} // End of for(z)
 				
@@ -415,7 +496,39 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 			
 		} // End of for(x)
 		
-		return context;
-	}
+	} // End of setupInitialEnvironment()
+	
+	
+	/**
+	 * 
+	 * @param context
+	 */
+	private void setupInitialPopulation(final Context<Object> context) {
+		
+		for (int x = -this.initialPopulationExtent; 
+				x <= this.initialPopulationExtent; x++) {
+			
+			for (int y = -this.initialPopulationExtent; 
+					y <= this.initialPopulationExtent; y++) {
+				
+				for (int z = -this.initialPopulationExtent; 
+						z <= this.initialPopulationExtent; z++) {
+					
+					UndifferentiatedCell motherCell = CellFactory
+							.getNewUndifferentiatedCell(this.genomeSize); 
+					motherCell.setGenerationId(x + "," + y + "," + z);
+					context.add(motherCell);
+					this.brainSpace.moveTo(motherCell, 
+							x + 0.5, y + 0.5, z + 0.5);
+					this.brainGrid.moveTo(motherCell, x, y, z);
 
+				} // End for(z)
+				
+			} // End for(y)
+			
+		} // End for(x)
+
+	} // End of setupInitialPopulation()
+	
+	
 } // End of NeurogenesisBuilder class

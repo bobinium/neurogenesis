@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
-  <name>Mutagen</name>
-  <dataSet>Mutagen</dataSet>
+  <name>Extracellular Matrix</name>
+  <dataSet>Extracellular Matrix</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
   <yAxisLabel>Concentration</yAxisLabel>
-  <chartTitle>Mutagen</chartTitle>
+  <chartTitle>Extracellular Matrix</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,25 +21,109 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>Intracellular</string>
+      <string>Maximum SAM</string>
       <SeriesData>
-        <label>Intracellular</label>
+        <label>Maximum SAM</label>
         <color>
-          <red>255</red>
+          <red>39</red>
+          <green>144</green>
+          <blue>51</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>Mean Waste</string>
+      <SeriesData>
+        <label>Mean Waste</label>
+        <color>
+          <red>134</red>
           <green>0</green>
+          <blue>255</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>Mean SAM</string>
+      <SeriesData>
+        <label>Mean SAM</label>
+        <color>
+          <red>49</red>
+          <green>212</green>
+          <blue>175</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>Minimum SAM</string>
+      <SeriesData>
+        <label>Minimum SAM</label>
+        <color>
+          <red>25</red>
+          <green>255</green>
           <blue>0</blue>
           <alpha>255</alpha>
         </color>
       </SeriesData>
     </entry>
     <entry>
-      <string>Extracellular</string>
+      <string>Maximum Waste</string>
       <SeriesData>
-        <label>Extracellular</label>
+        <label>Maximum Waste</label>
         <color>
           <red>0</red>
-          <green>0</green>
+          <green>11</green>
           <blue>255</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>Minimum Waste</string>
+      <SeriesData>
+        <label>Minimum Waste</label>
+        <color>
+          <red>0</red>
+          <green>249</green>
+          <blue>255</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>Minimum Food</string>
+      <SeriesData>
+        <label>Minimum Food</label>
+        <color>
+          <red>255</red>
+          <green>0</green>
+          <blue>149</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>Mean Food</string>
+      <SeriesData>
+        <label>Mean Food</label>
+        <color>
+          <red>255</red>
+          <green>193</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>Maximum Food</string>
+      <SeriesData>
+        <label>Maximum Food</label>
+        <color>
+          <red>255</red>
+          <green>0</green>
+          <blue>0</blue>
           <alpha>255</alpha>
         </color>
       </SeriesData>

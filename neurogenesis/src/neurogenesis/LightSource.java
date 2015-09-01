@@ -80,10 +80,32 @@ public class LightSource {
 		this.angularPosition = 
 				(this.angularPosition + this.angularVelocity) % (2 * Math.PI);
 		
-		System.out.println("Light source angular position: " + this.angularPosition / Math.PI);
+		System.out.println("Light source angular position: " 
+				+ this.angularPosition / Math.PI);
 		
-		this.space.moveTo(this, this.radiusOfTrajectory * Math.cos(this.angularPosition), this.radiusOfTrajectory * Math.sin(this.angularPosition));
+		this.space.moveTo(this, 
+				this.radiusOfTrajectory * Math.cos(this.angularPosition), 
+				this.radiusOfTrajectory * Math.sin(this.angularPosition));
 		
 	} // End update()
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getSineOfAngularPosition() {
+		return Math.sin(this.angularPosition);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getCosineOfAngularPosition() {
+		return Math.cos(this.angularPosition);
+	}
+	
 	
 } // End of LightSource class

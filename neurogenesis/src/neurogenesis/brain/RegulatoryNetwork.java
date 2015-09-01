@@ -1,7 +1,6 @@
 package neurogenesis.brain;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,8 +94,8 @@ public class RegulatoryNetwork {
 			
 			regulatoryUnit.updateConcentrations(
 					currentConcentrations, this.networkConcentrations);
-			System.out.println("Unit #" + ++count 
-					+ " concentration: " + regulatoryUnit.getConcentration());
+			//System.out.println("Unit #" + ++count 
+			//		+ " concentration: " + regulatoryUnit.getConcentration());
 			
 		} // End for()
 				
