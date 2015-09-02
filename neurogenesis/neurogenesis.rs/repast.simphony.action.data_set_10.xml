@@ -1,5 +1,5 @@
 <repast.simphony.data2.engine.DataSetDescriptor>
-  <name>Angular Delta</name>
+  <name>Energy</name>
   <type>AGGREGATE</type>
   <inclTick>true</inclTick>
   <inclBatchRun>false</inclBatchRun>
@@ -11,35 +11,26 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>568280188</hashCode>
+    <hashCode>-1266605891</hashCode>
   </scheduleParams>
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
-      <string>Angle Delta</string>
+      <string>Extracellular Matrix</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Angle Delta</id>
-        <className>neurogenesis.ArenaSimulator</className>
-        <methodName>getAngleDeltaLightAndRobot</methodName>
-        <aggType>MAX</aggType>
+        <id>Extracellular Matrix</id>
+        <className>neurogenesis.brain.ExtracellularMatrix</className>
+        <methodName>getFoodConcentration</methodName>
+        <aggType>SUM</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>Angle Delta Sign</string>
+      <string>Undifferentiated Cells</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Angle Delta Sign</id>
-        <className>neurogenesis.ArenaSimulator</className>
-        <methodName>getSignAngleDeltaLightAndRobot</methodName>
-        <aggType>MAX</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Average Angle Delta</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Average Angle Delta</id>
-        <className>neurogenesis.ArenaSimulator</className>
-        <methodName>getAverageAngleDelta</methodName>
-        <aggType>MAX</aggType>
+        <id>Undifferentiated Cells</id>
+        <className>neurogenesis.brain.UndifferentiatedCell</className>
+        <methodName>getFoodConcentration</methodName>
+        <aggType>SUM</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

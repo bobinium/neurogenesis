@@ -158,22 +158,5 @@ public class Robot {
 		
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	public double getSineOfAngularPosition() {
-		return Math.sin(this.angularPosition);
-	}
-	
-
-	/**
-	 * 
-	 * @return
-	 */
-	public double getCosineOfAngularPosition() {
-		return Math.cos(this.angularPosition);
-	}
-	
 
 } // End of Robot class

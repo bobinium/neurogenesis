@@ -1,0 +1,74 @@
+<repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
+  <name>Sine-Cosine Angular Position</name>
+  <dataSet>Angular Position</dataSet>
+  <xAxisLabel>Tick Count</xAxisLabel>
+  <yAxisLabel>sin(x) - cos(x)</yAxisLabel>
+  <chartTitle>Sine-Cosine Angular Position</chartTitle>
+  <type>TIME_SERIES</type>
+  <background>
+    <red>192</red>
+    <green>192</green>
+    <blue>192</blue>
+    <alpha>255</alpha>
+  </background>
+  <gridLineColor>
+    <red>255</red>
+    <green>255</green>
+    <blue>255</blue>
+    <alpha>255</alpha>
+  </gridLineColor>
+  <showGrid>true</showGrid>
+  <showLegend>true</showLegend>
+  <seriesIds>
+    <entry>
+      <string>CosineRobotAngularPosition</string>
+      <SeriesData>
+        <label>Cosine Robot Angular Position</label>
+        <color>
+          <red>255</red>
+          <green>0</green>
+          <blue>6</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>CosineLightAngularPosition</string>
+      <SeriesData>
+        <label>Cosine Light Angular Position</label>
+        <color>
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>SineRobotAngularPosition</string>
+      <SeriesData>
+        <label>Sine Robot Angular Position</label>
+        <color>
+          <red>0</red>
+          <green>0</green>
+          <blue>255</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>SineLightAngularPosition</string>
+      <SeriesData>
+        <label>Sine Light Angular Position</label>
+        <color>
+          <red>0</red>
+          <green>255</green>
+          <blue>255</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+  </seriesIds>
+  <dataValueIds/>
+  <plotRangeLength>-1</plotRangeLength>
+</repast.simphony.chart2.engine.TimeSeriesChartDescriptor>

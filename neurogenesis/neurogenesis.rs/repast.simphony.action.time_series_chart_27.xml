@@ -45,13 +45,13 @@
       </SeriesData>
     </entry>
     <entry>
-      <string>Minimum Food</string>
+      <string>Maximum SAM</string>
       <SeriesData>
-        <label>Minimum Food</label>
+        <label>Maximum SAM</label>
         <color>
-          <red>255</red>
-          <green>0</green>
-          <blue>149</blue>
+          <red>39</red>
+          <green>144</green>
+          <blue>51</blue>
           <alpha>255</alpha>
         </color>
       </SeriesData>
@@ -69,13 +69,13 @@
       </SeriesData>
     </entry>
     <entry>
-      <string>Maximum SAM</string>
+      <string>Minimum Food</string>
       <SeriesData>
-        <label>Maximum SAM</label>
+        <label>Minimum Food</label>
         <color>
-          <red>39</red>
-          <green>144</green>
-          <blue>51</blue>
+          <red>255</red>
+          <green>0</green>
+          <blue>149</blue>
           <alpha>255</alpha>
         </color>
       </SeriesData>

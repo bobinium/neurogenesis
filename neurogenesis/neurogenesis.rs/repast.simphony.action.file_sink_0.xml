@@ -1,0 +1,20 @@
+<repast.simphony.data2.engine.FileSinkDescriptor>
+  <name>Angular Position</name>
+  <dataSet>Angular Position</dataSet>
+  <delimiter>,</delimiter>
+  <format>TABULAR</format>
+  <sourceIds class="linked-hash-set">
+    <string>tick</string>
+    <string>LightSourceAngularPosition</string>
+    <string>RobotAngularPosition</string>
+    <string>AngleDeltaLightAndRobot</string>
+    <string>SignAngleDeltaLightAndRobot</string>
+    <string>AverageAngleDelta</string>
+    <string>SineLightAngularPosition</string>
+    <string>CosineLightAngularPosition</string>
+    <string>SineRobotAngularPosition</string>
+    <string>CosineRobotAngularPosition</string>
+  </sourceIds>
+  <fileName>AngularPositionOutput.txt</fileName>
+  <addTimeStamp>true</addTimeStamp>
+</repast.simphony.data2.engine.FileSinkDescriptor>

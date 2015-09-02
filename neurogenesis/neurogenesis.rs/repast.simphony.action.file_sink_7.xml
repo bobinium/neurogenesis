@@ -1,14 +1,12 @@
 <repast.simphony.data2.engine.FileSinkDescriptor>
-  <name>Angular Delta</name>
-  <dataSet>Angular Delta</dataSet>
+  <name>Neurite Junctions</name>
+  <dataSet>Neurite Junctions</dataSet>
   <delimiter>,</delimiter>
   <format>TABULAR</format>
   <sourceIds class="linked-hash-set">
     <string>tick</string>
-    <string>Angle Delta</string>
-    <string>Angle Delta Sign</string>
-    <string>Average Angle Delta</string>
+    <string>Neurite Junctions</string>
   </sourceIds>
-  <fileName>AngulaDeltaOutput.txt</fileName>
+  <fileName>NeuriteJunctionsOutput.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>

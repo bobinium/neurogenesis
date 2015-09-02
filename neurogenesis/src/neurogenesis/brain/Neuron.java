@@ -45,7 +45,7 @@ public class Neuron extends GeneRegulatedCell {
 	/**
 	 * 
 	 */
-	public static final double LEARNING_RATE = 0.2;
+	public static double LEARNING_RATE = 0.2;
 	
 	
 	/**

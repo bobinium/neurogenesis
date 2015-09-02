@@ -172,6 +172,42 @@ public class ArenaSimulator {
 	public double getAverageAngleDelta() {
 		return this.sumAverageAngleDelta / this.tickCount;
 	}
+
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getSineRobotAngularPosition() {
+		return Math.sin(getRobotAngularPosition());
+	}
+	
+
+	/**
+	 * 
+	 * @return
+	 */
+	public double getCosineRobotAngularPosition() {
+		return Math.cos(getRobotAngularPosition());
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getSineLightAngularPosition() {
+		return Math.sin(getLightSourceAngularPosition());
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getCosineLightAngularPosition() {
+		return Math.cos(getLightSourceAngularPosition());
+	}
 	
 	
 } // End of ArenaSimulator class

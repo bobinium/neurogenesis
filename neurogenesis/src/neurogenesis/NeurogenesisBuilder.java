@@ -145,6 +145,10 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	
 	
 	//
+	private double initialMatrixFoodConcentration;
+	
+	
+	//
 	private Grid<Object> brainGrid;
 	
 	
@@ -354,9 +358,12 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		this.outputNeuronGridPosY = -this.brainGridQuadrantSize;
 
 		this.initialPopulationExtent = params.getInteger("population.extent");
+		this.initialMatrixFoodConcentration = 
+				params.getDouble("matrix.food.concentration");
 		
 		Neuron.MAX_DENDRITE_ROOTS = params.getInteger("dendrites.roots.max");
 		Neuron.MAX_DENDRITE_LEAVES = params.getInteger("dendrites.leaves.max");
+		Neuron.LEARNING_RATE = params.getDouble("neuron.learning.rate");
 		
 	} // End of initiliseParameters()
 
@@ -484,7 +491,8 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 					Map<CellProductType, Double> concentrations = 
 							extracellularMatrix.getConcentrations();
 					
-					concentrations.put(CellProductType.FOOD, 0.2);
+					concentrations.put(CellProductType.FOOD, 
+							this.initialMatrixFoodConcentration);
 					//concentrations.put(CellProduct.MUTAGEN, 0.5);
 					
 					context.add(extracellularMatrix);

@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
-  <name>Waste</name>
-  <dataSet>Waste</dataSet>
+  <name>Angular Position</name>
+  <dataSet>Angular Position</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
-  <yAxisLabel>Concentration</yAxisLabel>
-  <chartTitle>Waste Concentration</chartTitle>
+  <yAxisLabel>Angle (radians)</yAxisLabel>
+  <chartTitle>Angular Position</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,9 +21,9 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>Extracellular Matrix Waste</string>
+      <string>LightSourceAngularPosition</string>
       <SeriesData>
-        <label>Extracellular Matrix Waste</label>
+        <label>Light Source Angular Position</label>
         <color>
           <red>0</red>
           <green>0</green>
@@ -33,9 +33,9 @@
       </SeriesData>
     </entry>
     <entry>
-      <string>Cellular Waste</string>
+      <string>RobotAngularPosition</string>
       <SeriesData>
-        <label>Cellular Waste</label>
+        <label>Robot Angular Position</label>
         <color>
           <red>255</red>
           <green>0</green>

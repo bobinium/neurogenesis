@@ -1,6 +1,7 @@
 <repast.simphony.data2.engine.DataSetDescriptor>
-  <name>Angular Position</name>
-  <type>AGGREGATE</type>
+  <name>Sensors Illumination</name>
+  <type>NON_AGGREGATE</type>
+  <sourceType>neurogenesis.LightSensor</sourceType>
   <inclTick>true</inclTick>
   <inclBatchRun>false</inclBatchRun>
   <inclRandomSeed>false</inclRandomSeed>
@@ -11,44 +12,24 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>1918093963</hashCode>
+    <hashCode>315593184</hashCode>
   </scheduleParams>
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
-      <string>Light Source sin(x)</string>
+      <string>Label</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Light Source sin(x)</id>
-        <className>neurogenesis.LightSource</className>
-        <methodName>getSineOfAngularPosition</methodName>
-        <aggType>MAX</aggType>
+        <id>Label</id>
+        <className>neurogenesis.LightSensor</className>
+        <methodName>getLabel</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>Light Source cos(x)</string>
+      <string>LightIntensity</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Light Source cos(x)</id>
-        <className>neurogenesis.LightSource</className>
-        <methodName>getCosineOfAngularPosition</methodName>
-        <aggType>MAX</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Robot sin(x)</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Robot sin(x)</id>
-        <className>neurogenesis.Robot</className>
-        <methodName>getSineOfAngularPosition</methodName>
-        <aggType>MAX</aggType>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Robot cos(x)</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Robot cos(x)</id>
-        <className>neurogenesis.Robot</className>
-        <methodName>getCosineOfAngularPosition</methodName>
-        <aggType>MAX</aggType>
+        <id>LightIntensity</id>
+        <className>neurogenesis.LightSensor</className>
+        <methodName>getLightIntensity</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

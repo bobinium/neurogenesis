@@ -90,22 +90,4 @@ public class LightSource {
 	} // End update()
 	
 	
-	/**
-	 * 
-	 * @return
-	 */
-	public double getSineOfAngularPosition() {
-		return Math.sin(this.angularPosition);
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public double getCosineOfAngularPosition() {
-		return Math.cos(this.angularPosition);
-	}
-	
-	
 } // End of LightSource class
