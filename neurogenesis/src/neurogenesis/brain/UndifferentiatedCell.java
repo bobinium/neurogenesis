@@ -1,5 +1,7 @@
 package neurogenesis.brain;
 
+import org.apache.log4j.Logger;
+
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -17,6 +19,11 @@ import repast.simphony.util.ContextUtils;
 public class UndifferentiatedCell extends GeneRegulatedCell {
 
 
+	//
+	private final static Logger logger = 
+			Logger.getLogger(UndifferentiatedCell.class);	
+		
+	
 	/**
 	 * 
 	 * @param newSpace
@@ -91,7 +98,7 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 	 */
 	protected boolean cellDifferentiationHandler() {
 				
-		System.out.println("Cell differentiation regulator concentration: " 
+		logger.debug("Cell differentiation regulator concentration: " 
 				+ this.cellDifferentiationRegulator);
 		
 		if (this.cellDifferentiationRegulator > REGULATOR_UNIVERSAL_THRESHOLD) {
@@ -108,7 +115,8 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 			this.space.moveTo(neuron, pt.getX() + 0.5, 
 					pt.getY() + 0.5, pt.getZ() + 0.5);
 			this.grid.moveTo(neuron, pt.getX(),	pt.getY(), pt.getZ());
-			System.out.println("****** Cell differentiation event ******");
+			logger.info("Cell differentiation event: regulator = " 
+					+ this.cellDifferentiationRegulator);
 
 			return true;
 				

@@ -1,9 +1,16 @@
 package neurogenesis;
 
+import org.apache.log4j.Logger;
+
 import repast.simphony.space.continuous.ContinuousSpace;
 
 public class LightSensor {
 
+	
+	//
+	private final static Logger logger = Logger.getLogger(LightSensor.class);	
+
+	
 	private final ContinuousSpace<Object> space;
 	
 	private final double angularRelativePosition;
@@ -59,11 +66,10 @@ public class LightSensor {
 		this.space.moveTo(this, 
 				robot.getRadius() * Math.cos(robot.getAngularPosition(this)), 
 				robot.getRadius() * Math.sin(robot.getAngularPosition(this)));
-		System.out.println("Updating sensor with intensity "  
-				+ newLightIntensity);
+		logger.debug("Updating sensor with intensity " + newLightIntensity);
 		this.lightIntensity = newLightIntensity;
 		
-	}
+	} // End of update()
 	
 	
 } // End of LightSensor class

@@ -8,6 +8,6 @@
     <string>Label</string>
     <string>LightIntensity</string>
   </sourceIds>
-  <fileName>SensorsIlluminationOutput.txt</fileName>
+  <fileName>output/SensorsIlluminationOutput.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>

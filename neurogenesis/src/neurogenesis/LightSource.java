@@ -1,10 +1,17 @@
 package neurogenesis;
 
+import org.apache.log4j.Logger;
+
 import repast.simphony.space.continuous.ContinuousSpace;
 
 
 public class LightSource {
 
+	
+	//
+	private final static Logger logger = Logger.getLogger(LightSource.class);	
+
+	
 	private final ContinuousSpace<Object> space;
 	
 	private final int radiusOfTrajectory;
@@ -80,7 +87,7 @@ public class LightSource {
 		this.angularPosition = 
 				(this.angularPosition + this.angularVelocity) % (2 * Math.PI);
 		
-		System.out.println("Light source angular position: " 
+		logger.debug("Light source angular position: "
 				+ this.angularPosition / Math.PI);
 		
 		this.space.moveTo(this, 

@@ -1,5 +1,7 @@
 package neurogenesis.brain;
 
+import org.apache.log4j.Logger;
+
 
 public class GeneticElement {
 
@@ -23,6 +25,10 @@ public class GeneticElement {
 		SPECIAL_OUT_NEUROGEN,
 		SPECIAL_OUT_ENERGY
 	}
+		
+	
+	//
+	private final static Logger logger = Logger.getLogger(GeneticElement.class);	
 		
 	
 	//
@@ -104,7 +110,7 @@ public class GeneticElement {
 		
 		double affinity = Math.sqrt(Math.pow(affinityDeltaX, 2) 
 				+ Math.pow(affinityDeltaY, 2)) * this.sign * cisElement.sign;
-		//System.out.println("Affinity: " + affinity);
+		logger.debug("Affinity: " + affinity);
 	
 		return affinity;
 		

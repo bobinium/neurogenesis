@@ -7,6 +7,6 @@
     <string>tick</string>
     <string>Neurite Junctions</string>
   </sourceIds>
-  <fileName>NeuriteJunctionsOutput.txt</fileName>
+  <fileName>output/NeuriteJunctionsOutput.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>

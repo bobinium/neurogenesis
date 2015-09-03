@@ -5,6 +5,8 @@ package neurogenesis;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import neurogenesis.brain.CellFactory;
 import neurogenesis.brain.CellProductType;
 import neurogenesis.brain.ExtracellularMatrix;
@@ -119,6 +121,11 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	
 	// INSTANCE VARIABLES ******************************************************
 	
+	
+	//
+	private final static Logger logger = 
+			Logger.getLogger(NeurogenesisBuilder.class);	
+
 	
 	//
 	private int genomeSize;
@@ -475,6 +482,8 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	 */
 	private void setupInitialEnvironment(final Context<Object> context) {
 		
+		logger.info("Initialising extracellular matrix.");
+		
 		for (int x = -this.brainGridQuadrantSize; 
 				x <= this.brainGridQuadrantSize; x++) {
 			
@@ -514,6 +523,9 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	 * @param context
 	 */
 	private void setupInitialPopulation(final Context<Object> context) {
+		
+		logger.info("Creating initial cell population: extent = " 
+				+ this.initialPopulationExtent);
 		
 		for (int x = -this.initialPopulationExtent; 
 				x <= this.initialPopulationExtent; x++) {

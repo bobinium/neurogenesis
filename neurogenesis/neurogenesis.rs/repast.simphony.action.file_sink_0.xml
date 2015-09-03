@@ -15,6 +15,6 @@
     <string>SineRobotAngularPosition</string>
     <string>CosineRobotAngularPosition</string>
   </sourceIds>
-  <fileName>AngularPositionOutput.txt</fileName>
+  <fileName>output/AngularPositionOutput.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>

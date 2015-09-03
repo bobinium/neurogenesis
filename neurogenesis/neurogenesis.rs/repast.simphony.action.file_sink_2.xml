@@ -9,6 +9,6 @@
     <string>Neurons</string>
     <string>Total</string>
   </sourceIds>
-  <fileName>CellPopulationOutput.txt</fileName>
+  <fileName>output/CellPopulationOutput.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>

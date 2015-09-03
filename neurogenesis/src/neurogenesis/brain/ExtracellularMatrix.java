@@ -40,22 +40,23 @@ public class ExtracellularMatrix {
 	 */
 	public static final double DECAY_RATE = 0.001;
 
-	
-	private static final boolean DEBUG = false;
-	
-	
+		
 	// INSTANCE VARIABLES ------------------------------------------------------
 	
 	
 	//
-	private final static Logger logger = Logger.getLogger(ExtracellularMatrix.class);	
+	private final static Logger logger = 
+			Logger.getLogger(ExtracellularMatrix.class);	
 		
+	
 	// The 3D continuous space to which this object belong.
 	private final ContinuousSpace<Object> space;
+	
 	
 	// The 3D grid to which this object belong.
 	private final Grid<Object> grid;
 
+	
 	// Contains the current concentration of each chemical in this grid cell.
 	private Map<CellProductType, Double> concentrations = 
 			new HashMap<CellProductType, Double>();
@@ -153,12 +154,8 @@ public class ExtracellularMatrix {
 			double localConcentration =	this.concentrations.get(substanceType);
 			
 			// Applies decay rate.
-			localConcentration -= localConcentration * DECAY_RATE;
-			
-			if (DEBUG) {
-				System.out.println("Local concentration: " 
-						+ localConcentration);
-			}
+			localConcentration -= localConcentration * DECAY_RATE;	
+			logger.debug("Local concentration: " + localConcentration);
 			
 			double newLocalConcentration = localConcentration;
 			
@@ -203,17 +200,11 @@ public class ExtracellularMatrix {
 					
 			} // End for() grid cells
 						
-			if (DEBUG) {
-				System.out.println("New local concentration: " 
-						+ newLocalConcentration);
-			}
+			logger.debug("New local concentration: " + newLocalConcentration);
 			
 			this.concentrations.put(substanceType, newLocalConcentration);
 			
 		} // End for() products
-		
-		//System.out.println("Max concentration: " + maxConcentration);
-		//System.out.println("New matrix colour: " + this.colour);
 		
 	} // End of step()
 	

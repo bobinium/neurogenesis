@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -47,6 +49,10 @@ public class Neuron extends GeneRegulatedCell {
 	 */
 	public static double LEARNING_RATE = 0.2;
 	
+	
+	//
+	private final static Logger logger = Logger.getLogger(Neuron.class);	
+		
 	
 	/**
 	 * 
@@ -175,8 +181,7 @@ public class Neuron extends GeneRegulatedCell {
 		double wasteConcentration = this.membraneChannels
 				.get(CellProductType.WASTE).getConcentration();
 		
-		System.out.println("Cell death waste concentration: " 
-				+ wasteConcentration);
+		logger.debug("Cell death waste concentration: "	+ wasteConcentration);
 
 		double foodConcentration = this.membraneChannels
 				.get(CellProductType.FOOD).getConcentration();
@@ -209,7 +214,8 @@ public class Neuron extends GeneRegulatedCell {
 			this.alive = false;
 			
 			context.remove(this);
-			System.out.println("****** Neuron death event ******");
+			logger.info("Neuron death event: food = " + foodConcentration 
+					+ ", waste = " + wasteConcentration);
 			return true;
 
 		} // End if()
@@ -311,7 +317,7 @@ public class Neuron extends GeneRegulatedCell {
 	 */
 	protected boolean cellAxonGrowthHandler() {
 		
-		System.out.println("Cell axon growth regulator concentration: " 
+		logger.debug("Cell axon growth regulator concentration: " 
 				+ this.cellGrowthRegulator);
 		
 		if (this.checkConcentrationTrigger(this.cellGrowthRegulator, false)) {
@@ -338,10 +344,9 @@ public class Neuron extends GeneRegulatedCell {
 	 */
 	protected boolean cellDendritesGrowthHandler() {
 		
-		System.out.println("Cell dendrites growth regulator concentration: " 
+		logger.debug("Cell dendrites growth regulator concentration: " 
 				+ this.cellGrowthRegulator);
 		
-		this.cellGrowthRegulator = 0.5;
 		if (this.checkConcentrationTrigger(this.cellGrowthRegulator, false)) {
 
 			NeuriteJunction nextBud = null;
@@ -349,13 +354,13 @@ public class Neuron extends GeneRegulatedCell {
 	
 			for (NeuriteJunction dendriteLeaf : this.dendriteLeaves) {
 							
-				System.out.println("Searching: dendrite depth = " 
+				logger.debug("Searching: dendrite depth = "	
 						+ dendriteLeaf.getDepth());
 				
 				GridPoint dendriteLocation = 
 						this.grid.getLocation(dendriteLeaf);
 				if (dendriteLocation == null) {
-					System.out.println("Dendrite location is null! (Neuron is " 
+					logger.warn("Dendrite location is null! (Neuron is " 
 							+ ((dendriteLeaf.getNeuron().alive) 
 									? "alive" : "dead") + ")");
 				}
@@ -385,19 +390,17 @@ public class Neuron extends GeneRegulatedCell {
 				return false;
 			}
 			
-			System.out.println("Number of leaves: " 
-					+ this.dendriteLeaves.size());
+			logger.debug("Number of leaves: " + this.dendriteLeaves.size());
 
 			// In any cases, selected dendrite is a leaf no longer.
 			this.dendriteLeaves.remove(nextBud);
 			
-			System.out.println("Number of leaves (R): " 
-					+ this.dendriteLeaves.size());
+			logger.debug("Number of leaves (R): " + this.dendriteLeaves.size());
 
 			// Add the new leaf to the list.
 			if (newJunction1.getType() != NeuriteJunction.Type.AXON) {
 				this.dendriteLeaves.add(newJunction1);
-				System.out.println("Number of leaves (J1): " 
+				logger.debug("Number of leaves (J1): " 
 						+ this.dendriteLeaves.size());
 			}
 			
@@ -423,7 +426,7 @@ public class Neuron extends GeneRegulatedCell {
 					// dendrite from the table if it is full.
 						
 					this.dendriteLeaves.add(newJunction2);
-					System.out.println("Number of leaves (J2): " 
+					logger.debug("Number of leaves (J2): " 
 							+ this.dendriteLeaves.size());
 					
 					if (this.dendriteLeaves.size() > MAX_DENDRITE_LEAVES) {
@@ -462,7 +465,7 @@ public class Neuron extends GeneRegulatedCell {
 	 */
 	protected void removeDendriteLeaf(NeuriteJunction dendriteToRemove) {
 		
-		System.out.println("Discarding dendrite leaves...");
+		logger.info("Discarding dendrite leaves...");
 		
 		@SuppressWarnings("unchecked")
 		Context<Object> context = ContextUtils.getContext(this);
@@ -476,7 +479,7 @@ public class Neuron extends GeneRegulatedCell {
 	
 			dendriteToRemove.active = false;
 			context.remove(dendriteToRemove);
-			System.out.println("Removed dendrite depth " 
+			logger.debug("Removed dendrite depth " 
 					+ dendriteToRemove.getDepth());
 	
 			// The successor is not a leaf?
@@ -507,7 +510,7 @@ public class Neuron extends GeneRegulatedCell {
 		
 		GridPoint currentLocation =	this.grid.getLocation(currentJunction);
 		if (currentLocation == null) {
-			System.out.println("Current location is null!!!");
+			logger.warn("Current location is null!!!");
 		}
 		
 		// Use the GridCellNgh class to create GridCells for

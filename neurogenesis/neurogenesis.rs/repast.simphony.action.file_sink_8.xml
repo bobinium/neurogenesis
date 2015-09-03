@@ -8,6 +8,6 @@
     <string>Extracellular Matrix Waste</string>
     <string>Cellular Waste</string>
   </sourceIds>
-  <fileName>WasteOutput.txt</fileName>
+  <fileName>output/WasteOutput.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>

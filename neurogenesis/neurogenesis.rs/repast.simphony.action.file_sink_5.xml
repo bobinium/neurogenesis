@@ -15,6 +15,6 @@
     <string>Maximum SAM</string>
     <string>Mean SAM</string>
   </sourceIds>
-  <fileName>ExtracellularMatrixOutput.txt</fileName>
+  <fileName>output/ExtracellularMatrixOutput.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>

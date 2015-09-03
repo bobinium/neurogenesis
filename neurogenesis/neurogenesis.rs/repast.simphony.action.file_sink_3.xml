@@ -8,6 +8,6 @@
     <string>SAM</string>
     <string>CAM</string>
   </sourceIds>
-  <fileName>AdhesionMoleculesOutput.txt</fileName>
+  <fileName>output/AdhesionMoleculesOutput.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>

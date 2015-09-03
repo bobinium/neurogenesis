@@ -5,6 +5,8 @@ package neurogenesis.brain;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import neurogenesis.LightSensor;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -21,6 +23,10 @@ import repast.simphony.space.grid.GridPoint;
 public class InputNeuron extends Neuron {
 
 	public static final double LIGHT_TO_ENERGY_EFFICIENCY = 0.1;
+	
+	//
+	private final static Logger logger = Logger.getLogger(InputNeuron.class);	
+		
 	
 	private final LightSensor lightSensor;
 	
@@ -101,7 +107,7 @@ public class InputNeuron extends Neuron {
 
 			double newExternalConcentration = 
 					externalConcentration + diffusingConcentration;
-			System.out.println("New input food concentration: " 
+			logger.debug("New input food concentration: " 
 					+ newExternalConcentration);
 
 			externalConcentrations.put(CellProductType.FOOD, 

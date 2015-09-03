@@ -8,6 +8,6 @@
     <string>Extracellular Matrix</string>
     <string>Undifferentiated Cells</string>
   </sourceIds>
-  <fileName>EnergyOutput.txt</fileName>
+  <fileName>output/EnergyOutput.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>

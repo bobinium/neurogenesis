@@ -76,7 +76,8 @@ public class OutputNeuron extends Neuron {
 		
 		calculateActivation();
 
-		CellMembraneChannel channel = this.membraneChannels.get(CellProductType.SAM);
+		CellMembraneChannel channel = 
+				this.membraneChannels.get(CellProductType.SAM);
 		channel.setConcentration(0.9);
 		channel.setOpenForOutput(true);
 		
@@ -87,5 +88,6 @@ public class OutputNeuron extends Neuron {
 		cellDendritesGrowthHandler();
 		
 	} // End of step()
+	
 	
 } // End of OutputNeuron class

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import repast.simphony.random.RandomHelper;
 
 
@@ -15,6 +17,11 @@ public class RegulatoryNetwork {
 	 */
 	public static final double DELTA_INTEGRATION_RATE = 0.2;
 	
+	
+	//
+	private final static Logger logger = 
+			Logger.getLogger(RegulatoryNetwork.class);	
+		
 	
 	//
 	private RegulatoryUnit[] regulatoryUnits;;
@@ -94,8 +101,8 @@ public class RegulatoryNetwork {
 			
 			regulatoryUnit.updateConcentrations(
 					currentConcentrations, this.networkConcentrations);
-			//System.out.println("Unit #" + ++count 
-			//		+ " concentration: " + regulatoryUnit.getConcentration());
+			logger.debug("Unit #" + ++count 
+					+ " concentration: " + regulatoryUnit.getConcentration());
 			
 		} // End for()
 				
@@ -114,7 +121,8 @@ public class RegulatoryNetwork {
 	
 		double activation = 0;
 			
-		for (GeneticElement transElement : this.networkConcentrations.keySet()) {
+		for (GeneticElement transElement : 
+				this.networkConcentrations.keySet()) {
 				
 			double affinity = 
 					transElement.getAffinityForCisElement(outputElement); 
@@ -124,13 +132,12 @@ public class RegulatoryNetwork {
 			
 		} // End of for() trans elements
 
-		//System.out.println("Activation (output): " + activation);
+		logger.debug("Activation (output): " + activation);
 			
 		double deltaConcentration = Math.tanh(activation / 2) 
 					* ((activation >= 0) ? 1 - currentConcentration 
 							: currentConcentration) * DELTA_INTEGRATION_RATE;
-		//System.out.println("Delta concentration (output): " 
-		//					+ deltaConcentration);
+		logger.debug("Delta concentration (output): " + deltaConcentration);
 		
 		return deltaConcentration;
 		
@@ -159,13 +166,13 @@ public class RegulatoryNetwork {
 			
 		} // End of for() trans elements
 
-		//System.out.println("Activation (output): " + activation);
+		logger.debug("Activation (output): " + activation);
 		
 		// cost
 		double deltaConcentration = -1 * activation 
 				/ (Math.sqrt(10 * 10 + 10 * 10) 
 						* this.networkConcentrations.size());
-		//System.out.println("Delta concentration energy: " + deltaConcentration);
+		logger.debug("Delta concentration energy: " + deltaConcentration);
 		
 		return deltaConcentration;
 		

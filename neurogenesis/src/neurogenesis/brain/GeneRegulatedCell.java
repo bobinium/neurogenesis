@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import repast.simphony.context.Context;
 import repast.simphony.query.space.grid.GridCell;
 import repast.simphony.query.space.grid.GridCellNgh;
@@ -56,6 +58,11 @@ public abstract class GeneRegulatedCell extends Cell {
 	
 	// INSTANCE VARIABLES ------------------------------------------------------
 	
+	
+	//
+	private final static Logger logger = 
+			Logger.getLogger(GeneRegulatedCell.class);	
+		
 	
 	/**
 	 * Concentration of permeable products inside the current cell.
@@ -331,8 +338,8 @@ public abstract class GeneRegulatedCell extends Cell {
 					this.membraneChannels.get(substanceType);
 			double internalConcentration = substanceChannel.getConcentration(); 
 			
-			//System.out.println("External = " + externalConcentration 
-			//		+ " ==> Internal = " + internalConcentration);
+			logger.debug("External = " + externalConcentration 
+					+ " ==> Internal = " + internalConcentration);
 			
 			if (substanceChannel.isOpenForInput()
 					&& (externalConcentration > internalConcentration)) {
@@ -352,8 +359,8 @@ public abstract class GeneRegulatedCell extends Cell {
 				externalConcentrations.put(substanceType, 
 						newExternalConcentration);
 				substanceChannel.setConcentration(newInternalConcentration);
-				//System.out.println("New internal concentration: " 
-				//		+ newInternalConcentration);
+				logger.debug("New internal concentration: " 
+						+ newInternalConcentration);
 				
 			} // End if()
 			
@@ -540,7 +547,7 @@ public abstract class GeneRegulatedCell extends Cell {
 				double deltaFoodConcentration = this.regulatoryNetwork
 						.calculateEnergyConcentrationDelta(outputElement, 
 								currentFoodConcentration);
-				System.out.println("Energy delta: " + deltaFoodConcentration);
+				logger.debug("Energy delta: " + deltaFoodConcentration);
 				double newFoodConcentration =
 						currentFoodConcentration + deltaFoodConcentration;
 								
@@ -578,8 +585,8 @@ public abstract class GeneRegulatedCell extends Cell {
 			double externalConcentration = externalConcentrations
 					.get(substanceChannel.getSubstanceType());
 			
-			//System.out.println("Internal = " + internalConcentration 
-			//		+ " ==> External = " + externalConcentration);
+			logger.debug("Internal = " + internalConcentration 
+					+ " ==> External = " + externalConcentration);
 			
 			if (substanceChannel.isOpenForOutput()
 					&& (internalConcentration > externalConcentration)) {
@@ -599,8 +606,8 @@ public abstract class GeneRegulatedCell extends Cell {
 				substanceChannel.setConcentration(newInternalConcentration);
 				externalConcentrations.put(substanceChannel.getSubstanceType(), 
 						newExternalConcentration);
-				//System.out.println("New internal concentration: " 
-				//		+ newInternalConcentration);
+				logger.debug("New internal concentration: " 
+						+ newInternalConcentration);
 				
 			} // End if()
 			
@@ -617,7 +624,7 @@ public abstract class GeneRegulatedCell extends Cell {
 		double wasteConcentration = this.membraneChannels
 				.get(CellProductType.WASTE).getConcentration();
 		
-		System.out.println("Cell death waste concentration: " 
+		logger.debug("Cell death waste concentration: " 
 				+ wasteConcentration);
 
 		double foodConcentration = this.membraneChannels
@@ -631,7 +638,8 @@ public abstract class GeneRegulatedCell extends Cell {
 			@SuppressWarnings("unchecked")
 			Context<Object> context = ContextUtils.getContext(this);
 			context.remove(this);
-			System.out.println("****** Cell death event ******");
+			logger.info("Cell death event: food = " + foodConcentration 
+					+ ", waste = " + wasteConcentration);
 			return true;
 
 		} // End if()
@@ -646,7 +654,7 @@ public abstract class GeneRegulatedCell extends Cell {
 	 */
 	protected boolean cellDivisionHandler() {
 		
-		System.out.println("Cell growth regulator concentration: " 
+		logger.debug("Cell growth regulator concentration: " 
 				+ this.cellGrowthRegulator);
 		
 		if (checkConcentrationTrigger(this.cellGrowthRegulator, true)) {
@@ -658,6 +666,9 @@ public abstract class GeneRegulatedCell extends Cell {
 			
 			if (pointWithNoCell != null) {
 				
+				logger.info("Cell division event: growth regulator = " 
+						+ this.cellGrowthRegulator);
+
 				this.cellGrowthRegulator = 
 						this.cellGrowthRegulator / 2;
 			
@@ -672,7 +683,6 @@ public abstract class GeneRegulatedCell extends Cell {
 						pointWithNoCell.getZ() + 0.5);
 				this.grid.moveTo(daughterCell, pointWithNoCell.getX(), 
 						pointWithNoCell.getY(), pointWithNoCell.getZ());
-				System.out.println("****** Cell division event ******");
 
 				return true;
 				
@@ -693,7 +703,7 @@ public abstract class GeneRegulatedCell extends Cell {
 		
 		boolean changedAdhesionState = false;
 		
-		System.out.println("Cell adhesion regulator concentration: " 
+		logger.debug("Cell adhesion regulator concentration: " 
 				+ this.cellAdhesionRegulator);
 		
 		// get the grid location of this Cell
@@ -712,8 +722,8 @@ public abstract class GeneRegulatedCell extends Cell {
 					this.membraneChannels
 							.get(CellProductType.SAM).setOpenForOutput(false);
 					changedAdhesionState = true;
-					System.out.println(
-							"****** Cell breaking away event ******");
+					logger.info("Cell breaking away event: no partners, CAM = " 
+							+ this.cellAdhesionRegulator);
 					
 				} else {
 					
@@ -775,7 +785,8 @@ public abstract class GeneRegulatedCell extends Cell {
 				this.membraneChannels
 						.get(CellProductType.SAM).setOpenForOutput(false);
 				changedAdhesionState = true;
-				System.out.println("****** Cell breaking away event ******");
+				logger.info("Cell breaking away event: CAM = " 
+						+ this.cellAdhesionRegulator);
 				
 			} // End if()
 			
@@ -802,7 +813,8 @@ public abstract class GeneRegulatedCell extends Cell {
 						
 					} // End for() partner cells
 										
-					System.out.println("****** Cell adhesion event ******");
+					logger.info("Cell adhesion event: CAM = " 
+							+ this.cellAdhesionRegulator);
 					
 				} // End if()
 							
@@ -831,7 +843,8 @@ public abstract class GeneRegulatedCell extends Cell {
 			
 			this.regulatoryNetwork.mutate();
 			
-			System.out.println("****** Cell mutation event ******");
+			logger.info("Cell mutation event: mutagen = " 
+					+ mutagenConcentration);
 			//cellMutagen.setConcentration(INITIAL_CONCENTRATION);
 			return true;
 
@@ -901,7 +914,7 @@ public abstract class GeneRegulatedCell extends Cell {
 				this.grid.moveTo(this, pointWithMostElements.getX(), 
 						pointWithMostElements.getY(), 
 						pointWithMostElements.getZ());
-				System.out.println("****** Cell movement event ******");
+				logger.info("Cell movement event.");
 				return true;
 			}
 			

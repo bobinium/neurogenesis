@@ -3,6 +3,8 @@
  */
 package neurogenesis;
 
+import org.apache.log4j.Logger;
+
 import neurogenesis.brain.OutputNeuron;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -13,6 +15,12 @@ import repast.simphony.engine.schedule.ScheduledMethod;
  */
 public class ArenaSimulator {
 
+
+	//
+	private final static Logger logger = Logger.getLogger(ArenaSimulator.class);	
+
+	
+	//
 	private final Robot robot;
 	
 	private final LightSource lightSource;
@@ -93,7 +101,7 @@ public class ArenaSimulator {
 			priority = ScheduleParameters.FIRST_PRIORITY)
 	public void update() {
 
-		System.out.println("Updating arena...");
+		logger.info("Updating arena...");
 		
 		// Constant velocity.
 		this.robot.update(this.motorNeuron.getActivation());
@@ -103,7 +111,8 @@ public class ArenaSimulator {
 		
 		for (LightSensor sensor : lightSensors) {
 			
-			System.out.println("Sensor angular position: " + this.robot.getAngularPosition(sensor) / Math.PI);
+			logger.debug("Sensor angular position: " 
+					+ this.robot.getAngularPosition(sensor) / Math.PI);
 			
 			double distanceSquared = 
 					Math.pow(this.lightSource.getRadiusOfTrajectory(), 2) 
@@ -113,7 +122,8 @@ public class ArenaSimulator {
 							- this.robot.getAngularPosition(sensor)))
 					+ Math.pow(this.robot.getRadius(), 2);
 			
-			System.out.println("Distance: " + Math.sqrt(distanceSquared) + ", Max: " + this.maxIlluminationDistance);
+			logger.debug("Distance: " + Math.sqrt(distanceSquared) 
+					+ ", Max: " + this.maxIlluminationDistance);
 			
 			double lightIntensity = 0;
 			if (Math.sqrt(distanceSquared) <= this.maxIlluminationDistance) {

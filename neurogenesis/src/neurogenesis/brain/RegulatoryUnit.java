@@ -4,8 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 public class RegulatoryUnit {
 
+	
+	//
+	private final static Logger logger = Logger.getLogger(RegulatoryUnit.class);	
+		
+	
 	//
 	private List<GeneticElement> cisElements = new ArrayList<GeneticElement>();
 	
@@ -112,8 +119,8 @@ public class RegulatoryUnit {
 		
 		double activation = 0;
 		
-		//System.out.println("Number of cis-elements: " + this.cisElements.size());
-		//System.out.println("Number of input elements: "	+ inputElements.size());
+		logger.debug("Number of cis-elements: " + this.cisElements.size());
+		logger.debug("Number of input elements: "	+ inputElements.size());
 		
 		for (GeneticElement cisElement : this.cisElements) {		
 			for (GeneticElement inputElement : inputElements.keySet()) {				
@@ -123,15 +130,15 @@ public class RegulatoryUnit {
 			}
 		}
 		
-		System.out.println("Activation: " + activation);
-		System.out.println("Current concentration: " + this.concentration);
+		logger.debug("Activation: " + activation);
+		logger.debug("Current concentration: " + this.concentration);
 		
 //		double deltaConcentration = 
 //				Math.tanh(activation / 2) - this.concentration;
 		double deltaConcentration = Math.tanh(activation / 2) 
 				* ((activation >= 0) ? 1 - this.concentration 
 						: this.concentration) * RegulatoryNetwork.DELTA_INTEGRATION_RATE;
-		//System.out.println("Delta concentration: " + deltaConcentration);
+		logger.debug("Delta concentration: " + deltaConcentration);
 
 		this.concentration += deltaConcentration;
 

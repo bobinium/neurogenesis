@@ -3,6 +3,8 @@
  */
 package neurogenesis;
 
+import org.apache.log4j.Logger;
+
 
 
 
@@ -12,6 +14,10 @@ package neurogenesis;
  */
 public class Robot {
 
+	
+	//
+	private final static Logger logger = Logger.getLogger(Robot.class);	
+		
 	
 	private int radius;
 	
@@ -132,10 +138,9 @@ public class Robot {
 		this.angularPosition = normaliseAngularPosition(this.angularPosition 
 				+ this.angularVelocity);
 		
-		System.out.println("Robot's angular position: " 
+		logger.debug("Robot's angular position: "
 				+ this.angularPosition / Math.PI);
-		System.out.println("Robot's angular velocity: " 
-				+ this.angularVelocity);
+		logger.debug("Robot's angular velocity: " + this.angularVelocity);
 		
 	} // End of update()
 	

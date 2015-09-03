@@ -8,6 +8,6 @@
     <string>Extracellular</string>
     <string>Intracellular</string>
   </sourceIds>
-  <fileName>MutagenOutput.txt</fileName>
+  <fileName>output/MutagenOutput.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>
