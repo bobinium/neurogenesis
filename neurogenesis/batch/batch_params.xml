@@ -1,3 +1,1 @@
-<?xml version="1.0"?>
-<sweep runs="1">
-</sweep>
+<?xml version="1.0" ?><sweep runs="1"><parameter name="dendrites.roots.max" type="constant" constant_type="int" value="25"></parameter><parameter name="dendrites.leaves.max" type="constant" constant_type="int" value="30"></parameter><parameter name="neuron.learning.rate" type="number" number_type="double" start="0.1" end="0.9" step="0.1"><parameter name="quadrant.size" type="number" number_type="int" start="5" end="15" step="5"><parameter name="genome.size" type="number" number_type="int" start="4" end="12" step="4"><parameter name="population.extent" type="number" number_type="int" start="2" end="4" step="1"><parameter name="matrix.food.concentration" type="number" number_type="double" start="0" end="0.9" step="0.1"></parameter></parameter></parameter></parameter></parameter></sweep>
