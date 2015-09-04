@@ -19,21 +19,21 @@
     <entry>
       <string>Undifferentiated Cells</string>
       <repast.simphony.data2.engine.CountSourceDefinition>
-        <typeName>neurogenesis.brain.UndifferentiatedCell</typeName>
+        <typeName>org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCell</typeName>
         <id>Undifferentiated Cells</id>
       </repast.simphony.data2.engine.CountSourceDefinition>
     </entry>
     <entry>
       <string>Neurons</string>
       <repast.simphony.data2.engine.CountSourceDefinition>
-        <typeName>neurogenesis.brain.Neuron</typeName>
+        <typeName>org.thoughtsfactory.neurogenesis.brain.Neuron</typeName>
         <id>Neurons</id>
       </repast.simphony.data2.engine.CountSourceDefinition>
     </entry>
     <entry>
       <string>Total</string>
       <repast.simphony.data2.engine.CountSourceDefinition>
-        <typeName>neurogenesis.brain.Cell</typeName>
+        <typeName>org.thoughtsfactory.neurogenesis.brain.Cell</typeName>
         <id>Total</id>
       </repast.simphony.data2.engine.CountSourceDefinition>
     </entry>

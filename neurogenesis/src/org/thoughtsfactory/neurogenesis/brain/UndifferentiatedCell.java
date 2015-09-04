@@ -1,4 +1,4 @@
-package neurogenesis.brain;
+package org.thoughtsfactory.neurogenesis.brain;
 
 import org.apache.log4j.Logger;
 
@@ -34,9 +34,10 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 	 */
 	public UndifferentiatedCell(final ContinuousSpace<Object> newSpace,
 			final Grid<Object> newGrid,
-			final RegulatoryNetwork newRegulatoryNetwork) {
+			final RegulatoryNetwork newRegulatoryNetwork,
+			final boolean newCellAdhesionEnabled) {
 		
-		super(newSpace, newGrid, newRegulatoryNetwork);
+		super(newSpace, newGrid, newRegulatoryNetwork, newCellAdhesionEnabled);
 		
 	} // End of Cell(ContinuousSpace, Grid, RegulatoryNetwork)
 	
@@ -73,7 +74,9 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 				if (!cellDifferentiationHandler()) {
 				
 					// Handles cell adhesion.
-					//cellAdhesionHandler();
+					if (this.cellAdhesionEnabled) {
+						cellAdhesionHandler();
+					}
 
 					// Handles mutations.
 					//cellMutationHandler();

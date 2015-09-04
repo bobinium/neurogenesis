@@ -1,10 +1,11 @@
-package neurogenesis.brain;
+package org.thoughtsfactory.neurogenesis.brain;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.thoughtsfactory.neurogenesis.brain.GeneticElement.Type;
 
 public class RegulatoryUnit {
 

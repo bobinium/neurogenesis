@@ -1,4 +1,4 @@
-package neurogenesis.brain;
+package org.thoughtsfactory.neurogenesis.brain;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,10 +67,16 @@ public abstract class GeneRegulatedCell extends Cell {
 	/**
 	 * Concentration of permeable products inside the current cell.
 	 */
-	public Map<CellProductType, CellMembraneChannel> membraneChannels = 
+	protected final Map<CellProductType, CellMembraneChannel> membraneChannels = 
 			new HashMap<CellProductType, CellMembraneChannel>();
 	
 
+	/**
+	 * 
+	 */
+	protected final boolean cellAdhesionEnabled;
+	
+	
 	/**
 	 * 
 	 */
@@ -123,11 +129,13 @@ public abstract class GeneRegulatedCell extends Cell {
 	 */
 	protected GeneRegulatedCell(final ContinuousSpace<Object> newSpace, 
 			final Grid<Object> newGrid, 
-			final RegulatoryNetwork newRegulatoryNetwork) {
+			final RegulatoryNetwork newRegulatoryNetwork,
+			final boolean newCellAdhesionEnabled) {
 		
 		super(newSpace, newGrid);
 		
 		this.regulatoryNetwork = newRegulatoryNetwork;
+		this.cellAdhesionEnabled = newCellAdhesionEnabled;
 		
 		// Food is only taken in, not out.
 		this.membraneChannels.put(CellProductType.FOOD,
@@ -172,6 +180,8 @@ public abstract class GeneRegulatedCell extends Cell {
 		this.attached = motherCell.attached;
 		this.alive = motherCell.alive;
 
+		this.cellAdhesionEnabled = motherCell.cellAdhesionEnabled;
+		
 	} // End of GeneRegulatedCell(GeneReulatedCell)
 	
 	
@@ -249,7 +259,8 @@ public abstract class GeneRegulatedCell extends Cell {
 	protected List<GeneRegulatedCell> findPartnerCells(final GridPoint pt, 
 			final double cellAdhesionThreshold) {
 		
-		List<GeneRegulatedCell> partnerCells = new ArrayList<GeneRegulatedCell>();
+		List<GeneRegulatedCell> partnerCells = 
+				new ArrayList<GeneRegulatedCell>();
 		
 		// use the GridCellNgh class to create GridCells for
 		// the surrounding neighbourhood.
@@ -263,12 +274,14 @@ public abstract class GeneRegulatedCell extends Cell {
 		for (GridCell<GeneRegulatedCell> gridCell : gridCells) {
 			
 			if (gridCell.size() > 1) {
-				//throw new IllegalStateException("Only one cell per grid unit!");
+				throw new IllegalStateException("Only one cell per grid unit!");
 			}
 			
 			for (GeneRegulatedCell cell : gridCell.items()) {
 				
-				if (cell.cellAdhesionRegulator > cellAdhesionThreshold) {
+				// Check if the neighbour has the right concentration of CAM.
+				if (cell.cellAdhesionEnabled && 
+						(cell.cellAdhesionRegulator > cellAdhesionThreshold)) {
 					partnerCells.add(cell);
 				}
 				

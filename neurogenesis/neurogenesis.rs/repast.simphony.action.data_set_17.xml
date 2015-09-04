@@ -19,7 +19,7 @@
       <string>LightSourceAngularPosition</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>LightSourceAngularPosition</id>
-        <className>neurogenesis.ArenaSimulator</className>
+        <className>org.thoughtsfactory.neurogenesis.ArenaSimulator</className>
         <methodName>getLightSourceAngularPosition</methodName>
         <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
@@ -28,7 +28,7 @@
       <string>RobotAngularPosition</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>RobotAngularPosition</id>
-        <className>neurogenesis.ArenaSimulator</className>
+        <className>org.thoughtsfactory.neurogenesis.ArenaSimulator</className>
         <methodName>getRobotAngularPosition</methodName>
         <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
@@ -37,7 +37,7 @@
       <string>AngleDeltaLightAndRobot</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>AngleDeltaLightAndRobot</id>
-        <className>neurogenesis.ArenaSimulator</className>
+        <className>org.thoughtsfactory.neurogenesis.ArenaSimulator</className>
         <methodName>getAngleDeltaLightAndRobot</methodName>
         <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
@@ -46,7 +46,7 @@
       <string>SignAngleDeltaLightAndRobot</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>SignAngleDeltaLightAndRobot</id>
-        <className>neurogenesis.ArenaSimulator</className>
+        <className>org.thoughtsfactory.neurogenesis.ArenaSimulator</className>
         <methodName>getSignAngleDeltaLightAndRobot</methodName>
         <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
@@ -55,7 +55,7 @@
       <string>AverageAngleDelta</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>AverageAngleDelta</id>
-        <className>neurogenesis.ArenaSimulator</className>
+        <className>org.thoughtsfactory.neurogenesis.ArenaSimulator</className>
         <methodName>getAverageAngleDelta</methodName>
         <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
@@ -64,7 +64,7 @@
       <string>SineLightAngularPosition</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>SineLightAngularPosition</id>
-        <className>neurogenesis.ArenaSimulator</className>
+        <className>org.thoughtsfactory.neurogenesis.ArenaSimulator</className>
         <methodName>getSineLightAngularPosition</methodName>
         <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
@@ -73,7 +73,7 @@
       <string>CosineLightAngularPosition</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>CosineLightAngularPosition</id>
-        <className>neurogenesis.ArenaSimulator</className>
+        <className>org.thoughtsfactory.neurogenesis.ArenaSimulator</className>
         <methodName>getCosineLightAngularPosition</methodName>
         <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
@@ -82,7 +82,7 @@
       <string>SineRobotAngularPosition</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>SineRobotAngularPosition</id>
-        <className>neurogenesis.ArenaSimulator</className>
+        <className>org.thoughtsfactory.neurogenesis.ArenaSimulator</className>
         <methodName>getSineRobotAngularPosition</methodName>
         <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
@@ -91,7 +91,7 @@
       <string>CosineRobotAngularPosition</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>CosineRobotAngularPosition</id>
-        <className>neurogenesis.ArenaSimulator</className>
+        <className>org.thoughtsfactory.neurogenesis.ArenaSimulator</className>
         <methodName>getCosineRobotAngularPosition</methodName>
         <aggType>MAX</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>

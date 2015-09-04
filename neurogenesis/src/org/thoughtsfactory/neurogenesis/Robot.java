@@ -1,7 +1,7 @@
 /**
  * 
  */
-package neurogenesis;
+package org.thoughtsfactory.neurogenesis;
 
 import org.apache.log4j.Logger;
 

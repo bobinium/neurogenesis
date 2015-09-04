@@ -3,36 +3,36 @@
   <type>3D</type>
   <styles>
     <entry>
-      <string>neurogenesis.brain.InputNeuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
     <entry>
-      <string>neurogenesis.brain.OutputNeuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
       <string>repast.simphony.visualization.visualization3D.style.DefaultStyle3D</string>
     </entry>
     <entry>
-      <string>neurogenesis.brain.Neuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
-      <string>neurogenesis.brain.InputNeuron</string>
-      <string>neurogenesis.brain.InputNeuron.style_4.xml</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron.style_4.xml</string>
     </entry>
     <entry>
-      <string>neurogenesis.brain.OutputNeuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
       <null/>
     </entry>
     <entry>
-      <string>neurogenesis.brain.Neuron</string>
-      <string>neurogenesis.brain.Neuron.style_5.xml</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.Neuron.style_5.xml</string>
     </entry>
   </editedStyles>
   <netStyles>
     <entry>
       <string>neural network</string>
-      <string>neurogenesis.brain.NeuralNetworkEdgeStyle3D</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.NeuralNetworkEdgeStyle3D</string>
     </entry>
   </netStyles>
   <editedNetStyles>
@@ -56,15 +56,15 @@
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
-      <string>neurogenesis.brain.InputNeuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
       <int>2</int>
     </entry>
     <entry>
-      <string>neurogenesis.brain.OutputNeuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
       <int>1</int>
     </entry>
     <entry>
-      <string>neurogenesis.brain.Neuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
       <int>0</int>
     </entry>
   </layerOrder>

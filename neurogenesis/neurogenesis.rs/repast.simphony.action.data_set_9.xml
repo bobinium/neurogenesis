@@ -1,7 +1,7 @@
 <repast.simphony.data2.engine.DataSetDescriptor>
   <name>Sensors Illumination</name>
   <type>NON_AGGREGATE</type>
-  <sourceType>neurogenesis.LightSensor</sourceType>
+  <sourceType>org.thoughtsfactory.neurogenesis.LightSensor</sourceType>
   <inclTick>true</inclTick>
   <inclBatchRun>false</inclBatchRun>
   <inclRandomSeed>false</inclRandomSeed>
@@ -20,7 +20,7 @@
       <string>Label</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>Label</id>
-        <className>neurogenesis.LightSensor</className>
+        <className>org.thoughtsfactory.neurogenesis.LightSensor</className>
         <methodName>getLabel</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
@@ -28,7 +28,7 @@
       <string>LightIntensity</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>LightIntensity</id>
-        <className>neurogenesis.LightSensor</className>
+        <className>org.thoughtsfactory.neurogenesis.LightSensor</className>
         <methodName>getLightIntensity</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>

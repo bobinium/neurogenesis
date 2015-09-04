@@ -1,7 +1,7 @@
 /**
  * 
  */
-package neurogenesis.brain;
+package org.thoughtsfactory.neurogenesis.brain;
 
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -29,7 +29,7 @@ public class OutputNeuron extends Neuron {
 			final Network<Object> newNeuritesNetwork) {
 
 		super(newSpace, newGrid, newRegulatoryNetwork, 
-				newNeuralNetwork, newNeuritesNetwork);
+				newNeuralNetwork, newNeuritesNetwork, false);
 
 	} // End of OutputNeuron()
 	

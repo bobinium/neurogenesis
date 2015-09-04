@@ -1,19 +1,19 @@
 /**
  * 
  */
-package neurogenesis;
+package org.thoughtsfactory.neurogenesis;
 
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.thoughtsfactory.neurogenesis.brain.CellFactory;
+import org.thoughtsfactory.neurogenesis.brain.CellProductType;
+import org.thoughtsfactory.neurogenesis.brain.ExtracellularMatrix;
+import org.thoughtsfactory.neurogenesis.brain.InputNeuron;
+import org.thoughtsfactory.neurogenesis.brain.Neuron;
+import org.thoughtsfactory.neurogenesis.brain.OutputNeuron;
+import org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCell;
 
-import neurogenesis.brain.CellFactory;
-import neurogenesis.brain.CellProductType;
-import neurogenesis.brain.ExtracellularMatrix;
-import neurogenesis.brain.InputNeuron;
-import neurogenesis.brain.Neuron;
-import neurogenesis.brain.OutputNeuron;
-import neurogenesis.brain.UndifferentiatedCell;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
@@ -128,34 +128,6 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 
 	
 	//
-	private int genomeSize;
-	
-	
-	//
-	private int brainGridQuadrantSize;
-	
-	
-	//
-	private int brainGridSize;
-	
-	
-	//
-	private int brainGridOrigin;
-	
-	
-	//
-	private int outputNeuronGridPosY;
-	
-	
-	//
-	private int initialPopulationExtent;
-	
-	
-	//
-	private double initialMatrixFoodConcentration;
-	
-	
-	//
 	private Grid<Object> brainGrid;
 	
 	
@@ -198,7 +170,32 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	//
 	private OutputNeuron motorNeuron;
 	
+
+	//
+	private int brainGridQuadrantSize;
 	
+	
+	//
+	private int brainGridSize;
+	
+	
+	//
+	private int brainGridOrigin;
+	
+	
+	//
+	private int outputNeuronGridPosY;
+	
+	
+	//
+	private int initialPopulationExtent;
+	
+	
+	//
+	private double initialMatrixFoodConcentration;
+	
+	
+
 	//	@SuppressWarnings("rawtypes")
 //	public Context build(Context<Object> context) {
 //
@@ -291,49 +288,55 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	@SuppressWarnings("rawtypes")
 	public Context build(Context<Object> context) {
 
+		context.setId("neurogenesis");
+		
 		// Get the parameters of the model.
 		initialiseParameters();
 		
-		context.setId("neurogenesis");
-		
-		NetworkBuilder<Object> netBuilder = 
-				new NetworkBuilder<Object>("neural network", context, true);
-		this.neuralNetwork = netBuilder.buildNetwork();
-		
-		netBuilder = 
-				new NetworkBuilder<Object>("neurites network", context, true);
-		this.neuritesNetwork = netBuilder.buildNetwork();
+		SimulationContextHolder simulationContext = 
+				SimulationContextHolder.getInstance();
 		
 		ContinuousSpaceFactory spaceFactory =
 				ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
+		
 		this.arenaSpace =
 				spaceFactory.createContinuousSpace("arena space", context,
 						new RandomCartesianAdder<Object>(),
-						new repast.simphony.space.continuous.InfiniteBorders<Object>(),
+						new repast.simphony.space.continuous
+								.InfiniteBorders<Object>(),
 						new double[]{50, 50}, new double[]{25, 25});
 		
 		this.brainSpace =
 				spaceFactory.createContinuousSpace("brain space", context,
 						new RandomCartesianAdder<Object>(),
 						new repast.simphony.space.continuous.StrictBorders(),
-						new double[] { this.brainGridSize, 
-							this.brainGridSize, this.brainGridSize }, 
+						new double[] { this.brainGridSize, this.brainGridSize, 
+							this.brainGridSize }, 
 						new double[] { this.brainGridOrigin, 
 							this.brainGridOrigin, this.brainGridOrigin });
+		
+		simulationContext.setBrainSpace(this.brainSpace);
 		
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
 		this.brainGrid = gridFactory.createGrid("brain grid", context,
 				new GridBuilderParameters<Object>(new StrictBorders(),
 						new SimpleGridAdder<Object>(), true, 
-						new int[] { this.brainGridSize, 
-							this.brainGridSize, this.brainGridSize }, 
-						new int[] { this.brainGridOrigin, 
-							this.brainGridOrigin, this.brainGridOrigin }));
+						new int[] { this.brainGridSize, this.brainGridSize, 
+							this.brainGridSize }, 
+						new int[] { this.brainGridOrigin, this.brainGridOrigin, 
+							this.brainGridOrigin }));
 		
-		CellFactory.setContinuousSpace(this.brainSpace);
-		CellFactory.setGrid(this.brainGrid);
-		CellFactory.setNeuralNetwork(this.neuralNetwork);
-		CellFactory.setNeuritesNetwork(this.neuritesNetwork);
+		simulationContext.setBrainGrid(this.brainGrid);
+
+		NetworkBuilder<Object> netBuilder = 
+				new NetworkBuilder<Object>("neural network", context, true);
+		this.neuralNetwork = netBuilder.buildNetwork();
+		simulationContext.setNeuralNetwork(this.neuralNetwork);
+		
+		netBuilder = new NetworkBuilder<Object>("neurites network", 
+				context, true);
+		this.neuritesNetwork = netBuilder.buildNetwork();
+		simulationContext.setNeuritesNetwork(this.neuritesNetwork);
 
 		// Initialisation has to be in this order because of dependencies.
 		setupOutputNeuron(context);
@@ -357,7 +360,9 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		
 		Parameters params = RunEnvironment.getInstance().getParameters();
 		
-		this.genomeSize = params.getInteger("genome.size");
+		Configuration config = Configuration.getInstance();
+		
+		config.setGenomeSize(params.getInteger("genome.size"));
 		
 		this.brainGridQuadrantSize = params.getInteger("quadrant.size");
 		this.brainGridSize = 2 * this.brainGridQuadrantSize + 1;
@@ -371,6 +376,8 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		Neuron.MAX_DENDRITE_ROOTS = params.getInteger("dendrites.roots.max");
 		Neuron.MAX_DENDRITE_LEAVES = params.getInteger("dendrites.leaves.max");
 		Neuron.LEARNING_RATE = params.getDouble("neuron.learning.rate");
+		
+		config.setCellAdhesionEnabled(true);
 		
 	} // End of initiliseParameters()
 
@@ -537,7 +544,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 						z <= this.initialPopulationExtent; z++) {
 					
 					UndifferentiatedCell motherCell = CellFactory
-							.getNewUndifferentiatedCell(this.genomeSize); 
+							.getNewUndifferentiatedCell(); 
 					motherCell.setGenerationId(x + "," + y + "," + z);
 					context.add(motherCell);
 					this.brainSpace.moveTo(motherCell, 

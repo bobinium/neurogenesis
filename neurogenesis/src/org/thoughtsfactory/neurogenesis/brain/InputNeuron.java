@@ -1,13 +1,13 @@
 /**
  * 
  */
-package neurogenesis.brain;
+package org.thoughtsfactory.neurogenesis.brain;
 
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.thoughtsfactory.neurogenesis.LightSensor;
 
-import neurogenesis.LightSensor;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -22,12 +22,18 @@ import repast.simphony.space.grid.GridPoint;
  */
 public class InputNeuron extends Neuron {
 
+	
+	/**
+	 * 
+	 */
 	public static final double LIGHT_TO_ENERGY_EFFICIENCY = 0.1;
+	
 	
 	//
 	private final static Logger logger = Logger.getLogger(InputNeuron.class);	
 		
-	
+
+	//
 	private final LightSensor lightSensor;
 	
 	
@@ -43,22 +49,13 @@ public class InputNeuron extends Neuron {
 			final LightSensor newLightSensor) {
 		
 		super(newSpace, newGrid, newRegulatoryNetwork, 
-				newNeuralNetwork, newNeuritesNetwork);
+				newNeuralNetwork, newNeuritesNetwork, false);
 		
 		this.lightSensor = newLightSensor;
 		
 	} // End of InputNeuron()
 	
 
-	/**
-	 * 
-	 * @return
-	 */
-	public Network<Object> getNeuralNetwork() {
-		return this.neuralNetwork;
-	}
-	
-	
 	/**
 	 * 
 	 * @return

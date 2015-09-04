@@ -1,4 +1,5 @@
-package neurogenesis.brain;
+package org.thoughtsfactory.neurogenesis.brain;
+
 
 /**
  * Permeable cell products that can be exchanged between the cell and the

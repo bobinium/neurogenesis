@@ -1,11 +1,11 @@
 /**
  * 
  */
-package neurogenesis;
+package org.thoughtsfactory.neurogenesis;
 
 import org.apache.log4j.Logger;
+import org.thoughtsfactory.neurogenesis.brain.OutputNeuron;
 
-import neurogenesis.brain.OutputNeuron;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 

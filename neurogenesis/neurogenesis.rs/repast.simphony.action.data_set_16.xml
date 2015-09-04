@@ -19,7 +19,7 @@
     <entry>
       <string>Neurite Junctions</string>
       <repast.simphony.data2.engine.CountSourceDefinition>
-        <typeName>neurogenesis.brain.NeuriteJunction</typeName>
+        <typeName>org.thoughtsfactory.neurogenesis.brain.NeuriteJunction</typeName>
         <id>Neurite Junctions</id>
       </repast.simphony.data2.engine.CountSourceDefinition>
     </entry>

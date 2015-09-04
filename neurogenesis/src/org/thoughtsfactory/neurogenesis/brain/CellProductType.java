@@ -1,4 +1,4 @@
-package neurogenesis.brain;
+package org.thoughtsfactory.neurogenesis.brain;
 
 /**
  * 

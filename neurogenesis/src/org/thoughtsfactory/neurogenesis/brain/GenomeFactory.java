@@ -1,7 +1,9 @@
-package neurogenesis.brain;
+package org.thoughtsfactory.neurogenesis.brain;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.thoughtsfactory.neurogenesis.brain.GeneticElement.Type;
 
 import repast.simphony.random.RandomHelper;
 

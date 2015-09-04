@@ -1,7 +1,7 @@
 /**
  * 
  */
-package neurogenesis.brain;
+package org.thoughtsfactory.neurogenesis.brain;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.thoughtsfactory.neurogenesis.brain.NeuriteJunction.Type;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduleParameters;
@@ -98,9 +99,10 @@ public class Neuron extends GeneRegulatedCell {
 			final Grid<Object> newGrid,
 			final RegulatoryNetwork newRegulatoryNetwork,
 			final Network<Object> newNeuralNetwork,
-			final Network<Object> newNeuritesNetwork) {
+			final Network<Object> newNeuritesNetwork,
+			final boolean newCellAdhesionEnabled) {
 		
-		super(newSpace, newGrid, newRegulatoryNetwork);
+		super(newSpace, newGrid, newRegulatoryNetwork, newCellAdhesionEnabled);
 		
 		this.neuralNetwork = newNeuralNetwork;
 		this.neuritesNetwork = newNeuritesNetwork;
@@ -113,8 +115,8 @@ public class Neuron extends GeneRegulatedCell {
 	 * @param baseCell
 	 */
 	public Neuron(final GeneRegulatedCell motherCell, 
-			Network<Object> newNeuralNetwork,
-			Network<Object> newNeuritesNetwork) {
+			final Network<Object> newNeuralNetwork,
+			final Network<Object> newNeuritesNetwork) {
 		
 		super(motherCell);
 				
@@ -157,7 +159,9 @@ public class Neuron extends GeneRegulatedCell {
 			cellDendritesGrowthHandler();
 			
 			// Handles cell adhesion.
-			//cellAdhesionHandler();
+			if (this.cellAdhesionEnabled) {
+				cellAdhesionHandler();
+			}
 
 			// Handles mutations.
 			//cellMutationHandler();
