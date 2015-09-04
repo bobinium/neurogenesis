@@ -29,11 +29,11 @@ public class NeuriteJunctionStyle3D implements Style3D<NeuriteJunction> {
 		//if (taggedGroup == null || taggedGroup.getTag() == null) {
 			taggedGroup = new TaggedBranchGroup("DEFAULT");
 			Shape3D shape;
-//			if (agent.isSynapse()) {
-//				shape = ShapeFactory.createCube(.03f, "DEFAULT");
-//			} else {
+			if (agent.getSynapses().isEmpty()) {
 				shape = ShapeFactory.createSphere(.03f, "DEFAULT");
-//			}
+			} else {
+				shape = ShapeFactory.createCube(.03f, "DEFAULT");
+			}
 		    taggedGroup.getBranchGroup().addChild(shape);
 		    return taggedGroup;
 		//}
@@ -147,8 +147,8 @@ public class NeuriteJunctionStyle3D implements Style3D<NeuriteJunction> {
 //		float size = (float) (MINIMUM_CELL_SIZE 
 //				+ (agent.getCellDivisionConcentration() 
 //						* (1 - MINIMUM_CELL_SIZE)));
-		float size = 
-				(agent.getType() == NeuriteJunction.Type.NEURON) ? 1.0f : 0.1f;
+		float size = (agent.getType() == NeuriteJunction.Type.NEURON) 
+				? 1.0f : (agent.isActive() ? 0.1f : 0);
 		return new float[] { size, size, size };
 		
 	} // End of getScale()

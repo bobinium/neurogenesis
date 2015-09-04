@@ -3,12 +3,12 @@
   <type>2D</type>
   <styles>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.LightSource</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
-    </entry>
-    <entry>
       <string>org.thoughtsfactory.neurogenesis.LightSensor</string>
       <string>repast.simphony.visualizationOGL2D.DefaultStyleOGL2D</string>
+    </entry>
+    <entry>
+      <string>org.thoughtsfactory.neurogenesis.LightSource</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
     </entry>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.Robot</string>
@@ -17,12 +17,12 @@
   </styles>
   <editedStyles>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.LightSource</string>
-      <string>org.thoughtsfactory.neurogenesis.LightSource.style_1.xml</string>
-    </entry>
-    <entry>
       <string>org.thoughtsfactory.neurogenesis.LightSensor</string>
       <null/>
+    </entry>
+    <entry>
+      <string>org.thoughtsfactory.neurogenesis.LightSource</string>
+      <string>org.thoughtsfactory.neurogenesis.LightSource.style_1.xml</string>
     </entry>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.Robot</string>
@@ -46,12 +46,12 @@
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.LightSource</string>
-      <int>1</int>
-    </entry>
-    <entry>
       <string>org.thoughtsfactory.neurogenesis.LightSensor</string>
       <int>2</int>
+    </entry>
+    <entry>
+      <string>org.thoughtsfactory.neurogenesis.LightSource</string>
+      <int>1</int>
     </entry>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.Robot</string>

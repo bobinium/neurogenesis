@@ -53,7 +53,7 @@ public class CellFactory {
 						genomeFactory.getNewGenome(config.getGenomeSize()), 
 						simulationContext.getNeuralNetwork(), 
 						simulationContext.getNeuritesNetwork(), 
-						config.isCellAdhesionEnabled());
+						false /*config.isCellAdhesionEnabled() */);
 		
 		return newCell;
 		

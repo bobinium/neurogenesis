@@ -3,6 +3,18 @@
   <type>3D</type>
   <styles>
     <entry>
+      <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
+    </entry>
+    <entry>
+      <string>org.thoughtsfactory.neurogenesis.brain.NeuriteJunction</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
+    </entry>
+    <entry>
+      <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.NeuronStyle3D</string>
+    </entry>
+    <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
@@ -10,38 +22,26 @@
       <string>org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCell</string>
       <string>org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCellStyle3D</string>
     </entry>
-    <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.NeuriteJunction</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
-    </entry>
-    <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
-    </entry>
-    <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
-      <string>org.thoughtsfactory.neurogenesis.brain.NeuronStyle3D</string>
-    </entry>
   </styles>
   <editedStyles>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
-      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron.style_1.xml</string>
-    </entry>
-    <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCell</string>
-      <null/>
+      <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron.style_0.xml</string>
     </entry>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.NeuriteJunction</string>
       <string>org.thoughtsfactory.neurogenesis.brain.NeuriteJunction.style_0.xml</string>
     </entry>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
-      <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron.style_0.xml</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
+      <null/>
     </entry>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron.style_1.xml</string>
+    </entry>
+    <entry>
+      <string>org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCell</string>
       <null/>
     </entry>
   </editedStyles>
@@ -72,24 +72,24 @@
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
-      <int>2</int>
-    </entry>
-    <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCell</string>
-      <int>3</int>
+      <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
+      <int>1</int>
     </entry>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.NeuriteJunction</string>
       <int>4</int>
     </entry>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
-      <int>1</int>
-    </entry>
-    <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
       <int>0</int>
+    </entry>
+    <entry>
+      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
+      <int>2</int>
+    </entry>
+    <entry>
+      <string>org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCell</string>
+      <int>3</int>
     </entry>
   </layerOrder>
   <projections>

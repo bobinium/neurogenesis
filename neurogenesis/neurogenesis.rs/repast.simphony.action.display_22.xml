@@ -3,10 +3,6 @@
   <type>3D</type>
   <styles>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
-    </entry>
-    <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
       <string>repast.simphony.visualization.visualization3D.style.DefaultStyle3D</string>
     </entry>
@@ -14,12 +10,12 @@
       <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
-  </styles>
-  <editedStyles>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
-      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron.style_4.xml</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
+  </styles>
+  <editedStyles>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
       <null/>
@@ -27,6 +23,10 @@
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
       <string>org.thoughtsfactory.neurogenesis.brain.Neuron.style_5.xml</string>
+    </entry>
+    <entry>
+      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron.style_4.xml</string>
     </entry>
   </editedStyles>
   <netStyles>
@@ -56,16 +56,16 @@
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
-      <int>2</int>
-    </entry>
-    <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
       <int>1</int>
     </entry>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
       <int>0</int>
+    </entry>
+    <entry>
+      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
+      <int>2</int>
     </entry>
   </layerOrder>
   <projections>

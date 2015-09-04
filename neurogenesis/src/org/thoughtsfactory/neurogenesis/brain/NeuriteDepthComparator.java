@@ -10,12 +10,12 @@ import java.util.Comparator;
 public class NeuriteDepthComparator implements Comparator<NeuriteJunction> {
 
 	/**
-	 * 
+	 * Ascending order.
 	 */
 	@Override
 	public int compare(NeuriteJunction junction1, NeuriteJunction junction2) {
 
-		return junction2.getDepth() - junction1.getDepth();
+		return junction1.getDepth() - junction2.getDepth();
 			
 	} // End of compare()
 

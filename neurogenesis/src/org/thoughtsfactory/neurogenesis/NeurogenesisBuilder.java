@@ -343,6 +343,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		setupArena(context);
 		setupInputNeurons(context);
 		
+		//setupTestNeuron(context);
 		setupInitialPopulation(context);
 		setupInitialEnvironment(context);
 		
@@ -377,7 +378,8 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		Neuron.MAX_DENDRITE_LEAVES = params.getInteger("dendrites.leaves.max");
 		Neuron.LEARNING_RATE = params.getDouble("neuron.learning.rate");
 		
-		config.setCellAdhesionEnabled(true);
+		config.setCellAdhesionEnabled(
+				params.getBoolean("cell.adhesion.enabled"));
 		
 	} // End of initiliseParameters()
 
@@ -558,6 +560,22 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		} // End for(x)
 
 	} // End of setupInitialPopulation()
+	
+	
+	/**
+	 * 
+	 * @param context
+	 */
+	@SuppressWarnings("unused")
+	private void setupTestNeuron(final Context<Object> context) {
+		
+		Neuron neuron = CellFactory.getNewNeuron();
+		
+		context.add(neuron);
+		this.brainSpace.moveTo(neuron,0.5, 0.5, 0.5);
+		this.brainGrid.moveTo(neuron, 0, 0, 0);
+
+	} // End of setupTestNeuron()
 	
 	
 } // End of NeurogenesisBuilder class

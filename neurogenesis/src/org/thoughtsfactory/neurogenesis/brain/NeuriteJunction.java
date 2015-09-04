@@ -30,15 +30,11 @@ public class NeuriteJunction {
 	
 	
 	//
-	//private boolean synapse = false;
+	private int depth;
 	
 	
 	//
-	private final int depth;
-	
-	
-	//
-	public boolean active = true;
+	private boolean active = true;
 	
 
 	// The list of neurites that point to this node.
@@ -48,6 +44,10 @@ public class NeuriteJunction {
 	
 	// The next neurite to which this one points.
 	private NeuriteJunction successor = null;
+	
+	
+	//
+	private List<NeuriteJunction> synapses = new ArrayList<NeuriteJunction>();
 	
 	
 	/**
@@ -80,51 +80,40 @@ public class NeuriteJunction {
 		return this.neuron;
 	}
 	
-	
-	/**
-	 * 
-	 * @return
-	 */
-//	public final boolean isSynapse() {
-//		
-//		if (this.type == Type.AXON) {
-//			
-//			boolean synapse = false;
-//		
-//			for (Object obj : this.neuron.neuritesNetwork.getSuccessors(this)) {
-//				NeuriteJunction junction = (NeuriteJunction) obj;
-//				if (junction.getNeuron() != this.neuron) {
-//					synapse = true;
-//					break;
-//				}
-//			}
-//				
-//			return synapse;
-//			
-//		} else {
-//		
-//			return false;
-//			
-//		} // End if()
-//			
-//	} // End of isSynapse()
-	
-	
-	/**
-	 * 
-	 * @param newValue
-	 */
-//	public final void setSynapse(final boolean newValue) {
-//		this.synapse = newValue;
-//	}
-	
-	
+		
 	/**
 	 * 
 	 * @return
 	 */
 	public final int getDepth() {
 		return this.depth;
+	}
+	
+	
+	/**
+	 * 
+	 * @param newDepth
+	 */
+	public final void setDepth(final int newDepth) { 
+		this.depth = newDepth;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final boolean isActive() {
+		return this.active;
+	}
+	
+	
+	/**
+	 * 
+	 * @param newValue
+	 */
+	public final void setActive(final boolean newValue) {
+		this.active = newValue;
 	}
 	
 	
@@ -150,9 +139,18 @@ public class NeuriteJunction {
 	 * 
 	 * @param newSuccessor
 	 */
-	public void setSuccessor(final NeuriteJunction newSuccessor) {
+	public final void setSuccessor(final NeuriteJunction newSuccessor) {
 		this.successor = newSuccessor;
 	}
 
 
+	/**
+	 * 
+	 * @return
+	 */
+	public final List<NeuriteJunction> getSynapses() {
+		return this.synapses;
+	}
+	
+	
 } // End of NeuriteJunction class
