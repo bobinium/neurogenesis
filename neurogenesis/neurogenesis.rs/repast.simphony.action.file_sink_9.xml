@@ -1,0 +1,15 @@
+<repast.simphony.data2.engine.FileSinkDescriptor>
+  <name>Neurogen</name>
+  <dataSet>Neurogen</dataSet>
+  <delimiter>,</delimiter>
+  <format>TABULAR</format>
+  <sourceIds class="linked-hash-set">
+    <string>tick</string>
+    <string>ExtracellularMatrix</string>
+    <string>UndifferentiatedCells</string>
+    <string>Neurons</string>
+    <string>Total Cells</string>
+  </sourceIds>
+  <fileName>output/NeurogenOutput.txt</fileName>
+  <addTimeStamp>true</addTimeStamp>
+</repast.simphony.data2.engine.FileSinkDescriptor>

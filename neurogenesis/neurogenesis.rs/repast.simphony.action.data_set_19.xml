@@ -1,0 +1,58 @@
+<repast.simphony.data2.engine.DataSetDescriptor>
+  <name>Neurogen</name>
+  <type>AGGREGATE</type>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <pType>LAST</pType>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+    <hashCode>-674711337</hashCode>
+  </scheduleParams>
+  <atEnd>false</atEnd>
+  <methodDataSources class="linked-hash-map">
+    <entry>
+      <string>ExtracellularMatrix</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>ExtracellularMatrix</id>
+        <className>org.thoughtsfactory.neurogenesis.brain.ExtracellularMatrix</className>
+        <methodName>getNeurogenConcentration</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>UndifferentiatedCells</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>UndifferentiatedCells</id>
+        <className>org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCell</className>
+        <methodName>getNeurogenConcentration</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Neurons</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Neurons</id>
+        <className>org.thoughtsfactory.neurogenesis.brain.Neuron</className>
+        <methodName>getNeurogenConcentration</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Total Cells</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Total Cells</id>
+        <className>org.thoughtsfactory.neurogenesis.brain.GeneRegulatedCell</className>
+        <methodName>getNeurogenConcentration</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+  </methodDataSources>
+  <countSources class="linked-hash-map"/>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>
