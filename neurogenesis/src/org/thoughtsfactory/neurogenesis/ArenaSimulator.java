@@ -4,7 +4,6 @@
 package org.thoughtsfactory.neurogenesis;
 
 import org.apache.log4j.Logger;
-import org.thoughtsfactory.neurogenesis.brain.OutputNeuron;
 
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -23,15 +22,20 @@ public class ArenaSimulator {
 	//
 	private final Robot robot;
 	
+	
+	//
 	private final LightSource lightSource;
 	
+	
+	//
 	private final double maxIlluminationDistance;
 	
-	private final OutputNeuron motorNeuron;
 	
-	
+	//
 	private double sumAverageAngleDelta = 0;
 	
+	
+	//
 	private long tickCount = 0;
 	
 	
@@ -41,12 +45,10 @@ public class ArenaSimulator {
 	 * @param newLightSource
 	 */
 	public ArenaSimulator(final Robot newRobot, 
-			final LightSource newLightSource,
-			final OutputNeuron newMotorNeuron) {
+			final LightSource newLightSource) {
 		
 		this.robot = newRobot;
 		this.lightSource = newLightSource;
-		this.motorNeuron = newMotorNeuron;
 		
 		this.maxIlluminationDistance = 
 				Math.sqrt((this.lightSource.getRadiusOfTrajectory() 
@@ -104,12 +106,10 @@ public class ArenaSimulator {
 		logger.info("Updating arena...");
 		
 		// Constant velocity.
-		this.robot.update(this.motorNeuron.getActivation());
+		this.robot.update();
 		this.lightSource.update();
 		
-		LightSensor[] lightSensors = this.robot.getLightSensors();
-		
-		for (LightSensor sensor : lightSensors) {
+		for (LightSensor sensor : this.robot.getLightSensors()) {
 			
 			logger.debug("Sensor angular position: " 
 					+ this.robot.getAngularPosition(sensor) / Math.PI);
@@ -131,7 +131,8 @@ public class ArenaSimulator {
 					this.lightSource.getLightIntensity() / distanceSquared;
 			}
 			
-			sensor.update(this.robot, lightIntensity);
+			sensor.update(this.robot, lightIntensity 
+					/ this.lightSource.getLightIntensity());
 			
 		} // End of for()
 		

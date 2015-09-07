@@ -5,6 +5,7 @@
   <sizeMin>0.0</sizeMin>
   <sizeScale>1.0</sizeScale>
   <label></label>
+  <labelMethod>getFormattedActivation</labelMethod>
   <labelPosition>bottom</labelPosition>
   <labelPrecision>3</labelPrecision>
   <labelOffset>0.03</labelOffset>
@@ -18,7 +19,7 @@
   </labelColor>
   <color>
     <float>1.0</float>
-    <float>1.0</float>
+    <float>0.0</float>
     <float>0.0</float>
   </color>
   <colorMax>

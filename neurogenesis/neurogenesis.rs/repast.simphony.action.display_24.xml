@@ -1,5 +1,5 @@
 <repast.simphony.visualization.engine.CartesianDisplayDescriptor>
-  <name>Brain Display</name>
+  <name>Neural Network Display</name>
   <type>3D</type>
   <styles>
     <entry>
@@ -7,54 +7,46 @@
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.NeuriteJunction</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
-    </entry>
-    <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
-      <string>org.thoughtsfactory.neurogenesis.brain.NeuronStyle3D</string>
-    </entry>
-    <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCell</string>
-      <string>org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCellStyle3D</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.MotionInputNeuron</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
+    </entry>
+    <entry>
+      <string>org.thoughtsfactory.neurogenesis.brain.FoodInputNeuron</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
-      <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron.style_0.xml</string>
-    </entry>
-    <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.NeuriteJunction</string>
-      <string>org.thoughtsfactory.neurogenesis.brain.NeuriteJunction.style_0.xml</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron.style_1.xml</string>
     </entry>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
-      <null/>
+      <string>org.thoughtsfactory.neurogenesis.brain.Neuron.style_5.xml</string>
     </entry>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
-      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron.style_1.xml</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.MotionInputNeuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.MotionInputNeuron.style_1.xml</string>
     </entry>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCell</string>
-      <null/>
+      <string>org.thoughtsfactory.neurogenesis.brain.FoodInputNeuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.FoodInputNeuron.style_1.xml</string>
     </entry>
   </editedStyles>
   <netStyles>
     <entry>
-      <string>neurites network</string>
-      <string>repast.simphony.visualization.editedStyle.EditedEdgeStyle3D</string>
+      <string>neural network</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.NeuralNetworkEdgeStyle3D</string>
     </entry>
   </netStyles>
   <editedNetStyles>
     <entry>
-      <string>neurites network</string>
-      <string>neuritesnetwork.style_0.xml</string>
+      <string>neural network</string>
+      <null/>
     </entry>
   </editedNetStyles>
   <frequency>ON_MOVE</frequency>
@@ -65,7 +57,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>1413579747</hashCode>
+    <hashCode>-336534582</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>brain space</layoutProjection>
@@ -73,23 +65,19 @@
   <layerOrder>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
-      <int>1</int>
-    </entry>
-    <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.NeuriteJunction</string>
-      <int>4</int>
+      <int>3</int>
     </entry>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
-      <int>0</int>
-    </entry>
-    <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.InputNeuron</string>
       <int>2</int>
     </entry>
     <entry>
-      <string>org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCell</string>
-      <int>3</int>
+      <string>org.thoughtsfactory.neurogenesis.brain.MotionInputNeuron</string>
+      <int>1</int>
+    </entry>
+    <entry>
+      <string>org.thoughtsfactory.neurogenesis.brain.FoodInputNeuron</string>
+      <int>0</int>
     </entry>
   </layerOrder>
   <projections>
@@ -99,7 +87,7 @@
       <type>continuous space</type>
     </repast.simphony.scenario.data.ProjectionData>
     <repast.simphony.scenario.data.ProjectionData>
-      <id>neurites network</id>
+      <id>neural network</id>
       <attributes/>
       <type>network</type>
     </repast.simphony.scenario.data.ProjectionData>
@@ -108,6 +96,13 @@
     <unitSize>0.06</unitSize>
   </visualizationProperties>
   <projectionDescriptors>
+    <entry>
+      <string>neural network</string>
+      <repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+        <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData[2]"/>
+        <props/>
+      </repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+    </entry>
     <entry>
       <string>brain space</string>
       <repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
@@ -132,13 +127,6 @@
           </entry>
         </props>
       </repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
-    </entry>
-    <entry>
-      <string>neurites network</string>
-      <repast.simphony.visualization.engine.DefaultProjectionDescriptor>
-        <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData[2]"/>
-        <props/>
-      </repast.simphony.visualization.engine.DefaultProjectionDescriptor>
     </entry>
   </projectionDescriptors>
   <props/>

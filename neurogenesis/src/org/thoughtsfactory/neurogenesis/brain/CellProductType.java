@@ -7,6 +7,6 @@ package org.thoughtsfactory.neurogenesis.brain;
  */
 public enum CellProductType {
 
-	FOOD, WASTE, SAM, MUTAGEN
+	FOOD, WASTE, SAM, MUTAGEN, NEUROGEN
 
 } // End CellProductType enum

@@ -108,10 +108,14 @@ public class NeuriteJunctionStyle3D implements Style3D<NeuriteJunction> {
 			taggedAppearance = new TaggedAppearance("DEFAULT");
 
 			Color agentColour = Color.WHITE;
+			
 			switch (agent.getType()) { 
 			case NEURON:
-				if (agent.getNeuron() instanceof InputNeuron) {
+			case AXON:
+				if (agent.getNeuron() instanceof FoodInputNeuron) {
 					agentColour = Color.YELLOW;
+				} else if (agent.getNeuron() instanceof MotionInputNeuron) {
+					agentColour = Color.MAGENTA;
 				} else if (agent.getNeuron() instanceof OutputNeuron) {
 					agentColour = Color.RED;
 				} else {
@@ -119,12 +123,11 @@ public class NeuriteJunctionStyle3D implements Style3D<NeuriteJunction> {
 				}
 				break;
 			case DENDRITE:
-				agentColour = (agent.getNeuron() instanceof OutputNeuron) 
-						? Color.GREEN : Color.BLUE;
-				break;
-			case AXON:
-				agentColour = (agent.getNeuron() instanceof InputNeuron)
-						? Color.MAGENTA : Color.RED;
+				if (agent.getNeuron() instanceof OutputNeuron) {
+					agentColour = Color.GREEN;
+				} else {
+					agentColour = Color.BLUE;
+				}
 				break;
 			}
 			

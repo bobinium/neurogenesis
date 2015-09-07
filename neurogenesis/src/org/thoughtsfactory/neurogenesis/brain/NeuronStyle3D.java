@@ -105,9 +105,16 @@ public class NeuronStyle3D implements Style3D<Neuron> {
 		
 		if (taggedAppearance == null || taggedAppearance.getTag() == null) {
 			taggedAppearance = new TaggedAppearance("DEFAULT");
+			
+			Color agentColour;
+			if (agent.isAttached() || !agent.invaders.isEmpty()) {
+				agentColour = Color.BLUE;
+			} else {
+				agentColour = Color.CYAN;
+			}
+			
 			AppearanceFactory.setMaterialAppearance(
-					taggedAppearance.getAppearance(), 
-					agent.isAttached() ? Color.BLUE : Color.CYAN);
+					taggedAppearance.getAppearance(), agentColour);
 	    }
 	    
 	    return taggedAppearance;

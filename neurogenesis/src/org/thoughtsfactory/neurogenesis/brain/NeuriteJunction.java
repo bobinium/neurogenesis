@@ -3,13 +3,15 @@ package org.thoughtsfactory.neurogenesis.brain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * 
  * @author bob
  *
  */
-public class NeuriteJunction {
+public class NeuriteJunction implements Destroyable {
 
 	/**
 	 * 
@@ -20,6 +22,11 @@ public class NeuriteJunction {
 		NEURON, DENDRITE, AXON
 	}
 	
+	
+	//
+	private final static Logger logger = 
+			Logger.getLogger(NeuriteJunction.class);	
+
 	
 	//
 	private Type type;
@@ -151,6 +158,18 @@ public class NeuriteJunction {
 	public final List<NeuriteJunction> getSynapses() {
 		return this.synapses;
 	}
+	
+	
+	/**
+	 * 
+	 */
+	public void destroy() {
+		
+		logger.info("Destroying neurite: " + this.type);
+		
+		//this.neuron.destroyNeuriteJunction(this);
+		
+	} // End of destroy()
 	
 	
 } // End of NeuriteJunction class

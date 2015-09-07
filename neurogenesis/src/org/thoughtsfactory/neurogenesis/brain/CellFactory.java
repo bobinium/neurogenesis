@@ -3,6 +3,7 @@ package org.thoughtsfactory.neurogenesis.brain;
 import org.thoughtsfactory.neurogenesis.Configuration;
 import org.thoughtsfactory.neurogenesis.SimulationContext;
 import org.thoughtsfactory.neurogenesis.SimulationContextHolder;
+import org.thoughtsfactory.neurogenesis.genetics.GenomeFactory;
 
 
 /**

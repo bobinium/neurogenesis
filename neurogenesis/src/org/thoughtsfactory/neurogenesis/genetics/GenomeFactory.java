@@ -1,13 +1,16 @@
-package org.thoughtsfactory.neurogenesis.brain;
+package org.thoughtsfactory.neurogenesis.genetics;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.thoughtsfactory.neurogenesis.brain.GeneticElement.Type;
-
 import repast.simphony.random.RandomHelper;
 
 
+/**
+ * 
+ * @author bob
+ *
+ */
 public class GenomeFactory {
 
 	
@@ -44,50 +47,46 @@ public class GenomeFactory {
 			
 		} // End for()
 		
-		GeneticElement foodInputElement = 
-				getNewGeneticElement(GeneticElement.Type.SPECIAL_IN_FOOD); 
+		List<GeneticElement> inputElements = new ArrayList<GeneticElement>();
+		List<GeneticElement> outputElements = new ArrayList<GeneticElement>();
 		
-		GeneticElement camFeedbackInputElement = 
-				getNewGeneticElement(GeneticElement.Type.SPECIAL_IN_CAM); 
-		
-		GeneticElement mutagenFeedbackInputElement = 
-				getNewGeneticElement(GeneticElement.Type.SPECIAL_IN_MUTAGEN); 
-		
-		GeneticElement wasteOutputElement = 
-				getNewGeneticElement(GeneticElement.Type.SPECIAL_OUT_WASTE);
-		
-		GeneticElement camOutputElement = 
-				getNewGeneticElement(GeneticElement.Type.SPECIAL_OUT_CAM);
-		
-		GeneticElement samOutputElement = 
-				getNewGeneticElement(GeneticElement.Type.SPECIAL_OUT_SAM);
-		
-		GeneticElement mutagenOutputElement = 
-				getNewGeneticElement(GeneticElement.Type.SPECIAL_OUT_MUTAGEN);
-		
-		GeneticElement growthOutputElement = 
-				getNewGeneticElement(GeneticElement.Type.SPECIAL_OUT_MITOGEN); 
-		
-		GeneticElement neurogenOutputElement = 
-				getNewGeneticElement(GeneticElement.Type.SPECIAL_OUT_NEUROGEN);
-		
-		GeneticElement energyOutputElement = 
-				getNewGeneticElement(GeneticElement.Type.SPECIAL_OUT_ENERGY);
-		
+		for (GeneticElement.Type elementType : GeneticElement.Type.values()) {
+
+			switch (elementType) {
+			case CIS: 
+			case TRANS:
+				break;
+			case SPECIAL_IN_FOOD:
+			case SPECIAL_IN_CAM:
+			case SPECIAL_IN_MUTAGEN:
+				inputElements.add(getNewGeneticElement(elementType));
+				break;
+			case SPECIAL_OUT_WASTE:
+			case SPECIAL_OUT_CAM:
+			case SPECIAL_OUT_SAM: 
+			case SPECIAL_OUT_MUTAGEN:
+			case SPECIAL_OUT_MITOGEN:
+			case SPECIAL_OUT_NEUROGEN:
+			case SPECIAL_OUT_ENERGY:
+			case SPECIAL_OUT_FOOD_RATE_IN:
+			case SPECIAL_OUT_WASTE_RATE_IN:
+			case SPECIAL_OUT_WASTE_RATE_OUT:
+			case SPECIAL_OUT_SAM_RATE_OUT:
+			case SPECIAL_OUT_MUTAGEN_RATE_IN:
+			case SPECIAL_OUT_MUTAGEN_RATE_OUT:
+			case SPECIAL_OUT_NEUROGEN_RATE_IN:
+			case SPECIAL_OUT_NEUROGEN_RATE_OUT:
+				outputElements.add(getNewGeneticElement(elementType));
+				break;
+			}
+	
+		} // End for(elementType)
+					
 		return new RegulatoryNetwork(regulatoryUnits.toArray(
 				new RegulatoryUnit[regulatoryUnits.size()]),
-				new GeneticElement[] { 
-						foodInputElement, 
-						camFeedbackInputElement,
-						mutagenFeedbackInputElement },
-				new GeneticElement[] {
-						wasteOutputElement,
-						camOutputElement,
-						samOutputElement,
-						mutagenOutputElement,
-						growthOutputElement,
-						neurogenOutputElement,
-						energyOutputElement });
+				inputElements.toArray(new GeneticElement[inputElements.size()]),
+				outputElements.toArray(
+						new GeneticElement[outputElements.size()]));
 		
 	} // End of getNewGenome()
 	

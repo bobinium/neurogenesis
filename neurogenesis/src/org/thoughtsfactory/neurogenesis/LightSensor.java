@@ -1,20 +1,33 @@
 package org.thoughtsfactory.neurogenesis;
 
 import org.apache.log4j.Logger;
+import org.thoughtsfactory.neurogenesis.brain.Sensor;
 
 import repast.simphony.space.continuous.ContinuousSpace;
 
-public class LightSensor {
+
+/**
+ * 
+ * 
+ * @author bob
+ *
+ */
+public class LightSensor implements Sensor {
 
 	
 	//
 	private final static Logger logger = Logger.getLogger(LightSensor.class);	
 
 	
+	//
 	private final ContinuousSpace<Object> space;
 	
+	
+	//
 	private final double angularRelativePosition;
 	
+	
+	//
 	private double lightIntensity = 0;
 	
 	
@@ -27,7 +40,7 @@ public class LightSensor {
 		
 		this.space = newSpace;
 		this.angularRelativePosition = newAngularRelativePosition;
-		
+				
 	} // End of LightSensor()
 	
 	
@@ -35,7 +48,16 @@ public class LightSensor {
 	 * 
 	 * @return
 	 */
-	public double getAngularRelativePosition() {
+	public final ContinuousSpace<Object> getSpace() {
+		return this.space;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final double getAngularRelativePosition() {
 		return this.angularRelativePosition;
 	}
 	
@@ -44,7 +66,17 @@ public class LightSensor {
 	 * 
 	 * @return
 	 */
-	public double getLightIntensity() {
+	public final double getLightIntensity() {
+		return this.lightIntensity;
+	}
+	
+
+	/**
+	 * 
+	 * @return
+	 */
+	@Override
+	public double getValue() {
 		return this.lightIntensity;
 	}
 	

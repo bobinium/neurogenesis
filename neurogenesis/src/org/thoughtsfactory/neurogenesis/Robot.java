@@ -5,7 +5,8 @@ package org.thoughtsfactory.neurogenesis;
 
 import org.apache.log4j.Logger;
 
-
+import repast.simphony.context.Context;
+import repast.simphony.space.continuous.ContinuousSpace;
 
 
 /**
@@ -19,15 +20,48 @@ public class Robot {
 	private final static Logger logger = Logger.getLogger(Robot.class);	
 		
 	
-	private int radius;
+	//
+	private final int radius;
 	
-	private double angularPosition;
 	
+	//
+	private final ContinuousSpace<Object> space;
+	
+	
+	//
+	private final LightSensor leftLightSensor;
+
+	
+	//
+	private final LightSensor rightLightSensor;
+	
+	
+	//
+	private final MotionSensor leftMotionSensor = new MotionSensor();
+	
+	
+	//
+	private final MotionSensor rightMotionSensor = new MotionSensor();
+	
+	
+	//
+	private final Motor leftMotor = new Motor();
+	
+	
+	//
+	private final Motor rightMotor = new Motor();
+	
+	
+	//
 	private final double maxAngularVelocity;
 	
-	private double angularVelocity;
 	
-	private final LightSensor[] lightSensors;
+	//
+	private double angularPosition = 0;
+	
+	
+	//
+	private double angularVelocity = 0;
 	
 	
 	/**
@@ -35,18 +69,17 @@ public class Robot {
 	 * @param radius
 	 * @param newAngularPosition
 	 */
-	public Robot(final int newRadius, 
-			final double newAngularPosition,
-			final double newMaxAngularVelocity,
-			final double newAngularVelocity,
-			final LightSensor[] newLightSensors) {
+	public Robot(final int newRadius,
+			final ContinuousSpace<Object> newSpace,
+			final double newMaxAngularVelocity) {
 		
 		this.radius = newRadius;
-		this.angularPosition = newAngularPosition;
+		this.space = newSpace;
 		this.maxAngularVelocity = newMaxAngularVelocity;
-		this.angularVelocity = newAngularVelocity;
-		this.lightSensors = newLightSensors;
 				
+		this.leftLightSensor = new LightSensor(this.space, Math.PI / 12);
+		this.rightLightSensor = new LightSensor(this.space, Math.PI / -12);
+		
 	} // End of Robot()
 	
 	
@@ -54,7 +87,7 @@ public class Robot {
 	 * 
 	 * @return
 	 */
-	public int getRadius() {
+	public final int getRadius() {
 		return this.radius;
 	}
 	
@@ -63,8 +96,8 @@ public class Robot {
 	 * 
 	 * @return
 	 */
-	public double getAngularPosition() {
-		return this.angularPosition;
+	public final LightSensor getLeftLightSensor() {
+		return this.leftLightSensor;
 	}
 	
 	
@@ -72,7 +105,50 @@ public class Robot {
 	 * 
 	 * @return
 	 */
-	public double getMaxAngularVelocity() {
+	public final LightSensor getRightLightSensor() {
+		return this.rightLightSensor;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final MotionSensor getLeftMotionSensor() {
+		return this.leftMotionSensor;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final MotionSensor getRightMotionSensor() {
+		return this.rightMotionSensor;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public final Motor getLeftMotor() {
+		return this.leftMotor;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public final Motor getRightMotor() {
+		return this.rightMotor;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final double getMaxAngularVelocity() {
 		return this.maxAngularVelocity;
 	}
 	
@@ -81,7 +157,16 @@ public class Robot {
 	 * 
 	 * @return
 	 */
-	public double getAngularVelocity() {
+	public final double getAngularPosition() {
+		return this.angularPosition;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final double getAngularVelocity() {
 		return this.angularVelocity;
 	}
 	
@@ -90,9 +175,9 @@ public class Robot {
 	 * 
 	 * @return
 	 */
-	public LightSensor[] getLightSensors() {
-		// Return a defensive copy of the array.
-		return this.lightSensors.clone();
+	public final LightSensor[] getLightSensors() {
+		return new LightSensor[] { 
+				this.leftLightSensor, this.rightLightSensor };
 	}
 	
 	
@@ -121,11 +206,12 @@ public class Robot {
 	 * 
 	 * @param deltaAngularVelocity
 	 */
-	public void update(final double deltaAngularVelocity) {
+	public void update() {
 		
 		// Calculates new velocity.
-		double newAngularVelocity = 
-				this.angularVelocity + deltaAngularVelocity;
+		double newAngularVelocity = this.angularVelocity 
+				+ this.leftMotor.getAcceleration() 
+				- this.rightMotor.getAcceleration();
 		if (newAngularVelocity > this.maxAngularVelocity) {
 			this.angularVelocity = this.maxAngularVelocity;
 		} else if (newAngularVelocity < -this.maxAngularVelocity) {
@@ -142,6 +228,16 @@ public class Robot {
 				+ this.angularPosition / Math.PI);
 		logger.debug("Robot's angular velocity: " + this.angularVelocity);
 		
+		if (this.angularVelocity < 0) {
+			this.leftMotionSensor.update(0);
+			this.rightMotionSensor.update(
+					Math.abs(this.angularVelocity / this.maxAngularVelocity));
+		} else {
+			this.leftMotionSensor.update(
+					this.angularVelocity / this.maxAngularVelocity);
+			this.rightMotionSensor.update(0);
+		}
+
 	} // End of update()
 	
 	
@@ -161,7 +257,34 @@ public class Robot {
 
 		return normalisedAngularPosition;
 		
-	}
+	} // End of normaliseAngularPosition()
 
 
+	/**
+	 * 
+	 * @param context
+	 */
+	public void setUp(final Context<Object> context) {
+		
+		context.add(this);
+		this.space.moveTo(this, 0, 0);
+
+		context.add(this.leftLightSensor);
+		context.add(this.rightLightSensor);
+
+		this.space.moveTo(this.leftLightSensor, 
+				this.radius 
+				* Math.cos(getAngularPosition(this.leftLightSensor)), 
+				this.radius 
+				* Math.sin(getAngularPosition(this.leftLightSensor)));
+		
+		this.space.moveTo(this.rightLightSensor, 
+				this.radius	
+				* Math.cos(getAngularPosition(this.rightLightSensor)), 
+				this.radius 
+				* Math.sin(getAngularPosition(this.rightLightSensor)));
+				
+	} // End of setUp()
+	
+	
 } // End of Robot class

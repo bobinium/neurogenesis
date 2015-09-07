@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.thoughtsfactory.neurogenesis.genetics.GeneticElement;
+import org.thoughtsfactory.neurogenesis.genetics.RegulatoryNetwork;
 
 import repast.simphony.context.Context;
 import repast.simphony.query.space.grid.GridCell;
@@ -33,9 +35,15 @@ public abstract class GeneRegulatedCell extends Cell {
 	
 	
 	/**
+	 * Less than 0.01%
+	 */
+	protected static final double MORTAL_LOWEST_FOOD_CONCENTRATION = 0.001;
+	
+	
+	/**
 	 * 
 	 */
-	protected static final double REGULATOR_UNIVERSAL_THRESHOLD = 0.7;
+	protected static final double REGULATOR_UNIVERSAL_THRESHOLD = 0.95;
 	
 	
 	/**
@@ -47,7 +55,7 @@ public abstract class GeneRegulatedCell extends Cell {
 	/**
 	 * 
 	 */
-	protected static final double OSMOSIS_RATE = 0.2;
+	private static final double OSMOSIS_RATE = 0.2;
 	
 	
 	/**
@@ -104,7 +112,7 @@ public abstract class GeneRegulatedCell extends Cell {
 	/**
 	 * 
 	 */
-	protected double cellDifferentiationRegulator = INITIAL_CONCENTRATION;
+	protected double cellEnergyRegulator = INITIAL_CONCENTRATION;
 	
 	
 	/**
@@ -119,6 +127,13 @@ public abstract class GeneRegulatedCell extends Cell {
 	protected boolean alive = true;
 		
 
+	/**
+	 * 
+	 */
+	protected List<GeneRegulatedCell> invaders = 
+			new ArrayList<GeneRegulatedCell>();
+	
+	
 	// CONSTRUCTORS ============================================================
 	
 	
@@ -137,11 +152,11 @@ public abstract class GeneRegulatedCell extends Cell {
 		this.regulatoryNetwork = newRegulatoryNetwork;
 		this.cellAdhesionEnabled = newCellAdhesionEnabled;
 		
-		// Food is only taken in, not out.
+		// Food is by default only taken in, not out.
 		this.membraneChannels.put(CellProductType.FOOD,
 				new CellMembraneChannel(CellProductType.FOOD, 
-						INITIAL_CONCENTRATION, OSMOSIS_RATE, true, 
-						0, false));
+						0 /*INITIAL_CONCENTRATION*/, OSMOSIS_RATE, true, 
+						OSMOSIS_RATE, false));
 		
 		this.membraneChannels.put(CellProductType.WASTE, 
 				new CellMembraneChannel(CellProductType.WASTE, 
@@ -156,9 +171,15 @@ public abstract class GeneRegulatedCell extends Cell {
 		// SAM is released only by attached cells.
 		this.membraneChannels.put(CellProductType.SAM, 
 				new CellMembraneChannel(CellProductType.SAM, 
-						INITIAL_CONCENTRATION, 0, false,
+						INITIAL_CONCENTRATION, OSMOSIS_RATE, false,
 						OSMOSIS_RATE, false));
 		
+		// Neurogen is released only by neurons.
+		this.membraneChannels.put(CellProductType.NEUROGEN, 
+				new CellMembraneChannel(CellProductType.NEUROGEN, 
+						INITIAL_CONCENTRATION, OSMOSIS_RATE, true,
+						OSMOSIS_RATE, false));
+
 	} // End of Cell(ContinuousSpace, Grid, RegulatoryNetwork)
 
 
@@ -166,7 +187,8 @@ public abstract class GeneRegulatedCell extends Cell {
 	 * 
 	 * @param motherCell
 	 */
-	protected GeneRegulatedCell(final GeneRegulatedCell motherCell) {
+	protected GeneRegulatedCell(final GeneRegulatedCell motherCell, 
+			final boolean newCellAdhesionEnabled) {
 		
 		super(motherCell);
 		
@@ -175,12 +197,10 @@ public abstract class GeneRegulatedCell extends Cell {
 
 		this.cellGrowthRegulator = motherCell.cellGrowthRegulator;
 		this.cellAdhesionRegulator = motherCell.cellAdhesionRegulator;
-		this.cellDifferentiationRegulator = 
-				motherCell.cellDifferentiationRegulator;
 		this.attached = motherCell.attached;
 		this.alive = motherCell.alive;
 
-		this.cellAdhesionEnabled = motherCell.cellAdhesionEnabled;
+		this.cellAdhesionEnabled = newCellAdhesionEnabled;
 		
 	} // End of GeneRegulatedCell(GeneReulatedCell)
 	
@@ -256,6 +276,44 @@ public abstract class GeneRegulatedCell extends Cell {
 	 * 
 	 * @return
 	 */
+	protected GridPoint findHighestSamGridCell(final GridPoint pt) {
+		
+		// use the GridCellNgh class to create GridCells for
+		// the surrounding neighbourhood.
+		GridCellNgh<ExtracellularMatrix> nghCreator = 
+				new GridCellNgh<ExtracellularMatrix>(
+						this.grid, pt, ExtracellularMatrix.class, 1, 1, 1);
+		List<GridCell<ExtracellularMatrix>> gridCells = 
+				nghCreator.getNeighborhood(false);
+		SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
+		
+		GridPoint pointWithMostSAM = null;
+		double maxSamConcentration = 0;
+		for (GridCell<ExtracellularMatrix> gridCell : gridCells) {
+			if (gridCell.size() > 0) {
+				ExtracellularMatrix matrix = gridCell.items().iterator().next();
+				Map<CellProductType, Double> concentrations = 
+						matrix.getConcentrations();
+				double samConcentration = 
+						concentrations.get(CellProductType.SAM);
+				if (samConcentration > maxSamConcentration) {
+					maxSamConcentration = samConcentration;
+					pointWithMostSAM = gridCell.getPoint();
+				}
+			} else {
+				throw new IllegalStateException("No extracellular matrix!");
+			}
+		}
+		
+		return pointWithMostSAM;
+		
+	} // End of findHighestSamGridCell()
+
+	
+	/**
+	 * 
+	 * @return
+	 */
 	protected List<GeneRegulatedCell> findPartnerCells(final GridPoint pt, 
 			final double cellAdhesionThreshold) {
 		
@@ -273,9 +331,9 @@ public abstract class GeneRegulatedCell extends Cell {
 		
 		for (GridCell<GeneRegulatedCell> gridCell : gridCells) {
 			
-			if (gridCell.size() > 1) {
-				throw new IllegalStateException("Only one cell per grid unit!");
-			}
+//			if (gridCell.size() > 1) {
+//				throw new IllegalStateException("Only one cell per grid unit!");
+//			}
 			
 			for (GeneRegulatedCell cell : gridCell.items()) {
 				
@@ -431,140 +489,110 @@ public abstract class GeneRegulatedCell extends Cell {
 			
 			case SPECIAL_OUT_WASTE:
 				
-				CellMembraneChannel wasteChannel = 
-						this.membraneChannels.get(CellProductType.WASTE);
-				double currentWasteConcentration = 
-						wasteChannel.getConcentration();
-				double deltaWasteConcentration = this.regulatoryNetwork
-						.calculateOutputConcentrationDelta(outputElement, 
-								currentWasteConcentration);
-				double newWasteConcentration = 
-						currentWasteConcentration + deltaWasteConcentration;
-				
-				if (newWasteConcentration < 0) {
-					throw new IllegalStateException(
-							"Output element WASTE concentration is negative!"
-							+ " (old = " + currentWasteConcentration
-							+ ", new = " + newWasteConcentration + ")");
-				}
-								
-				wasteChannel.setConcentration(newWasteConcentration);
+				updateMembraneChannelConcentration(outputElement, 
+						CellProductType.WASTE);
 				break;
 				
 			case SPECIAL_OUT_CAM:
-								
-				double deltaCamConcentration = this.regulatoryNetwork
-						.calculateOutputConcentrationDelta(outputElement, 
-								this.cellAdhesionRegulator);
-				double newCamConcentration = 
-						this.cellAdhesionRegulator + deltaCamConcentration;
-				
-				if (newCamConcentration < 0) {
-					throw new IllegalStateException(
-							"Output element CAM concentration is negative!"
-							+ " (old = " + this.cellAdhesionRegulator
-							+ ", new = " + newCamConcentration + ")");
-				}
-												
-				this.cellAdhesionRegulator = newCamConcentration;
+
+				this.cellAdhesionRegulator = 
+						updateRegulatorConcentration(outputElement, 
+						this.cellAdhesionRegulator);
 				break;
 				
 			case SPECIAL_OUT_SAM:
 				
-				CellMembraneChannel samChannel = 
-						this.membraneChannels.get(CellProductType.SAM);
-				double currentSamConcentration = samChannel.getConcentration(); 
-				double deltaSamConcentration = this.regulatoryNetwork
-						.calculateOutputConcentrationDelta(outputElement, 
-								currentSamConcentration);
-				double newSamConcentration = 
-						currentSamConcentration + deltaSamConcentration;
-				
-				if (newSamConcentration < 0) {
-					throw new IllegalStateException(
-							"Output element SAM concentration is negative!"
-							+ " (old = " + currentSamConcentration
-							+ ", new = " + newSamConcentration + ")");
-				}
-								
-				samChannel.setConcentration(newSamConcentration);
+				updateMembraneChannelConcentration(outputElement, 
+						CellProductType.SAM);
 				break;
 				
 			case SPECIAL_OUT_MUTAGEN:
 				
-				CellMembraneChannel mutagenChannel = this.membraneChannels
-						.get(CellProductType.MUTAGEN);
-				double currentMutagenConcentration = 
-						mutagenChannel.getConcentration();
-				double deltaMutagenConcentration = this.regulatoryNetwork
-						.calculateOutputConcentrationDelta(outputElement, 
-								currentMutagenConcentration);
-				double newMutagenConcentration =
-						currentMutagenConcentration + deltaMutagenConcentration;
-				
-				if (newMutagenConcentration < 0) {
-					throw new IllegalStateException(
-							"Output element MUTAGEN concentration is negative!"
-							+ " (old = " + currentMutagenConcentration
-							+ ", new = " + newMutagenConcentration + ")");
-				}
-												
-				mutagenChannel.setConcentration(newMutagenConcentration);
+				updateMembraneChannelConcentration(outputElement, 
+						CellProductType.MUTAGEN);
 				break;
 				
 			case SPECIAL_OUT_MITOGEN:
 				
-				double deltaMitogenConcentration = this.regulatoryNetwork
-						.calculateOutputConcentrationDelta(outputElement, 
+				this.cellGrowthRegulator = 
+						updateRegulatorConcentration(outputElement, 
 								this.cellGrowthRegulator);
-				double newMitogenConcentration =
-						this.cellGrowthRegulator + deltaMitogenConcentration;
-				
-				if (newMitogenConcentration < 0) {
-					throw new IllegalStateException(
-							"Output element MITOGEN concentration is negative!"
-							+ " (old = " + this.cellGrowthRegulator
-							+ ", new = " + newMitogenConcentration + ")");
-				}
-																
-				this.cellGrowthRegulator = newMitogenConcentration;
 				break;
 				
 			case SPECIAL_OUT_NEUROGEN:
 
-				double deltaNeurogenConcentration = this.regulatoryNetwork
-						.calculateOutputConcentrationDelta(outputElement, 
-								this.cellDifferentiationRegulator);
-				double newNeurogenConcentration =
-						this.cellDifferentiationRegulator 
-						+ deltaNeurogenConcentration;
-				
-				if (newNeurogenConcentration < 0) {
-					throw new IllegalStateException(
-							"Output element NEUROGEN concentration is negative!"
-							+ " (old = " + this.cellDifferentiationRegulator
-							+ ", new = " + newNeurogenConcentration + ")");
-				}
-				
-				this.cellDifferentiationRegulator = newNeurogenConcentration;				
+				updateMembraneChannelConcentration(outputElement, 
+						CellProductType.NEUROGEN);
 				break;
 				
 			case SPECIAL_OUT_ENERGY:
-				
+
+				this.cellEnergyRegulator = 
+						updateRegulatorConcentration(outputElement, 
+						this.cellEnergyRegulator);
+
 				// Energy spent delta is always negative.
 				
 				CellMembraneChannel foodChannel = 
 						this.membraneChannels.get(CellProductType.FOOD);
 				double currentFoodConcentration = 
 						foodChannel.getConcentration();
-				double deltaFoodConcentration = this.regulatoryNetwork
-						.calculateEnergyConcentrationDelta(outputElement, 
-								currentFoodConcentration);
+				double deltaFoodConcentration = 
+						currentFoodConcentration * this.cellEnergyRegulator;
 				logger.debug("Energy delta: " + deltaFoodConcentration);
-				double newFoodConcentration =
-						currentFoodConcentration + deltaFoodConcentration;
+				double newFoodConcentration = 
+						currentFoodConcentration - deltaFoodConcentration;
 								
-				foodChannel.setConcentration(Math.max(0, newFoodConcentration));
+				foodChannel.setConcentration(newFoodConcentration);
+				
+				break;
+				
+			case SPECIAL_OUT_FOOD_RATE_IN:
+				
+				updateMembraneChannelInputRate(outputElement, 
+						CellProductType.FOOD);
+				break;
+				
+			case SPECIAL_OUT_WASTE_RATE_IN:
+				
+				updateMembraneChannelInputRate(outputElement, 
+						CellProductType.WASTE);
+				break;
+				
+			case SPECIAL_OUT_WASTE_RATE_OUT:
+				
+				updateMembraneChannelOutputRate(outputElement, 
+						CellProductType.WASTE);
+				break;
+				
+			case SPECIAL_OUT_SAM_RATE_OUT:
+				
+				updateMembraneChannelOutputRate(outputElement, 
+						CellProductType.SAM);
+				break;
+				
+			case SPECIAL_OUT_MUTAGEN_RATE_IN:
+				
+				updateMembraneChannelInputRate(outputElement, 
+						CellProductType.MUTAGEN);
+				break;
+				
+			case SPECIAL_OUT_MUTAGEN_RATE_OUT:
+				
+				updateMembraneChannelOutputRate(outputElement, 
+						CellProductType.MUTAGEN);
+				break;
+				
+			case SPECIAL_OUT_NEUROGEN_RATE_IN:
+				
+				updateMembraneChannelInputRate(outputElement, 
+						CellProductType.NEUROGEN);
+				break;
+				
+			case SPECIAL_OUT_NEUROGEN_RATE_OUT:
+				
+				updateMembraneChannelOutputRate(outputElement, 
+						CellProductType.NEUROGEN);
 				break;
 				
 			default:
@@ -574,6 +602,97 @@ public abstract class GeneRegulatedCell extends Cell {
 		} // End for()
 		
 	} // End of updateCellConcentrations()
+	
+
+	/**
+	 * 
+	 * @return
+	 */
+	protected double updateRegulatorConcentration(
+			final GeneticElement outputElement, 
+			final double currentConcentration) {
+		
+		double deltaConcentration = this.regulatoryNetwork
+				.calculateOutputConcentrationDelta(outputElement, 
+						currentConcentration);
+		double newConcentration = currentConcentration + deltaConcentration;
+		
+		assert newConcentration > 0 : 
+			"Negative regulator concentration for " + outputElement.getType();
+		
+		return newConcentration;
+
+	} // End of updateRegulatorConcentration()
+	
+	
+	/**
+	 * 
+	 * @param outputElement
+	 * @param productType
+	 */
+	protected void updateMembraneChannelConcentration(
+			final GeneticElement outputElement, 
+			final CellProductType productType) {
+		
+		CellMembraneChannel channel = this.membraneChannels.get(productType);
+		double currentConcentration = channel.getConcentration(); 
+		double deltaConcentration = this.regulatoryNetwork
+				.calculateOutputConcentrationDelta(outputElement, 
+						currentConcentration);
+		double newConcentration = currentConcentration + deltaConcentration;
+		
+		assert newConcentration > 0 : 
+			"Negative concentration for " + outputElement.getType();
+						
+		channel.setConcentration(newConcentration);
+
+	} // End of updateMembraneChannelConcentration()
+	
+	
+	/**
+	 * 
+	 * @param geneticElement
+	 */
+	protected void updateMembraneChannelInputRate(
+			final GeneticElement outputElement, 
+			final CellProductType productType) {
+		
+		CellMembraneChannel channel = this.membraneChannels.get(productType);
+		double currentInputRate = channel.getInputRate();
+		double deltaInputRate = this.regulatoryNetwork
+				.calculateOutputConcentrationDelta(outputElement, 
+						currentInputRate);
+		double newInputRate = currentInputRate + deltaInputRate;
+		
+		assert newInputRate > 0 : 
+				"Negative input rate for " + outputElement.getType();
+						
+		channel.setInputRate(newInputRate);
+
+	} // End of updateMembraneChannelInputRate()
+	
+	
+	/**
+	 * 
+	 * @param geneticElement
+	 */
+	protected void updateMembraneChannelOutputRate(
+			final GeneticElement outputElement, 
+			final CellProductType productType) {
+		
+		CellMembraneChannel channel = this.membraneChannels.get(productType);
+		double currentOutputRate = channel.getOutputRate();
+		double deltaOutputRate = this.regulatoryNetwork
+				.calculateOutputConcentrationDelta(outputElement, 
+						currentOutputRate);
+		double newOutputRate = currentOutputRate + deltaOutputRate;
+		
+		assert newOutputRate > 0 : 
+				"Negative output rate for " + outputElement.getType();
+						
+		channel.setInputRate(newOutputRate);
+
+	} // End of updateMembraneChannelOutputRate()
 	
 	
 	/**
@@ -630,7 +749,8 @@ public abstract class GeneRegulatedCell extends Cell {
 	
 
 	/**
-	 * 
+	 * Handles the event of cell death. Cells cans die either from lack of food
+	 * or from a too high internal concentration of waste.
 	 */
 	protected boolean cellDeathHandler() {
 		
@@ -644,15 +764,13 @@ public abstract class GeneRegulatedCell extends Cell {
 				.get(CellProductType.FOOD).getConcentration();
 		
 		if ((wasteConcentration > REGULATOR_UNIVERSAL_THRESHOLD)
-				|| (foodConcentration == 0)) {
-			
-			this.alive = false;
-			
-			@SuppressWarnings("unchecked")
-			Context<Object> context = ContextUtils.getContext(this);
-			context.remove(this);
+				|| (foodConcentration < MORTAL_LOWEST_FOOD_CONCENTRATION)) {
+
 			logger.info("Cell death event: food = " + foodConcentration 
 					+ ", waste = " + wasteConcentration);
+
+			die();
+			
 			return true;
 
 		} // End if()
@@ -660,6 +778,22 @@ public abstract class GeneRegulatedCell extends Cell {
 		return false;
 		
 	} // End of cellDeathHandler()
+	
+	
+	/**
+	 * Remove a cell from the context along with all with all the dependent
+	 * objects that it owns. 
+	 */
+	protected void die() {
+		
+		this.alive = false;
+		
+		@SuppressWarnings("unchecked")
+		Context<Object> context = ContextUtils.getContext(this);
+		
+		context.remove(this);
+
+	} // End of die()
 	
 	
 	/**
@@ -675,29 +809,69 @@ public abstract class GeneRegulatedCell extends Cell {
 			// get the grid location of this Cell
 			GridPoint pt = this.grid.getLocation(this);
 			
-			GridPoint pointWithNoCell = findFreeGridCell(pt);
-			
-			if (pointWithNoCell != null) {
+			if (this.attached) {
 				
-				logger.info("Cell division event: growth regulator = " 
+				GeneRegulatedCell neighbourToKick = null;
+				GridPoint pointWithMostSAM = findHighestSamGridCell(pt);
+				for (Object obj : this.grid.getObjectsAt(
+						pointWithMostSAM.getX(), pointWithMostSAM.getY(), 
+						pointWithMostSAM.getZ())) {
+					if (obj instanceof UndifferentiatedCell) {
+						neighbourToKick = (GeneRegulatedCell) obj;
+						break;
+					}
+				}
+
+				if (neighbourToKick != null) {
+					neighbourToKick.invaders.add(this);
+				}
+					
+				logger.info("Cell division event (attached):"
+						+ " growth regulator = " 
 						+ this.cellGrowthRegulator);
 
-				this.cellGrowthRegulator = 
-						this.cellGrowthRegulator / 2;
-			
+				this.cellGrowthRegulator = this.cellGrowthRegulator / 2;
+		
 				Cell daughterCell = clone();
 			
 				@SuppressWarnings("unchecked")
 				Context<Object> context = ContextUtils.getContext(this);
 				context.add(daughterCell);
 				this.space.moveTo(daughterCell, 
-						pointWithNoCell.getX() + 0.5, 
-						pointWithNoCell.getY() + 0.5, 
-						pointWithNoCell.getZ() + 0.5);
-				this.grid.moveTo(daughterCell, pointWithNoCell.getX(), 
-						pointWithNoCell.getY(), pointWithNoCell.getZ());
+						pointWithMostSAM.getX() + 0.5, 
+						pointWithMostSAM.getY() + 0.5, 
+						pointWithMostSAM.getZ() + 0.5);
+				this.grid.moveTo(daughterCell, pointWithMostSAM.getX(), 
+						pointWithMostSAM.getY(), pointWithMostSAM.getZ());
 
 				return true;
+								
+			} else {
+				
+				GridPoint pointWithNoCell = findFreeGridCell(pt);
+			
+				if (pointWithNoCell != null) {
+				
+					logger.info("Cell division event: growth regulator = " 
+							+ this.cellGrowthRegulator);
+
+					this.cellGrowthRegulator = this.cellGrowthRegulator / 2;
+			
+					Cell daughterCell = clone();
+			
+					@SuppressWarnings("unchecked")
+					Context<Object> context = ContextUtils.getContext(this);
+					context.add(daughterCell);
+					this.space.moveTo(daughterCell, 
+							pointWithNoCell.getX() + 0.5, 
+							pointWithNoCell.getY() + 0.5, 
+							pointWithNoCell.getZ() + 0.5);
+					this.grid.moveTo(daughterCell, pointWithNoCell.getX(), 
+							pointWithNoCell.getY(), pointWithNoCell.getZ());
+
+					return true;
+				
+				} // End if()
 				
 			} // End if()
 			
@@ -708,6 +882,56 @@ public abstract class GeneRegulatedCell extends Cell {
 	} // End of cellDivisionHandler()
 
 
+	/**
+	 * 
+	 * @return
+	 */
+	protected boolean cellInvasionHandler() {
+		
+		if (!this.invaders.isEmpty()) {
+
+			GridPoint pt = this.grid.getLocation(this);
+			
+			GridPoint pointWithMostSAM = findHighestSamGridCell(pt);
+			
+			if (pointWithMostSAM != null) {
+				
+				this.invaders.clear();
+				
+				GeneRegulatedCell neighbourToKick = null;
+				for (Object obj : this.grid.getObjectsAt(
+						pointWithMostSAM.getX(), pointWithMostSAM.getY(), 
+						pointWithMostSAM.getZ())) {
+					if (obj instanceof UndifferentiatedCell) {
+						neighbourToKick = (GeneRegulatedCell) obj;
+						break;
+					}
+				}
+
+				if (neighbourToKick != null) {
+					neighbourToKick.invaders.add(this);
+				}
+					
+				this.space.moveTo(this, 
+						pointWithMostSAM.getX() + 0.5, 
+						pointWithMostSAM.getY() + 0.5, 
+						pointWithMostSAM.getZ() + 0.5);
+				this.grid.moveTo(this, pointWithMostSAM.getX(), 
+						pointWithMostSAM.getY(), 
+						pointWithMostSAM.getZ());
+				
+				logger.info("Cell kicking event.");
+				return true;
+				
+			} // End if()
+			
+		} // End if()
+		
+		return false;
+		
+	} // End of cellInvasionHandler()
+	
+	
 	/**
 	 * 
 	 * @return
@@ -789,6 +1013,17 @@ public abstract class GeneRegulatedCell extends Cell {
 								.setConcentration(newLocalConcentration);
 						
 					} // End for() products
+
+					Map<CellProductType, Double> externalConcentrations = getExternalConcentrations(pt);
+					double samConcentration = externalConcentrations.get(CellProductType.SAM);
+					for (Object obj : this.grid.getObjectsAt(pt.getX(), pt.getY(), pt.getZ())) {
+						if (obj instanceof Destroyable) {
+							if (RandomHelper.nextDoubleFromTo(0, 1) <= samConcentration) {
+								Destroyable destroyableObject = (Destroyable) obj;
+								//destroyableObject.destroy();
+							}
+						}
+					}
 					
 				} // End if()
 				
@@ -936,6 +1171,55 @@ public abstract class GeneRegulatedCell extends Cell {
 		return false;
 		
 	} // End of cellMovementHandler()
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getFoodConcentration() {
+		return this.membraneChannels
+				.get(CellProductType.FOOD).getConcentration();
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getWasteConcentration() {
+		return this.membraneChannels
+				.get(CellProductType.WASTE).getConcentration();
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getCamConcentration() {
+		return this.cellAdhesionRegulator;
+	}
+
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getMutagenConcentration() {
+		return this.membraneChannels
+				.get(CellProductType.MUTAGEN).getConcentration();
+	}
+
+
+	/**
+	 * 
+	 * @return
+	 */
+	public double getNeurogenConcentration() {
+		return this.membraneChannels
+				.get(CellProductType.NEUROGEN).getConcentration();
+	}
 	
 	
 	/**

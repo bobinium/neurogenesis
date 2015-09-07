@@ -1,6 +1,7 @@
 package org.thoughtsfactory.neurogenesis.brain;
 
 import org.apache.log4j.Logger;
+import org.thoughtsfactory.neurogenesis.genetics.RegulatoryNetwork;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduleParameters;
@@ -48,7 +49,7 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 	 */
 	protected UndifferentiatedCell(final UndifferentiatedCell motherCell) {
 		
-		super(motherCell);
+		super(motherCell, motherCell.cellAdhesionEnabled);
 		
 	} // End of UndifferentiatedCell(UndifferentiatedCell)
 
@@ -67,6 +68,7 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 		// Handles cell death.
 		if (!cellDeathHandler()) {
 			
+			if (!cellInvasionHandler()) {
 			// Handles cellular division.
 			if (!cellDivisionHandler()) {
 				
@@ -89,7 +91,7 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 				} // End if()
 				
 			} // End if()
-			
+			}
 		} // End if()
 		
 	} // End of step()
@@ -101,10 +103,13 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 	 */
 	protected boolean cellDifferentiationHandler() {
 				
-		logger.debug("Cell differentiation regulator concentration: " 
-				+ this.cellDifferentiationRegulator);
+		double neurogenConcentration = this.membraneChannels
+				.get(CellProductType.NEUROGEN).getConcentration();
 		
-		if (this.cellDifferentiationRegulator > REGULATOR_UNIVERSAL_THRESHOLD) {
+		logger.debug("Cell differentiation regulator concentration: " 
+				+ neurogenConcentration);
+		
+		if (checkConcentrationTrigger(neurogenConcentration, true)) {
 			
 			// get the grid location of this Cell
 			GridPoint pt = this.grid.getLocation(this);
@@ -115,11 +120,13 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 
 			Neuron neuron = CellFactory.getNeuronFrom(this);
 			context.add(neuron);
+			
 			this.space.moveTo(neuron, pt.getX() + 0.5, 
 					pt.getY() + 0.5, pt.getZ() + 0.5);
 			this.grid.moveTo(neuron, pt.getX(),	pt.getY(), pt.getZ());
+
 			logger.info("Cell differentiation event: regulator = " 
-					+ this.cellDifferentiationRegulator);
+					+ neurogenConcentration);
 
 			return true;
 				
@@ -129,45 +136,6 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 		
 	} // End of cellDifferentiationHandler()
 	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public double getFoodConcentration() {
-		return this.membraneChannels
-				.get(CellProductType.FOOD).getConcentration();
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public double getWasteConcentration() {
-		return this.membraneChannels
-				.get(CellProductType.WASTE).getConcentration();
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public double getCamConcentration() {
-		return this.cellAdhesionRegulator;
-	}
-
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public double getMutagenConcentration() {
-		return this.membraneChannels
-				.get(CellProductType.MUTAGEN).getConcentration();
-	}
-
 	
 	/**
 	 * 

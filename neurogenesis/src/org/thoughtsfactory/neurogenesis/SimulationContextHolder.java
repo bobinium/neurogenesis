@@ -44,6 +44,7 @@ public final class SimulationContextHolder implements SimulationContext {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ContinuousSpace<Object> getBrainSpace() {
 		return this.brainSpace;
 	}
@@ -52,6 +53,7 @@ public final class SimulationContextHolder implements SimulationContext {
 	/**
 	 * 
 	 */
+	@Override
 	public Grid<Object> getBrainGrid() {
 		return this.brainGrid;
 	}
@@ -60,6 +62,7 @@ public final class SimulationContextHolder implements SimulationContext {
 	/**
 	 * 
 	 */
+	@Override
 	public Network<Object> getNeuralNetwork() {
 		return this.neuralNetwork;
 	}
@@ -68,6 +71,7 @@ public final class SimulationContextHolder implements SimulationContext {
 	/**
 	 * 
 	 */
+	@Override
 	public Network<Object> getNeuritesNetwork() {
 		return this.neuritesNetwork;
 	}

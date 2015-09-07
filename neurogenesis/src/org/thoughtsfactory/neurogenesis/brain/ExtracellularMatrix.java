@@ -125,6 +125,15 @@ public class ExtracellularMatrix {
 	 * 
 	 * @return
 	 */
+	public final double getNeurogenConcentration() {
+		return this.concentrations.get(CellProductType.NEUROGEN);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public Map<CellProductType, Double> getConcentrations() {
 		return this.concentrations;
 	}
@@ -154,7 +163,8 @@ public class ExtracellularMatrix {
 			double localConcentration =	this.concentrations.get(substanceType);
 			
 			// Applies decay rate.
-			localConcentration -= localConcentration * DECAY_RATE;	
+			localConcentration = localConcentration 
+					- localConcentration * DECAY_RATE;	
 			logger.debug("Local concentration: " + localConcentration);
 			
 			double newLocalConcentration = localConcentration;

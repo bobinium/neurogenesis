@@ -106,7 +106,7 @@ public class UndifferentiatedCellStyle3D implements Style3D<UndifferentiatedCell
 			taggedAppearance = new TaggedAppearance("DEFAULT");
 			AppearanceFactory.setMaterialAppearance(
 					taggedAppearance.getAppearance(), 
-					agent.isAttached() ? Color.MAGENTA : Color.GREEN);
+					agent.isAttached() ? ((agent.invaders.isEmpty() )? Color.MAGENTA : Color.ORANGE) : Color.GREEN);
 	    }
 	    
 	    return taggedAppearance;

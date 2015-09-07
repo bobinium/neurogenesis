@@ -1,4 +1,4 @@
-package org.thoughtsfactory.neurogenesis.brain;
+package org.thoughtsfactory.neurogenesis.genetics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.thoughtsfactory.neurogenesis.brain.GeneticElement.Type;
 
 import repast.simphony.random.RandomHelper;
 
@@ -155,9 +154,23 @@ public class RegulatoryNetwork {
 			final GeneticElement outputElement, 
 			final double currentConcentration) {
 	
+		if (outputElement.getType() != GeneticElement.Type.SPECIAL_OUT_ENERGY) {
+			throw new IllegalArgumentException(
+					"Need an energy output genetic element!");
+		}
+		
+		/**
+		 * Cost of the network in energy is genetically determined by the
+		 * values of the SPECIAL_OUT_ENERGY genetic element in relation to
+		 * all products of the network, given here by the activation value.
+		 * Cost is also a function of the network size in the way that more
+		 * trans elements are an opportunity to raise the activation higher.
+		 */
+		
 		double activation = 0;
 			
-		for (GeneticElement transElement : this.networkConcentrations.keySet()) {
+		for (GeneticElement transElement : 
+				this.networkConcentrations.keySet()) {
 				
 			double affinity = Math.abs(transElement
 					.getAffinityForCisElement(outputElement)); 
@@ -169,10 +182,9 @@ public class RegulatoryNetwork {
 
 		logger.debug("Activation (output): " + activation);
 		
-		// cost
-		double deltaConcentration = -1 * activation 
-				/ (Math.sqrt(10 * 10 + 10 * 10) 
-						* this.networkConcentrations.size());
+		// Squash the result between 0.5 and 1 with a sigmoid function
+		// (activation always positive).
+		double deltaConcentration = -1 / (1 + Math.pow(Math.E, -activation)); 
 		logger.debug("Delta concentration energy: " + deltaConcentration);
 		
 		return deltaConcentration;

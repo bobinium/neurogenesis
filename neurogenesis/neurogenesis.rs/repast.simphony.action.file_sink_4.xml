@@ -7,6 +7,7 @@
     <string>tick</string>
     <string>Extracellular Matrix</string>
     <string>Undifferentiated Cells</string>
+    <string>Neurons</string>
   </sourceIds>
   <fileName>output/EnergyOutput.txt</fileName>
   <addTimeStamp>true</addTimeStamp>

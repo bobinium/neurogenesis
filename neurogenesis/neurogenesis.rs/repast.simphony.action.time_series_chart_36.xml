@@ -1,9 +1,9 @@
 <repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
-  <name>Energy</name>
-  <dataSet>Energy</dataSet>
+  <name>Sine-Cosine Angular Position</name>
+  <dataSet>Angular Position</dataSet>
   <xAxisLabel>Tick Count</xAxisLabel>
-  <yAxisLabel>Food Concentration</yAxisLabel>
-  <chartTitle>Energy</chartTitle>
+  <yAxisLabel>sin(x) - cos(x)</yAxisLabel>
+  <chartTitle>Sine-Cosine Angular Position</chartTitle>
   <type>TIME_SERIES</type>
   <background>
     <red>192</red>
@@ -21,36 +21,48 @@
   <showLegend>true</showLegend>
   <seriesIds>
     <entry>
-      <string>Undifferentiated Cells</string>
+      <string>CosineRobotAngularPosition</string>
       <SeriesData>
-        <label>Undifferentiated Cells</label>
+        <label>Cosine Robot Angular Position</label>
         <color>
           <red>255</red>
           <green>0</green>
+          <blue>6</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>CosineLightAngularPosition</string>
+      <SeriesData>
+        <label>Cosine Light Angular Position</label>
+        <color>
+          <red>255</red>
+          <green>255</green>
           <blue>0</blue>
           <alpha>255</alpha>
         </color>
       </SeriesData>
     </entry>
     <entry>
-      <string>Neurons</string>
+      <string>SineRobotAngularPosition</string>
       <SeriesData>
-        <label>Neurons</label>
+        <label>Sine Robot Angular Position</label>
         <color>
           <red>0</red>
-          <green>220</green>
+          <green>0</green>
           <blue>255</blue>
           <alpha>255</alpha>
         </color>
       </SeriesData>
     </entry>
     <entry>
-      <string>Extracellular Matrix</string>
+      <string>SineLightAngularPosition</string>
       <SeriesData>
-        <label>Extracellular Matrix</label>
+        <label>Sine Light Angular Position</label>
         <color>
           <red>0</red>
-          <green>0</green>
+          <green>255</green>
           <blue>255</blue>
           <alpha>255</alpha>
         </color>

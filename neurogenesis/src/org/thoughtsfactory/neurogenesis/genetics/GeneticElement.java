@@ -1,4 +1,4 @@
-package org.thoughtsfactory.neurogenesis.brain;
+package org.thoughtsfactory.neurogenesis.genetics;
 
 import org.apache.log4j.Logger;
 
@@ -23,7 +23,16 @@ public class GeneticElement {
 		SPECIAL_OUT_MUTAGEN,
 		SPECIAL_OUT_MITOGEN,
 		SPECIAL_OUT_NEUROGEN,
-		SPECIAL_OUT_ENERGY
+		SPECIAL_OUT_ENERGY,
+		SPECIAL_OUT_FOOD_RATE_IN,
+		SPECIAL_OUT_WASTE_RATE_IN,
+		SPECIAL_OUT_WASTE_RATE_OUT,
+		SPECIAL_OUT_SAM_RATE_OUT,
+		SPECIAL_OUT_MUTAGEN_RATE_IN,
+		SPECIAL_OUT_MUTAGEN_RATE_OUT,
+		SPECIAL_OUT_NEUROGEN_RATE_IN,
+		SPECIAL_OUT_NEUROGEN_RATE_OUT
+		
 	}
 		
 	

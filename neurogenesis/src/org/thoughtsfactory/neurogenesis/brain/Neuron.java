@@ -4,12 +4,14 @@
 package org.thoughtsfactory.neurogenesis.brain;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Stack;
 
 import org.apache.log4j.Logger;
+import org.thoughtsfactory.neurogenesis.genetics.RegulatoryNetwork;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduleParameters;
@@ -96,8 +98,13 @@ public class Neuron extends GeneRegulatedCell {
 	 * 
 	 */
 	protected Queue<NeuriteJunction> freeDendriteLeavesPool = 
-			new PriorityQueue<NeuriteJunction>(
-					30, new NeuriteDepthComparator());
+			new LinkedList<NeuriteJunction>();
+	
+	
+	/**
+	 * 
+	 */
+	protected int totalDendrites = 0;
 	
 	
 	/**
@@ -128,12 +135,21 @@ public class Neuron extends GeneRegulatedCell {
 			final Network<Object> newNeuralNetwork,
 			final Network<Object> newNeuritesNetwork) {
 		
-		super(motherCell);
+		super(motherCell, false);
 				
+		this.attached = false;
+		
 		this.neuralNetwork = newNeuralNetwork;
 		this.neuritesNetwork = newNeuritesNetwork;
 		
-		this.membraneChannels.get(CellProductType.SAM).setOpenForOutput(true);
+		CellMembraneChannel samChannel = 
+				this.membraneChannels.get(CellProductType.SAM);
+		samChannel.setOpenForOutput(true);
+		
+		CellMembraneChannel neurogenChannel = 
+				this.membraneChannels.get(CellProductType.NEUROGEN);
+		neurogenChannel.setOpenForInput(false);
+		neurogenChannel.setOpenForOutput(true);
 		
 	} // End of Neuron(GeneRegulatedCell)
 	
@@ -142,7 +158,7 @@ public class Neuron extends GeneRegulatedCell {
 	 * 
 	 * @return
 	 */
-	public double getActivation() {
+	public final double getActivation() {
 		return this.activation;
 	};
 	
@@ -154,6 +170,13 @@ public class Neuron extends GeneRegulatedCell {
 			priority = ScheduleParameters.RANDOM_PRIORITY)
 	public void step() {
 
+		if (this.neuritesRoot == null) {
+			if (!initialiseNeurites(true, true)) {
+				die();
+				return;
+			}
+		}
+		
 		calculateActivation();
 		
 		absorbProductsFromMatrix();
@@ -163,10 +186,11 @@ public class Neuron extends GeneRegulatedCell {
 		// Handles cell death.
 		if (!cellDeathHandler()) {
 			
-			// Handles neurites growth.
-			initialiseNeurites(true, true);
+			// Handles neurites growth.			
 			cellAxonGrowthHandler();
 			cellDendritesGrowthHandler();
+			
+			cellInvasionHandler();
 			
 			// Handles cell adhesion.
 //			if (this.cellAdhesionEnabled) {
@@ -187,146 +211,306 @@ public class Neuron extends GeneRegulatedCell {
 
 	
 	/**
-	 * 
+	 * Remove a cell from the context along with all with all the dependent
+	 * objects that it owns. Neurons must destroy all their neurites before
+	 * dying properly.
 	 */
 	@Override
-	protected boolean cellDeathHandler() {
-		
-		double wasteConcentration = this.membraneChannels
-				.get(CellProductType.WASTE).getConcentration();
-		
-		logger.debug("Cell death waste concentration: "	+ wasteConcentration);
+	protected void die() {
 
-		double foodConcentration = this.membraneChannels
-				.get(CellProductType.FOOD).getConcentration();
+		this.alive = false;
 		
-		if ((wasteConcentration > REGULATOR_UNIVERSAL_THRESHOLD)
-				|| (foodConcentration == 0)) {
+		logger.debug("Destroying neurites belonging to current neuron.");
 			
-			// Remove the axon first so as to not 
-			// attempt to remove the root twice.
-			removeNeuriteJunction(this.axonTip);
-			removeNeuriteJunction(this.neuritesRoot);
-			
-			@SuppressWarnings("unchecked")
-			Context<Object> context = ContextUtils.getContext(this);
-			
-			for (NeuriteJunction junction : this.freeDendriteLeavesPool) {
-				context.remove(junction);
-			}
-			
-			this.alive = false;
-			
-			context.remove(this);
-			logger.info("Neuron death event: food = " + foodConcentration 
-					+ ", waste = " + wasteConcentration);
-			return true;
+		// Remove the axon first so as to not 
+		// attempt to remove the root twice.
 
-		} // End if()
-				
-		return false;
-		
-	} // End of cellDeathHandler)_
+		if (this.axonTip != null) {
+			destroyAxon();
+		}
+			
+		if (this.neuritesRoot != null) {
+			destroyDendrites();
+		}
+			
+		@SuppressWarnings("unchecked")
+		Context<Object> context = ContextUtils.getContext(this);
+
+		// Destroy dendrites still in the pool.
+		for (NeuriteJunction junction : this.freeDendriteLeavesPool) {
+			context.remove(junction);
+		}
+
+		context.remove(this);
+
+	} // End of die()
 	
 
 	/**
-	 * 
-	 * @param currentJunction
+	 * Destroy (i.e. remove from the context) all neurite junctions that make 
+	 * the axon and adjust relevant dependencies.
 	 */
-	protected void removeNeuriteJunction(
-			final NeuriteJunction currentJunction) {
-				
-		currentJunction.setActive(false);
+	protected void destroyAxon() {
+	
+		assert this.axonTip != null : "No axon tip!";
+		assert this.neuritesRoot != null : "No dendrite root!";
+		
+		NeuriteJunction currentJunction = this.axonTip;
 
 		@SuppressWarnings("unchecked")
 		Context<Object> context = ContextUtils.getContext(this);
-		context.remove(currentJunction);
 
-		for (NeuriteJunction nextJunction : currentJunction.getPredecessors()) {
+		while (currentJunction != this.neuritesRoot) {
+			
+			assert currentJunction.getType() == NeuriteJunction.Type.AXON :
+					"Not an AXON junction!?";
+			
+			currentJunction.setActive(false);
+			
+			for (NeuriteJunction synapse : currentJunction.getSynapses()) {
+				
+//				// Remove link between neurons.
+//				
+//				RepastEdge<Object> neuralNetworkEdge = 
+//						this.neuralNetwork.getEdge(currentJunction.getNeuron(), 
+//								synapse.getNeuron());
+//				
+//				assert neuralNetworkEdge != null : 
+//						"Should have a corresponding link between neurons!";
+//				
+//				this.neuralNetwork.removeEdge(neuralNetworkEdge);
+				
+				// Remove the synaptic link.
+				synapse.getPredecessors().remove(currentJunction);
+				
+//				RepastEdge<Object> synapticEdge = 
+//						this.neuritesNetwork.getEdge(currentJunction, synapse);
+//				
+//				assert synapticEdge != null : "No synaptic link!";
+//				
+//				this.neuritesNetwork.removeEdge(synapticEdge);
+				
+			} // End for(synapse)
+			
+			context.remove(currentJunction);
 
-			// Ignore the root as predecessor in an axon.
-			if (nextJunction.getType() == NeuriteJunction.Type.NEURON) {
-				continue;
-			}
+			assert currentJunction.getPredecessors().size() == 1 :
+				"Axon junctions must have one and one only predecessor!";
 			
-			// Do not collect beyond a synapse!
-			if ((currentJunction.getType() == NeuriteJunction.Type.DENDRITE)
-					&& (nextJunction.getType() == NeuriteJunction.Type.AXON)) {
-				nextJunction.getSynapses().remove(currentJunction);
-			} else {
-				removeNeuriteJunction(nextJunction);
-			}
+			currentJunction.getPredecessors().get(0);
 			
-		} // End for(nextJunction)
+		} // End while()
 		
-	} // End of removeNeuriteJunction()
+		this.axonTip = null;
+		
+	} // End of destroyAxon()
 	
+
+	/**
+	 * Destroy (i.e. remove from the context) all neurite junctions that
+	 * form the dendrites network of the current neuron and adjust relevant 
+	 * dependencies.
+	 */
+	protected void destroyDendrites() {
+
+		this.neuritesRoot.setActive(false);
+		
+		Stack<NeuriteJunction> junctionsToDestroy = 
+				new Stack<NeuriteJunction>();
+		junctionsToDestroy.push(this.neuritesRoot);
+			
+		@SuppressWarnings("unchecked")
+		Context<Object> context = ContextUtils.getContext(this);
+
+		while (!junctionsToDestroy.isEmpty()) {
+		
+			NeuriteJunction currentJunction = junctionsToDestroy.pop();
+			
+			assert currentJunction.getType() == NeuriteJunction.Type.DENDRITE :
+					"Current junction is not a dendrite!";
+			
+			for (NeuriteJunction predecessor : 
+					currentJunction.getPredecessors()) {
+
+				if (predecessor.getNeuron() == this) {
+					
+					assert predecessor.getType() 
+							== NeuriteJunction.Type.DENDRITE :
+							"Predecessor is of the wrong junction type!";
+					
+					predecessor.setActive(false);						
+					junctionsToDestroy.push(predecessor);
+					
+				} else {
+					
+					assert predecessor.getType() == NeuriteJunction.Type.AXON :
+							"This should be an AXON from another neuron!";
+					
+					predecessor.getSynapses().remove(currentJunction);
+
+				} // End if()
+			
+			} // End for(predeccessor)
+
+			context.remove(currentJunction);
+			
+		} // End while()
+	
+	} // End of destroyDendrites()
+		
 	
 	/**
 	 * 
-	 * @return
+	 * @param junctiontoDestroy
 	 */
-	public boolean initialiseNeurites(final boolean createAxon, 
-			final boolean createDendrites) {
+	protected void removefNeuriteJunction(
+			final NeuriteJunction junctionToDestroy) {
+
+		if (junctionToDestroy.getType() == NeuriteJunction.Type.DENDRITE) {
+
+			junctionToDestroy.setActive(false);
+	
+			Stack<NeuriteJunction> junctionsToRemove = 
+					new Stack<NeuriteJunction>();
+			junctionsToRemove.push(junctionToDestroy);
+				
+			while (!junctionsToRemove.isEmpty()) {
+			
+				NeuriteJunction currentJunction = junctionsToRemove.pop();
+				
+				for (NeuriteJunction junction : 
+						currentJunction.getPredecessors()) {
+
+					if (junction.getNeuron() == this) {		
+						junction.setActive(false);						
+						junctionsToRemove.push(junction);
+					} else {
+						junction.getSynapses().remove(currentJunction);
+//						RepastEdge<Object> edgeToRemove = this.neuralNetwork
+//								.getEdge(junction.getNeuron(), this);
+//						this.neuralNetwork.removeEdge(edgeToRemove);
+					}
+				
+					int edgeCount = 0;
+					for (RepastEdge<Object> edge : this.neuritesNetwork.getEdges(currentJunction)) {
+						edgeCount++;
+					}
+					logger.debug("Numer of edges: " + edgeCount);
+					
+					RepastEdge<Object> edgeToRemove = this.neuritesNetwork
+							.getEdge(junction, currentJunction);
+					if (edgeToRemove == null) {
+						throw new IllegalStateException(
+								"No edge between junctions!");
+					}
+
+					this.neuritesNetwork.removeEdge(edgeToRemove);
+
+				} // End for(junction)
+
+				currentJunction.getPredecessors().clear();
+				this.freeDendriteLeavesPool.add(currentJunction);
+			
+			} // End while()
 		
-		if (this.neuritesRoot == null) {
-			
-			// Creates the root to all neurites.
-			
-			this.neuritesRoot = 
-					new NeuriteJunction(NeuriteJunction.Type.NEURON, this, 0);
-			
-			@SuppressWarnings("unchecked")
-			Context<Object> context = ContextUtils.getContext(this);
-			context.add(this.neuritesRoot);
+		} else {
 
-			GridPoint pt = this.grid.getLocation(this);
-			this.space.moveTo(this.neuritesRoot, pt.getX() + 0.5, 
-					pt.getY() + 0.5, pt.getZ() + 0.5); 
-			this.grid.moveTo(this.neuritesRoot, 
-					pt.getX(), pt.getY(), pt.getZ());
+//			NeuriteJunction currentJunction = junctionToDestroy;
+//			
+//			while (currentJunction != null) {
+//				
+//				currentJunction.setActive(false);
+//				NeuriteJunction sucessor = currentJunction.getSuccessor();
+//				
+//			} // End while()
 			
-			// Creates the axon.
-			
-			if (createAxon) {
-				this.axonTip = extendNeurite(NeuriteJunction.Type.AXON, 
-						this.neuritesRoot, false);
-			}
-			
-			// Creates the initial dendrites.
-			
-			if (createDendrites) {
-				
-				for (int n = 1; 
-						n <= Math.min(MAX_DENDRITE_ROOTS, MAX_DENDRITE_LEAVES); 
-						n++) {
-				
-					if ((n == 1) || (RandomHelper.nextDoubleFromTo(0, 1) 
-							<= this.cellGrowthRegulator)) {
-					
-						NeuriteJunction newDendrite = 
-								extendNeurite(NeuriteJunction.Type.DENDRITE, 
-										this.neuritesRoot, false);
-					
-						if (newDendrite == null) {
-							break;
-						}
-									
-						this.dendriteLeaves.add(newDendrite);
-						
-					} // End if()
-				
-				} // End for()
-			
-			} // End  if()
-			
-			return true;
-
 		} // End if()
 		
-		return false;
+	} // End of destroyNeuriteJunction()
+	
+	
+	/**
+	 * Internal procedure that initialises the first level dendrites and/or 
+	 * the axon tip or a newly born neuron. Assume that the current neuron has 
+	 * already been deployed in the context.
+	 * 
+	 * @param createAxon A boolean specifying if the axon must be created.
+	 * @param createDendrites A boolean specifying if the first level dendrites
+	 *                        must be created.
+	 * @return <code>true</code> if the initialisation went successfully,
+	 * <code>false</code> otherwise.
+	 */
+	protected boolean initialiseNeurites(final boolean createAxon, 
+			final boolean createDendrites) {
 		
-	} // End of initialiseNeurites()
+		assert this.neuritesRoot == null : "Neurite root already initialised!";
+
+		boolean success = true;
+		
+		// Creates the root to all neurites.
+			
+		this.neuritesRoot =	
+				new NeuriteJunction(NeuriteJunction.Type.NEURON, this, 0);
+			
+		@SuppressWarnings("unchecked")
+		Context<Object> context = ContextUtils.getContext(this);
+		context.add(this.neuritesRoot);
+
+		GridPoint pt = this.grid.getLocation(this);
+		this.space.moveTo(this.neuritesRoot, pt.getX() + 0.5, 
+				pt.getY() + 0.5, pt.getZ() + 0.5); 
+		this.grid.moveTo(this.neuritesRoot, 
+				pt.getX(), pt.getY(), pt.getZ());
+			
+		// Creates the axon.
+			
+		if (createAxon) {
+			
+			assert this.axonTip == null : "Axon tip already initialised!";
+			
+			this.axonTip = extendNeurite(NeuriteJunction.Type.AXON,	
+					this.neuritesRoot, false);
+			if (this.axonTip == null) {
+				logger.warn("Could not initialise axon!");
+				success = false;
+			}
+			
+		} // End if()
+			
+		// Creates the initial dendrites.
+			
+		if (createDendrites) {
+				
+			for (int n = 1;	
+					n <= Math.min(MAX_DENDRITE_ROOTS, MAX_DENDRITE_LEAVES); 
+					n++) {
+				
+				if ((n == 1) || (RandomHelper.nextDoubleFromTo(0, 1) 
+						<= this.cellGrowthRegulator)) {
+					
+					NeuriteJunction newDendrite = 
+							extendNeurite(NeuriteJunction.Type.DENDRITE, 
+									this.neuritesRoot, false);
+					
+					if (newDendrite != null) {
+						this.dendriteLeaves.add(newDendrite);
+						this.totalDendrites++;
+					}
+															
+				} // End if()
+				
+			} // End for()
+			
+			if (this.dendriteLeaves.isEmpty()) {
+				logger.warn("Dendrites not initialised!");
+				success = false;
+			}
+				
+		} // End if()
+			
+		return success;
+		
+	} // End of initialiseNeurites(boolean, boolean)
 	
 	
 	/**
@@ -335,18 +519,26 @@ public class Neuron extends GeneRegulatedCell {
 	 */
 	protected boolean cellAxonGrowthHandler() {
 		
+		assert this.axonTip != null : "Uninitialised axon!?";
+		
 		logger.debug("Cell axon growth regulator concentration: " 
 				+ this.cellGrowthRegulator);
 		
-		if (this.checkConcentrationTrigger(this.cellGrowthRegulator, false)) {
+		/* Probability of having the axon grow decreases exponentially
+		 * with the depth of the axon's tip.
+		 */
+		if (checkConcentrationTrigger(this.cellGrowthRegulator
+				 / Math.pow(this.axonTip.getDepth(), 2), false)) {
 
 			NeuriteJunction newJunction = 
 					extendNeurite(NeuriteJunction.Type.AXON, 
-							this.axonTip, true);
+							this.axonTip, false);
 
 			if (newJunction != null) {
 				this.axonTip = newJunction;
 				return true;				
+			} else {
+				logger.warn("Could not grow axon!");
 			}
 
 		} // End if()
@@ -361,43 +553,56 @@ public class Neuron extends GeneRegulatedCell {
 	 * @return
 	 */
 	protected boolean cellDendritesGrowthHandler() {
+
+		assert this.neuritesRoot != null : "Uninitialised neurites root!?";
+		assert !this.dendriteLeaves.isEmpty() : "No dendrite leaves!";
 		
 		logger.debug("Cell dendrites growth regulator concentration: " 
 				+ this.cellGrowthRegulator);
 		
-		if (this.checkConcentrationTrigger(this.cellGrowthRegulator, false)) {
-
-			NeuriteJunction nextBud = null;
-			double minValue = Double.MAX_VALUE;
+		/*
+		 *  Find the best neurite junction to bud the next dendrite(s). The
+		 *  best junction is one with the least external SAM concentration
+		 *  (i.e. "away" from neurons and other SAM expelling cells) and
+		 *  the lowest dendrite depth (i.e. cost less to expand and maintain).
+		 */
+		
+		NeuriteJunction nextBud = null;
+		double minValue = Double.MAX_VALUE;
 	
-			for (NeuriteJunction dendriteLeaf : this.dendriteLeaves) {
+		for (NeuriteJunction dendriteLeaf : this.dendriteLeaves) {
 							
-				logger.debug("Searching: dendrite depth = "	
-						+ dendriteLeaf.getDepth());
+			logger.debug("Searching: dendrite depth = " 
+					+ dendriteLeaf.getDepth());
 				
-				GridPoint dendriteLocation = 
-						this.grid.getLocation(dendriteLeaf);
-				if (dendriteLocation == null) {
-					logger.warn("Dendrite location is null! (Neuron is " 
-							+ ((dendriteLeaf.getNeuron().alive) 
-									? "alive" : "dead") + ")");
-				}
+			GridPoint dendriteLocation = this.grid.getLocation(dendriteLeaf);
+			assert dendriteLocation != null : 
+				"Dendrite location is null! (Neuron is " 
+					+ ((dendriteLeaf.getNeuron().alive)	
+							? "alive" : "dead") + ")";
 				
-				Map<CellProductType, Double> externalConcentrations = 
-						getExternalConcentrations(dendriteLocation);
+			Map<CellProductType, Double> externalConcentrations = 
+					getExternalConcentrations(dendriteLocation);
 			
-				double externalConcentration = 
+			double externalConcentration = 
 						externalConcentrations.get(CellProductType.SAM);
 				
-				double currentValue = 
-						externalConcentration * dendriteLeaf.getDepth();
-				if (currentValue < minValue) {
-					nextBud = dendriteLeaf;
-					minValue = currentValue;
-				}
+			double currentValue = externalConcentration 
+					* Math.pow(dendriteLeaf.getDepth(), 2);
+			if (currentValue < minValue) {
+				nextBud = dendriteLeaf;
+				minValue = currentValue;
+			}
 				
-			} // End for()
+		} // End for()
+
+		/* Probability of having the axon grow decreases exponentially
+		 * with the depth of the selected dendrite leaf.
+		 */
 			
+		if (checkConcentrationTrigger(this.cellGrowthRegulator
+				/ Math.pow(nextBud.getDepth(), 2), false)) {
+
 			// First branch from bud.
 
 			NeuriteJunction newJunction1 = 
@@ -405,6 +610,11 @@ public class Neuron extends GeneRegulatedCell {
 							this.dendriteLeaves.size() > 1);
 
 			if (newJunction1 == null) {
+				logger.warn("Could not grow first branch of dendrite!.");
+				if (this.dendriteLeaves.size() > 1) {
+					logger.warn("Discarding leaf bud.");
+					discardDendriteLeaf(nextBud);
+				}
 				return false;
 			}
 			
@@ -419,15 +629,16 @@ public class Neuron extends GeneRegulatedCell {
 			// Add the new leaf to the list if not a synapse.
 			if (newJunction1.getType() != NeuriteJunction.Type.AXON) {
 				this.dendriteLeaves.add(newJunction1);
+				this.totalDendrites++;
 				logger.debug("Number of leaves (added J1): " 
 						+ this.dendriteLeaves.size());
 			}
 			
 			// Second (optional) branch from bud.
 			
-			if (RandomHelper.nextDoubleFromTo(0, 1)
-					> this.membraneChannels.get(CellProductType.SAM)
-					.getConcentration()) {
+//			if (checkConcentrationTrigger(this.cellGrowthRegulator, false)) {
+			if (checkConcentrationTrigger(this.cellGrowthRegulator 
+					/ Math.pow(nextBud.getDepth(), 2), false)) {
 				
 				NeuriteJunction newJunction2 = 
 						extendNeurite(NeuriteJunction.Type.DENDRITE, nextBud, 
@@ -436,6 +647,7 @@ public class Neuron extends GeneRegulatedCell {
 				if (newJunction2 == null) {
 					// At this point the first branch at least 
 					// was added successfully.
+					logger.warn("Could not grow second branch of dendrite!");
 					return true;
 				}
 
@@ -445,6 +657,7 @@ public class Neuron extends GeneRegulatedCell {
 					// dendrite from the table if it is full.
 						
 					this.dendriteLeaves.add(newJunction2);
+					this.totalDendrites++;
 					logger.debug("Number of leaves (added J2): " 
 							+ this.dendriteLeaves.size());
 					
@@ -455,8 +668,18 @@ public class Neuron extends GeneRegulatedCell {
 						 * can be discarded. Also, only new dendrites have the
 						 * opportunity to connect to axons.
 						 */
-						
-						discardDendriteLeaf();
+
+						NeuriteJunction dendriteToRemove = 
+								this.dendriteLeaves.get(0);
+						for (NeuriteJunction dendriteLeaf : 
+								this.dendriteLeaves) {
+							if (dendriteLeaf.getDepth() 
+									< dendriteToRemove.getDepth()) {
+								dendriteToRemove = dendriteLeaf;
+							}
+						}
+
+						discardDendriteLeaf(dendriteToRemove);
 												
 					} // End if()
 					
@@ -476,17 +699,10 @@ public class Neuron extends GeneRegulatedCell {
 	/**
 	 * 
 	 */
-	protected void discardDendriteLeaf() {
+	protected void discardDendriteLeaf(NeuriteJunction dendriteToRemove) {
 		
 		logger.info("Discarding dendrite leaves...");
 
-		NeuriteJunction dendriteToRemove = this.dendriteLeaves.get(0);
-		for (NeuriteJunction dendriteLeaf : this.dendriteLeaves) {
-			if (dendriteLeaf.getDepth() < dendriteToRemove.getDepth()) {
-				dendriteToRemove = dendriteLeaf;
-			}
-		}
-		
 		this.dendriteLeaves.remove(dendriteToRemove);
 		logger.debug("Number of leaves (removed deepest): " 
 				+ this.dendriteLeaves.size());
@@ -512,6 +728,7 @@ public class Neuron extends GeneRegulatedCell {
 
 			dendriteToRemove.getPredecessors().clear();
 			this.freeDendriteLeavesPool.add(dendriteToRemove);
+			this.totalDendrites--;
 			
 			logger.debug("Dendrite depth " 
 					+ dendriteToRemove.getDepth() + " added to pool.");
@@ -549,16 +766,16 @@ public class Neuron extends GeneRegulatedCell {
 		
 		// Use the GridCellNgh class to create GridCells for
 		// the surrounding neighbourhood.
-		GridCellNgh<NeuriteJunction> nghCreator = 
-				new GridCellNgh<NeuriteJunction>(this.grid, currentLocation, 
-						NeuriteJunction.class, 1, 1, 1);
-		List<GridCell<NeuriteJunction>> gridCells =	
+		GridCellNgh<Object> nghCreator = 
+				new GridCellNgh<Object>(this.grid, currentLocation, 
+						Object.class, 1, 1, 1);
+		List<GridCell<Object>> gridCells =	
 				nghCreator.getNeighborhood(false);
 		SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
 
 		// Pick the first free grid cell among the shuffled list.
 		
-		GridCell<NeuriteJunction> selectedGridCell = null;
+		GridCell<Object> selectedGridCell = null;
 		double minConcentration = Double.MAX_VALUE;
 		NeuriteJunction newJunction = null;
 		
@@ -567,30 +784,45 @@ public class Neuron extends GeneRegulatedCell {
 				&& (newJunctionType == NeuriteJunction.Type.DENDRITE)
 				&& (currentJunction.getType() == NeuriteJunction.Type.DENDRITE);
 		
-		for (GridCell<NeuriteJunction> gridCell : gridCells) {
+		for (GridCell<Object> gridCell : gridCells) {
 			
 			boolean freeCell = true;
 			NeuriteJunction synapse = null;
 			
 			if (gridCell.size() > 0) {
 				
-				for (NeuriteJunction junction : gridCell.items()) {
+				for (Object obj : gridCell.items()) {
 
-					if (!junction.isActive()) {
-						continue;
-					}
+					if (obj instanceof NeuriteJunction) {
+						
+						NeuriteJunction junction = (NeuriteJunction) obj;
+						
+						if (!junction.isActive()) {
+							continue;
+						}
 					
-					if (junction.getNeuron() == this) {
-						freeCell = false;
-						if (!lookForSynapse) {
+						if (junction.getNeuron() == this) {
+							freeCell = false;
+							if (!lookForSynapse) {
+								break;
+							}
+						} else if (lookForSynapse 
+								&& (junction.getType() 
+										== NeuriteJunction.Type.AXON)) {
+							synapse = junction;
 							break;
 						}
-					} else if (lookForSynapse &&	
-							(junction.getType() == NeuriteJunction.Type.AXON)) {
-						synapse = junction;
-						break;
-					}
-											
+						
+					} else if (obj instanceof GeneRegulatedCell) {
+						
+						GeneRegulatedCell cell = (GeneRegulatedCell) obj;
+						if (cell.attached) {
+							freeCell = false;
+							break;
+						}
+						
+					} // End if()
+					
 				} // End for(junction)
 						
 			} // End if()
@@ -647,11 +879,12 @@ public class Neuron extends GeneRegulatedCell {
 				
 				newJunction = this.freeDendriteLeavesPool.remove();
 				
+				logger.debug("Recycling junction: " + newJunction.getType() 
+						+ ", old depth = " + newJunction.getDepth());
+
 				newJunction.setDepth(currentJunction.getDepth() + 1);
 				newJunction.setActive(true);
-				
-				logger.debug("Recycled junction: " + newJunction.getType());
-				
+								
 			} // End if();
 			
 			GridPoint newJunctionLocation = selectedGridCell.getPoint();
@@ -747,35 +980,69 @@ public class Neuron extends GeneRegulatedCell {
 	/**
 	 * 
 	 */
-	private void calculateActivation() {
+	protected void calculateActivation() {
+		
+		double foodConcentration = this.membraneChannels
+				.get(CellProductType.FOOD).getConcentration();
+		
+		logger.debug("Neuron food concentration: " + foodConcentration);
+		
+		List<RepastEdge<Object>> inputEdges = 
+				new ArrayList<RepastEdge<Object>>();
 		
 		double netInput = 0;
 		
-		for (Object obj : this.neuralNetwork.getPredecessors(this)) {
-			if (obj instanceof Neuron) {
-				Neuron neuron = (Neuron) obj;
-				RepastEdge<Object> edge = this.neuralNetwork.getEdge(neuron, this);
-				netInput += neuron.getActivation() * edge.getWeight();
-			}
-		}
+		for (RepastEdge<Object> inputEdge :	
+				this.neuralNetwork.getInEdges(this)) {
+			
+			Neuron inputNeuron = (Neuron) inputEdge.getSource();
+			
+			logger.debug("Input neuron: activation = " 
+					+ inputNeuron.getActivation() + ", weight = " 
+					+ inputEdge.getWeight());
+
+			netInput += inputNeuron.getActivation() 
+					* inputEdge.getWeight()	* foodConcentration;
+			
+			inputEdges.add(inputEdge);
+			
+		} // End for(inputEdge)
 		
-		// Sigmoid function.
-		this.activation = (1 / (1 + Math.pow(Math.E, -1 * netInput)));
+		logger.debug("Number of input edges: " + inputEdges.size());
+		logger.debug("Net input: " + netInput);
+		
+		this.activation = 1 / (1 + Math.pow(Math.E, -netInput));
+		logger.debug("Activation: " + this.activation);
 		
 		// Ajust the weight using the Hebbian rule.
-		for (Object obj : this.neuralNetwork.getPredecessors(this)) {
-			if (obj instanceof Neuron) {
-				Neuron neuron = (Neuron) obj;
-				RepastEdge<Object> edge = this.neuralNetwork.getEdge(neuron, this);
-				double newWeight = LEARNING_RATE * this.activation 
-						* (neuron.activation - neuron.activation 
-								* edge.getWeight());
-				edge.setWeight(newWeight);
-			}
-		}
+		for (RepastEdge<Object> inputEdge : inputEdges) {
+			
+			Neuron inputNeuron = (Neuron) inputEdge.getSource();
+			double deltaWeight = LEARNING_RATE * this.activation 
+						* (inputNeuron.activation - inputNeuron.activation 
+								* Math.abs(inputEdge.getWeight()));
+
+			double newWeight = inputEdge.getWeight() 
+					+ Math.signum(inputEdge.getWeight()) * deltaWeight;
+			
+			logger.debug("Delta weight: " + deltaWeight);
+			logger.debug("Input neuron new weight: " + newWeight); 
+
+			inputEdge.setWeight(newWeight);
+			
+		} // End for(inputEdge)
 		
 	} // calculateActivation()
 
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getFormattedActivation() {
+		return String.format("%+.1e", this.activation); 
+	}
+	
 	
 	/** 
 	 */
