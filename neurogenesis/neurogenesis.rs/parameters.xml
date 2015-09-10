@@ -36,13 +36,6 @@
 						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									
 		/>
-				<parameter name="population.extent" displayName="Initial Population Extent" type="int" 
-						defaultValue="2" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									values="1 2 3 4 "
-						
-		/>
 				<parameter name="dendrites.leaves.max" displayName="Max. Dendrite Leaves" type="int" 
 						defaultValue="30" 
 						isReadOnly="false" 
@@ -53,6 +46,12 @@
 						defaultValue="0.2" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="population.extent.percent" displayName="Initial Population Extent (%)" type="int" 
+						defaultValue="20" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 				<parameter name="simulation.test" displayName="Run Test Model" type="boolean" 

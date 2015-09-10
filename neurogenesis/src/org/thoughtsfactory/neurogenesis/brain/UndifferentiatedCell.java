@@ -20,6 +20,8 @@ import repast.simphony.util.ContextUtils;
 public class UndifferentiatedCell extends GeneRegulatedCell {
 
 
+	public float count = 0;
+	
 	//
 	private final static Logger logger = 
 			Logger.getLogger(UndifferentiatedCell.class);	
@@ -68,7 +70,6 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 		// Handles cell death.
 		if (!cellDeathHandler()) {
 			
-			if (!cellInvasionHandler()) {
 			// Handles cellular division.
 			if (!cellDivisionHandler()) {
 				
@@ -91,7 +92,7 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 				} // End if()
 				
 			} // End if()
-			}
+
 		} // End if()
 		
 	} // End of step()

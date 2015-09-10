@@ -12,11 +12,11 @@ import repast.simphony.engine.schedule.ScheduledMethod;
  * @author bob
  *
  */
-public class ArenaSimulator {
+public class ArenaSupervisor {
 
 
 	//
-	private final static Logger logger = Logger.getLogger(ArenaSimulator.class);	
+	private final static Logger logger = Logger.getLogger(ArenaSupervisor.class);	
 
 	
 	//
@@ -44,7 +44,7 @@ public class ArenaSimulator {
 	 * @param newRobot
 	 * @param newLightSource
 	 */
-	public ArenaSimulator(final Robot newRobot, 
+	public ArenaSupervisor(final Robot newRobot, 
 			final LightSource newLightSource) {
 		
 		this.robot = newRobot;

@@ -19,7 +19,7 @@
       <string>Extracellular Matrix</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>Extracellular Matrix</id>
-        <className>org.thoughtsfactory.neurogenesis.brain.ExtracellularMatrix</className>
+        <className>org.thoughtsfactory.neurogenesis.brain.ExtracellularMatrixSample</className>
         <methodName>getFoodConcentration</methodName>
         <aggType>SUM</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>

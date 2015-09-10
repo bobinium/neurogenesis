@@ -14,6 +14,10 @@ public final class Configuration {
 
 
 	//
+	private int brainGridQuadrantSize;
+	
+	
+	//
 	private int genomeSize;
 	
 
@@ -37,6 +41,22 @@ public final class Configuration {
 	}
 	
 
+	/**
+	 * 
+	 */
+	public int getBrainGridQuadrantSize() {
+		return this.brainGridQuadrantSize;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void setBrainGridQuadrantSize(final int newSize) {
+		this.brainGridQuadrantSize = newSize;
+	}
+	
+	
 	/**
 	 * 
 	 */

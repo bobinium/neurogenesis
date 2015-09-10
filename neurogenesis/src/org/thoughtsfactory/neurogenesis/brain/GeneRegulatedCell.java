@@ -1,11 +1,14 @@
 package org.thoughtsfactory.neurogenesis.brain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.thoughtsfactory.neurogenesis.SimulationContext;
+import org.thoughtsfactory.neurogenesis.SimulationContextHolder;
 import org.thoughtsfactory.neurogenesis.genetics.GeneticElement;
 import org.thoughtsfactory.neurogenesis.genetics.RegulatoryNetwork;
 
@@ -118,6 +121,12 @@ public abstract class GeneRegulatedCell extends Cell {
 	/**
 	 * 
 	 */
+	protected double cellNeurotransmitterRegulator = INITIAL_CONCENTRATION;
+	
+	
+	/**
+	 * 
+	 */
 	protected boolean attached = false;
 
 	
@@ -126,12 +135,11 @@ public abstract class GeneRegulatedCell extends Cell {
 	 */
 	protected boolean alive = true;
 		
-
+	
 	/**
 	 * 
 	 */
-	protected List<GeneRegulatedCell> invaders = 
-			new ArrayList<GeneRegulatedCell>();
+	protected int[] polarity = null;
 	
 	
 	// CONSTRUCTORS ============================================================
@@ -202,6 +210,8 @@ public abstract class GeneRegulatedCell extends Cell {
 
 		this.cellAdhesionEnabled = newCellAdhesionEnabled;
 		
+		this.polarity = motherCell.polarity;
+		
 	} // End of GeneRegulatedCell(GeneReulatedCell)
 	
 	
@@ -248,68 +258,68 @@ public abstract class GeneRegulatedCell extends Cell {
 	 * 
 	 * @return
 	 */
-	protected GridPoint findFreeGridCell(final GridPoint pt) {
+	protected GridLocationStatus findHighestConcentrationGridCell(
+			final CellProductType productType, final GridPoint pt, 
+			final int extentX, final int extentY, final int extentZ, 
+			final boolean includeCentre, final boolean vacant) {
 		
-		// use the GridCellNgh class to create GridCells for
-		// the surrounding neighbourhood.
-		GridCellNgh<GeneRegulatedCell> nghCreator = 
-				new GridCellNgh<GeneRegulatedCell>(
-						this.grid, pt, GeneRegulatedCell.class, 1, 1, 1);
-		List<GridCell<GeneRegulatedCell>> gridCells = 
-				nghCreator.getNeighborhood(false);
-		SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
+		SimulationContext simulationContext = 
+				SimulationContextHolder.getInstance();
 		
-		GridPoint pointWithNoCell = null;
-		for (GridCell<GeneRegulatedCell> gridCell : gridCells) {
-			if (gridCell.size() == 0) {
-				pointWithNoCell = gridCell.getPoint();
-				break;
-			}
-		}
+		ExtracellularMatrix matrix = simulationContext.getExtracellularMatrix();
 		
-		return pointWithNoCell;
+		List<ExtracellularMatrixSample> samples = matrix.getAreaSample(
+				pt, extentX, extentY, extentZ, includeCentre);		
+		SimUtilities.shuffle(samples, RandomHelper.getUniform());
 		
-	} // End of findFreeGridCell()
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	protected GridPoint findHighestSamGridCell(final GridPoint pt) {
-		
-		// use the GridCellNgh class to create GridCells for
-		// the surrounding neighbourhood.
-		GridCellNgh<ExtracellularMatrix> nghCreator = 
-				new GridCellNgh<ExtracellularMatrix>(
-						this.grid, pt, ExtracellularMatrix.class, 1, 1, 1);
-		List<GridCell<ExtracellularMatrix>> gridCells = 
-				nghCreator.getNeighborhood(false);
-		SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
-		
-		GridPoint pointWithMostSAM = null;
-		double maxSamConcentration = 0;
-		for (GridCell<ExtracellularMatrix> gridCell : gridCells) {
-			if (gridCell.size() > 0) {
-				ExtracellularMatrix matrix = gridCell.items().iterator().next();
-				Map<CellProductType, Double> concentrations = 
-						matrix.getConcentrations();
-				double samConcentration = 
-						concentrations.get(CellProductType.SAM);
-				if (samConcentration > maxSamConcentration) {
-					maxSamConcentration = samConcentration;
-					pointWithMostSAM = gridCell.getPoint();
-				}
-			} else {
-				throw new IllegalStateException("No extracellular matrix!");
-			}
-		}
-		
-		return pointWithMostSAM;
-		
-	} // End of findHighestSamGridCell()
+		GridPoint bestLocation = null;
+		GridPoint freeLocation = null;
 
-	
+		ExtracellularMatrixSample bestLocationSample = null;
+		ExtracellularMatrixSample freeLocationSample = null;
+		
+		double maxConcentration = -1;
+		
+		for (ExtracellularMatrixSample sample : samples) {
+			
+			double concentration = sample.getConcentration(productType);
+			
+			if (concentration > maxConcentration) {
+				
+				bestLocation = sample.getPoint();
+				bestLocationSample = sample;
+				maxConcentration = concentration;
+
+				if (vacant && isFreeGridCell(bestLocation)) {
+					freeLocation = bestLocation;
+					freeLocationSample = sample;
+				}
+				
+			} // End if()
+			
+		} // End for(sample)
+		
+		GridLocationStatus gridLocationStatus;
+		
+		if (vacant && (freeLocation != null)) {
+
+			// Return the free location.
+			gridLocationStatus = new GridLocationStatus(freeLocation, 
+					null, freeLocationSample);
+			
+		} else {
+			
+			// Return the best location.
+			gridLocationStatus = new GridLocationStatus(bestLocation, 
+					getCellAt(bestLocation), bestLocationSample);
+			
+		} // End if()
+		
+		return gridLocationStatus;
+		
+	} // End of findHighestConcentrationGridCell()
+
+
 	/**
 	 * 
 	 * @return
@@ -320,7 +330,7 @@ public abstract class GeneRegulatedCell extends Cell {
 		List<GeneRegulatedCell> partnerCells = 
 				new ArrayList<GeneRegulatedCell>();
 		
-		// use the GridCellNgh class to create GridCells for
+		// Use the GridCellNgh class to create GridCells for
 		// the surrounding neighbourhood.
 		GridCellNgh<GeneRegulatedCell> nghCreator = 
 				new GridCellNgh<GeneRegulatedCell>(this.grid, pt, 
@@ -331,11 +341,13 @@ public abstract class GeneRegulatedCell extends Cell {
 		
 		for (GridCell<GeneRegulatedCell> gridCell : gridCells) {
 			
-//			if (gridCell.size() > 1) {
-//				throw new IllegalStateException("Only one cell per grid unit!");
-//			}
+			if (gridCell.size() > 0) {
+				
+				assert gridCell.size() == 1 : 
+						"Only one cell per grid unit! (current = " 
+						+ gridCell.size() + ")";
 			
-			for (GeneRegulatedCell cell : gridCell.items()) {
+				GeneRegulatedCell cell = gridCell.items().iterator().next();
 				
 				// Check if the neighbour has the right concentration of CAM.
 				if (cell.cellAdhesionEnabled && 
@@ -343,7 +355,7 @@ public abstract class GeneRegulatedCell extends Cell {
 					partnerCells.add(cell);
 				}
 				
-			} // End for() cells
+			} // End if()
 			
 		} // End for() gridCells
 		
@@ -354,33 +366,301 @@ public abstract class GeneRegulatedCell extends Cell {
 
 	/**
 	 * 
+	 * @param sourcePolarity
+	 * @param targetPolarity
 	 * @return
 	 */
-	protected Map<CellProductType, Double> getExternalConcentrations(
+	protected boolean validatePolarity(final GeneRegulatedCell target) {
+		
+		GridPoint sourcePos = this.grid.getLocation(this);
+		GridPoint targetPos = this.grid.getLocation(target);
+		
+		/* Remember: source and target must share at least on common Cartesian 
+		 * plane such as (x,y), (x,z) or (y, z).
+		 */
+		
+		final int X = 0;
+		final int Y = 1;
+		final int Z = 2;
+		
+		int[] sourceVector = sourcePos.toIntArray(new int[3]);
+		int[] targetVector = targetPos.toIntArray(new int[3]);
+		
+		int[] diffTargetSource = new int[3];
+		int numCommonPlanes = 0;
+		int selectedPlane = -1;
+
+		for (int i = 0; i < 3; i++) {
+			
+			diffTargetSource[i] = targetVector[i] - sourceVector[i];
+			
+			// Identify common planes.
+			if (diffTargetSource[i] == 0) {
+				numCommonPlanes++;
+				if (selectedPlane > 0) {
+					// Already have a common plane: pick one at random.
+					if (RandomHelper.nextIntFromTo(0, 1) == 0) {
+						// Take the new one instead.
+						selectedPlane = i;
+					}
+				} else {
+					selectedPlane = i;
+				}
+			}
+			
+		} // End for()
+		
+		if ((numCommonPlanes == 3) || (numCommonPlanes == 0)) {
+			/* Target coordinates equal source coordinates, or no common
+			 * Cartesian plane ==> not valid.
+			 */
+			return false;
+		}
+		
+		// Dot product for each plane.
+	
+		int[] validSourcePolarity;
+		int[] validTargetPolarity;
+		
+		switch (selectedPlane) {
+		case X:
+			validSourcePolarity = new int[] { 0, diffTargetSource[Y], 0 };
+			validTargetPolarity = new int[] { 0, 0, -diffTargetSource[Z] };			
+			break;			
+		case Y:
+			validSourcePolarity = new int[] { diffTargetSource[X], 0, 0 };
+			validTargetPolarity = new int[] { 0, 0, -diffTargetSource[Z]};			
+			break;
+		case Z:
+			validSourcePolarity = new int[] { diffTargetSource[X], 0, 0 };
+			validTargetPolarity = new int[] { 0, -diffTargetSource[Y], 0 };
+			break;
+		default:
+			throw new IllegalStateException(
+					"Should have picked a Cartesian plane!");
+		}
+		
+		return (Arrays.equals(this.polarity, validSourcePolarity) 
+				&& Arrays.equals(target.polarity, validTargetPolarity));
+			
+	} // End of validatePolarity()
+	
+	
+	/**
+	 * 
+	 * @param target
+	 * @return
+	 */
+	protected int[] calculateMatchingPolarity(
+			final GeneRegulatedCell otherCell) {
+		
+		GridPoint thisPos = this.grid.getLocation(this);
+		GridPoint otherPos = this.grid.getLocation(otherCell);
+		
+		/* Remember: source and target must share at least on common Cartesian 
+		 * plane such as (x,y), (x,z) or (y, z).
+		 */
+		
+		int[] thisPosVector = thisPos.toIntArray(new int[3]);
+		int[] otherPosVector = otherPos.toIntArray(new int[3]);
+		
+		int[] diffPosThisOther = new int[3];
+		int[] thisPolarity = null;
+
+		for (int i = 0; i < 3; i++) {	
+			diffPosThisOther[i] = thisPosVector[i] - otherPosVector[i];			
+		}
+		
+		final int X = 0;
+		final int Y = 0;
+		final int Z = 0;
+		
+		if (diffPosThisOther[X] == 0) {
+			
+			if (diffPosThisOther[Y] == 0) {
+					
+				if (diffPosThisOther[Z] == 0) {
+					
+					// The other cell has the same position as this one:
+					// should never happen.
+					return null;
+					
+				} else {
+
+					/* Check if trying to stick to the base face of the other
+					 * cell or if the polarity is on the opposite side. If
+					 * not just take the current polarity. 
+					 */
+
+					if (otherCell.polarity[Z] == 0) {
+						thisPolarity = otherCell.polarity.clone();
+					} else {
+						return null;
+					}
+					
+				} // End if()
+				
+			} else {
+				
+				if (diffPosThisOther[Z] == 0) {
+					
+					if (otherCell.polarity[Y] == 0) {
+						thisPolarity = otherCell.polarity.clone();
+					} else {
+						return null;
+					}
+					
+				} else {
+					
+					// Aligned only on x.
+					if (otherCell.polarity[X] == 0) {
+						
+						if (diffPosThisOther[Y] == otherCell.polarity[Y]) {
+							thisPolarity = 
+									new int[] { 0, 0, -diffPosThisOther[Z] };
+						} else if (diffPosThisOther[Z] 
+								== otherCell.polarity[Z]) {
+							thisPolarity = 
+									new int[] { 0, -diffPosThisOther[Y], 0 };
+						} else {
+							// This cell and the polarity of the other cell
+							// are not on the same side.
+							return null; 
+						}
+						
+					} else {
+						
+						return null;
+						
+					} // End if()
+
+				} // End if()
+				
+			} // End if()
+			
+		} else {
+			
+			if (diffPosThisOther[Y] == 0) {
+				
+				if (diffPosThisOther[Z] == 0) {
+					
+					if (otherCell.polarity[X] == 0) {
+						thisPolarity = otherCell.polarity.clone();
+					} else {
+						return null;
+					}
+					
+				} else {
+
+					if (otherCell.polarity[Y] == 0) {
+						
+						if (diffPosThisOther[X] == otherCell.polarity[X]) {
+							thisPolarity = 
+									new int[] { 0, 0, -diffPosThisOther[Z] };
+						} else if (diffPosThisOther[Z] 
+								== otherCell.polarity[Z]) {
+							thisPolarity = 
+									new int[] { -diffPosThisOther[X], 0, 0 };
+						} else {
+							// This cell and the polarity of the other cell
+							// are not on the same side.
+							return null; 
+						}
+						
+					} else {
+						
+						return null;
+						
+					} // End if()
+
+				} // End if()
+				
+			} else {
+				
+				if (diffPosThisOther[Z] == 0) {
+					
+					if (otherCell.polarity[Z] == 0) {
+						
+						if (diffPosThisOther[X] == otherCell.polarity[X]) {
+							thisPolarity = 
+									new int[] { 0, -diffPosThisOther[Y], 0 };
+						} else if (diffPosThisOther[Y] 
+								== otherCell.polarity[Y]) {
+							thisPolarity = 
+									new int[] { -diffPosThisOther[X], 0, 0 };
+						} else {
+							// This cell and the polarity of the other cell
+							// are not on the same side.
+							return null; 
+						}
+						
+					} else {
+						
+						return null;
+						
+					} // End if()
+					
+				} else {
+					
+					// No common plane.
+					return null;
+					
+				} // End if()
+
+			} // End if()
+			
+		} // End if()
+			
+		return thisPolarity;
+		
+	} // End of calculateMatchingPolarity()
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	protected ExtracellularMatrixSample getExtracellularMatrixSample(
 			final GridPoint pt) {
 		
 		// Get the external concentration from the extracellular matrix
 		// at current position.
+
+		SimulationContext simulationContext = 
+				SimulationContextHolder.getInstance();
 		
-		Map<CellProductType, Double> externalConcentrations = null;
+		ExtracellularMatrix matrix = simulationContext.getExtracellularMatrix();
+		
+		ExtracellularMatrixSample sample = 
+				matrix.getSample(pt.getX(), pt.getY(), pt.getZ());
 
-		// Find extracellular matrix (there should be only one instance).
-		for (Object obj : this.grid.getObjectsAt(
-				pt.getX(), pt.getY(), pt.getZ())) {			
-			if (obj instanceof ExtracellularMatrix) {
-				 ExtracellularMatrix matrix = (ExtracellularMatrix) obj;
-				 externalConcentrations = matrix.getConcentrations();
-				 break;
-			}
-		}
-
-		if (externalConcentrations == null) {
-			throw new IllegalStateException("No input elements!");
-		}
-
-		return externalConcentrations;
+		return sample;
 		
 	} // End of getExternalConcentrations()
+	
+	
+	/**
+	 * 
+	 * @param neighbour
+	 * @return
+	 */
+	@Override
+	protected boolean bumpRequest(final Cell requester, 
+			final GridPoint requesterLocation, final int extentX, 
+			final int extentY, final int extentZ) {
+
+		if (this.attached && !((requester instanceof GeneRegulatedCell) 
+				&& ((GeneRegulatedCell) requester).attached)) {
+			
+			// Sedentary cells won't move for puny free roaming cells!
+			return false;
+				
+		} // End if()
+			
+		return super.bumpRequest(requester, 
+				requesterLocation, extentX, extentY, extentZ);		
+		
+	} // End of bumpRequest()
 	
 	
 	// CELL LIFECYCLE METHODS --------------------------------------------------
@@ -396,15 +676,14 @@ public abstract class GeneRegulatedCell extends Cell {
 		
 		// Get the external concentration from the extracellular matrix
 		// at current position.		
-		Map<CellProductType, Double> externalConcentrations = 
-				getExternalConcentrations(pt);
+		ExtracellularMatrixSample extracellularMatrix = getExtracellularMatrixSample(pt);
 
 		// Absorb external products if external concentration is higher.
 		
-		for (CellProductType substanceType : externalConcentrations.keySet()) {
+		for (CellProductType substanceType : CellProductType.values()) {
 			
 			double externalConcentration = 
-					externalConcentrations.get(substanceType);
+					extracellularMatrix.getConcentration(substanceType);
 			CellMembraneChannel substanceChannel = 
 					this.membraneChannels.get(substanceType);
 			double internalConcentration = substanceChannel.getConcentration(); 
@@ -427,7 +706,7 @@ public abstract class GeneRegulatedCell extends Cell {
 				double newInternalConcentration = 
 						internalConcentration + diffusingConcentration;
 				
-				externalConcentrations.put(substanceType, 
+				extracellularMatrix.setConcentration(substanceType, 
 						newExternalConcentration);
 				substanceChannel.setConcentration(newInternalConcentration);
 				logger.debug("New internal concentration: " 
@@ -545,6 +824,13 @@ public abstract class GeneRegulatedCell extends Cell {
 								
 				foodChannel.setConcentration(newFoodConcentration);
 				
+				break;
+				
+			case SPECIAL_OUT_NEUROTRANS:
+				
+				this.cellNeurotransmitterRegulator = 
+						updateRegulatorConcentration(outputElement, 
+								this.cellNeurotransmitterRegulator);
 				break;
 				
 			case SPECIAL_OUT_FOOD_RATE_IN:
@@ -705,8 +991,8 @@ public abstract class GeneRegulatedCell extends Cell {
 		
 		// Get the external concentration from the extracellular matrix
 		// at current position.
-		Map<CellProductType, Double> externalConcentrations = 
-				getExternalConcentrations(pt);
+		ExtracellularMatrixSample extracellularMatrix = 
+				getExtracellularMatrixSample(pt);
 
 		// Expel internal products if internal concentration is higher.
 		
@@ -714,8 +1000,9 @@ public abstract class GeneRegulatedCell extends Cell {
 				this.membraneChannels.values()) {
 			
 			double internalConcentration = substanceChannel.getConcentration();
-			double externalConcentration = externalConcentrations
-					.get(substanceChannel.getSubstanceType());
+			double externalConcentration = 
+					extracellularMatrix.getConcentration(
+							substanceChannel.getSubstanceType());
 			
 			logger.debug("Internal = " + internalConcentration 
 					+ " ==> External = " + externalConcentration);
@@ -736,7 +1023,8 @@ public abstract class GeneRegulatedCell extends Cell {
 						externalConcentration + diffusingConcentration;
 				
 				substanceChannel.setConcentration(newInternalConcentration);
-				externalConcentrations.put(substanceChannel.getSubstanceType(), 
+				extracellularMatrix.setConcentration(
+						substanceChannel.getSubstanceType(), 
 						newExternalConcentration);
 				logger.debug("New internal concentration: " 
 						+ newInternalConcentration);
@@ -786,6 +1074,8 @@ public abstract class GeneRegulatedCell extends Cell {
 	 */
 	protected void die() {
 		
+		logger.debug("R.I.P. ...");
+		
 		this.alive = false;
 		
 		@SuppressWarnings("unchecked")
@@ -809,129 +1099,86 @@ public abstract class GeneRegulatedCell extends Cell {
 			// get the grid location of this Cell
 			GridPoint pt = this.grid.getLocation(this);
 			
+			GridPoint targetLocation;
+			
 			if (this.attached) {
 				
-				GeneRegulatedCell neighbourToKick = null;
-				GridPoint pointWithMostSAM = findHighestSamGridCell(pt);
-				for (Object obj : this.grid.getObjectsAt(
-						pointWithMostSAM.getX(), pointWithMostSAM.getY(), 
-						pointWithMostSAM.getZ())) {
-					if (obj instanceof UndifferentiatedCell) {
-						neighbourToKick = (GeneRegulatedCell) obj;
-						break;
-					}
-				}
-
-				if (neighbourToKick != null) {
-					neighbourToKick.invaders.add(this);
-				}
+				int extentX = (this.polarity[0] == 0) ? 1 : 0;
+				int extentY = (this.polarity[1] == 0) ? 1 : 0;
+				int extentZ = (this.polarity[2] == 0) ? 1 : 0;
+				
+				GridLocationStatus locationStatus = 
+						findHighestConcentrationGridCell(CellProductType.SAM, 
+								pt, extentX, extentY, extentZ, false, true);
+				
+				if (locationStatus.getOccupant() != null) {
 					
-				logger.info("Cell division event (attached):"
-						+ " growth regulator = " 
-						+ this.cellGrowthRegulator);
-
-				this.cellGrowthRegulator = this.cellGrowthRegulator / 2;
-		
-				Cell daughterCell = clone();
-			
-				@SuppressWarnings("unchecked")
-				Context<Object> context = ContextUtils.getContext(this);
-				context.add(daughterCell);
-				this.space.moveTo(daughterCell, 
-						pointWithMostSAM.getX() + 0.5, 
-						pointWithMostSAM.getY() + 0.5, 
-						pointWithMostSAM.getZ() + 0.5);
-				this.grid.moveTo(daughterCell, pointWithMostSAM.getX(), 
-						pointWithMostSAM.getY(), pointWithMostSAM.getZ());
-
-				return true;
-								
-			} else {
-				
-				GridPoint pointWithNoCell = findFreeGridCell(pt);
-			
-				if (pointWithNoCell != null) {
-				
-					logger.info("Cell division event: growth regulator = " 
-							+ this.cellGrowthRegulator);
-
-					this.cellGrowthRegulator = this.cellGrowthRegulator / 2;
-			
-					Cell daughterCell = clone();
-			
-					@SuppressWarnings("unchecked")
-					Context<Object> context = ContextUtils.getContext(this);
-					context.add(daughterCell);
-					this.space.moveTo(daughterCell, 
-							pointWithNoCell.getX() + 0.5, 
-							pointWithNoCell.getY() + 0.5, 
-							pointWithNoCell.getZ() + 0.5);
-					this.grid.moveTo(daughterCell, pointWithNoCell.getX(), 
-							pointWithNoCell.getY(), pointWithNoCell.getZ());
-
-					return true;
-				
+					logger.debug("No free space: bumping neighbour.");
+						
+					if (!locationStatus.getOccupant()
+							.bumpRequest(this, pt, extentX, extentY, extentZ)) {
+							
+						logger.debug("Neighbour can't or won't move: "
+								+ "choking to death.");
+							
+						die();
+						return true;
+							
+					} // End if()
+						
 				} // End if()
 				
-			} // End if()
-			
-		} // End if()
+				targetLocation = locationStatus.getLocation();
 				
+			} else {
+				
+				GridLocationStatus locationStatus = 
+						findHighestConcentrationGridCell(CellProductType.FOOD, 
+								pt, 1, 1, 1, false, true);
+				
+				if (locationStatus.getOccupant() != null) {
+					
+					logger.debug("No free space: bumping neighbour.");
+						
+					if (!locationStatus.getOccupant()
+							.bumpRequest(this, pt, 1, 1, 1)) {
+							
+						logger.debug("Neighbour can't or won't move: "
+								+ "choking to death.");
+							
+						die();
+						return true;
+							
+					} // End if()
+						
+				} // End if()
+				
+				targetLocation = locationStatus.getLocation();
+				
+			} // End if()
+				
+			logger.info("Cell division event: growth regulator = " 
+					+ this.cellGrowthRegulator);
+
+			this.cellGrowthRegulator = this.cellGrowthRegulator / 2;
+			
+			Cell daughterCell = clone();
+			
+			@SuppressWarnings("unchecked")
+			Context<Object> context = ContextUtils.getContext(this);
+			context.add(daughterCell);
+			
+			daughterCell.moveTo(targetLocation);
+
+			return true;
+				
+		} // End if()
+			
 		return false;
 		
 	} // End of cellDivisionHandler()
 
 
-	/**
-	 * 
-	 * @return
-	 */
-	protected boolean cellInvasionHandler() {
-		
-		if (!this.invaders.isEmpty()) {
-
-			GridPoint pt = this.grid.getLocation(this);
-			
-			GridPoint pointWithMostSAM = findHighestSamGridCell(pt);
-			
-			if (pointWithMostSAM != null) {
-				
-				this.invaders.clear();
-				
-				GeneRegulatedCell neighbourToKick = null;
-				for (Object obj : this.grid.getObjectsAt(
-						pointWithMostSAM.getX(), pointWithMostSAM.getY(), 
-						pointWithMostSAM.getZ())) {
-					if (obj instanceof UndifferentiatedCell) {
-						neighbourToKick = (GeneRegulatedCell) obj;
-						break;
-					}
-				}
-
-				if (neighbourToKick != null) {
-					neighbourToKick.invaders.add(this);
-				}
-					
-				this.space.moveTo(this, 
-						pointWithMostSAM.getX() + 0.5, 
-						pointWithMostSAM.getY() + 0.5, 
-						pointWithMostSAM.getZ() + 0.5);
-				this.grid.moveTo(this, pointWithMostSAM.getX(), 
-						pointWithMostSAM.getY(), 
-						pointWithMostSAM.getZ());
-				
-				logger.info("Cell kicking event.");
-				return true;
-				
-			} // End if()
-			
-		} // End if()
-		
-		return false;
-		
-	} // End of cellInvasionHandler()
-	
-	
 	/**
 	 * 
 	 * @return
@@ -955,67 +1202,19 @@ public abstract class GeneRegulatedCell extends Cell {
 				
 				if (partnerCells.size() == 0) {
 					
-					this.attached = false;
-					this.membraneChannels
-							.get(CellProductType.SAM).setOpenForOutput(false);
+					detachCell();										
 					changedAdhesionState = true;
-					logger.info("Cell breaking away event: no partners, CAM = " 
-							+ this.cellAdhesionRegulator);
+					
+					logger.info("Cell breaking away: no partners");
 					
 				} else {
 					
-					// Apply diffusion and decay to each product
-					// in this grid cell.
-					for (CellMembraneChannel substanceChannel : 
-							this.membraneChannels.values()) {
-						
-						double localConcentration = 
-								substanceChannel.getConcentration();	
-						
-						double newLocalConcentration = localConcentration;
-						
-						for (GeneRegulatedCell partnerCell : partnerCells) {
-						
-							CellMembraneChannel partnerChannel = partnerCell
-									.membraneChannels
-									.get(substanceChannel.getSubstanceType());
-							double partnerConcentration = 
-									partnerChannel.getConcentration(); 
-								
-							if (localConcentration > partnerConcentration) {
-								
-								double equilibriumConcentration =
-										(localConcentration 
-												+ partnerConcentration) / 2;
-								
-								double diffusingConcentration =
-										(localConcentration 
-												- equilibriumConcentration) 
-										* GAP_TRANSFER_RATE;
-								
-								// Proceed only if we have the concentration to spare.
-								if (diffusingConcentration < newLocalConcentration) {
-									
-									newLocalConcentration -= diffusingConcentration;
-									double newPartnerConcentration =
-											partnerConcentration + diffusingConcentration;
-									
-									partnerChannel.setConcentration(
-											newPartnerConcentration);
-									
-								} // End if()
-								
-							} // End if()
-								
-						} // End for() grid cells
-									
-						substanceChannel
-								.setConcentration(newLocalConcentration);
-						
-					} // End for() products
-
-					Map<CellProductType, Double> externalConcentrations = getExternalConcentrations(pt);
-					double samConcentration = externalConcentrations.get(CellProductType.SAM);
+					// Cell still attached.
+					
+					diffuseToPartnerCells(partnerCells);
+					
+					ExtracellularMatrixSample extracellularMatrix = getExtracellularMatrixSample(pt);
+					double samConcentration = extracellularMatrix.getConcentration(CellProductType.SAM);
 					for (Object obj : this.grid.getObjectsAt(pt.getX(), pt.getY(), pt.getZ())) {
 						if (obj instanceof Destroyable) {
 							if (RandomHelper.nextDoubleFromTo(0, 1) <= samConcentration) {
@@ -1029,12 +1228,10 @@ public abstract class GeneRegulatedCell extends Cell {
 				
 			} else {
 				
-				this.attached = false;
-				this.membraneChannels
-						.get(CellProductType.SAM).setOpenForOutput(false);
+				detachCell();
 				changedAdhesionState = true;
-				logger.info("Cell breaking away event: CAM = " 
-						+ this.cellAdhesionRegulator);
+				
+				logger.info("Cell breaking away: concentration too low."); 
 				
 			} // End if()
 			
@@ -1045,26 +1242,9 @@ public abstract class GeneRegulatedCell extends Cell {
 				List<GeneRegulatedCell> partnerCells = 
 						findPartnerCells(pt, REGULATOR_UNIVERSAL_THRESHOLD);
 				
-				if (partnerCells.size() > 0) {
-					
-					this.attached = true;
-					this.membraneChannels
-							.get(CellProductType.SAM).setOpenForOutput(true);
-					changedAdhesionState = true;
-					
-					for (GeneRegulatedCell partnerCell : partnerCells) {
-						
-						partnerCell.attached = true;
-						partnerCell.membraneChannels
-								.get(CellProductType.SAM)
-								.setOpenForOutput(true);
-						
-					} // End for() partner cells
-										
-					logger.info("Cell adhesion event: CAM = " 
-							+ this.cellAdhesionRegulator);
-					
-				} // End if()
+				if (partnerCells.size() > 0) {			
+					changedAdhesionState = attachCell(partnerCells);
+				}
 							
 			} // End if()
 
@@ -1073,6 +1253,135 @@ public abstract class GeneRegulatedCell extends Cell {
 		return changedAdhesionState;
 		
 	} // End of cellAdhesionHandler()
+	
+	
+	/**
+	 * 
+	 */
+	protected boolean attachCell(final List<GeneRegulatedCell> partnerCells) {
+		
+		assert this.polarity == null : 
+				"Detached cells should have no polarity!";
+		
+		int[] polarity = null;
+		int polarisedCellCount = 0;
+		
+		for (GeneRegulatedCell partnerCell : partnerCells) {
+			
+			if (partnerCell.polarity != null) {
+				polarisedCellCount++;
+				polarity = calculateMatchingPolarity(partnerCell);
+				if (polarity != null) {	
+					break;
+				}
+			}
+			
+		} // End for(partnerCell)
+		
+		if (polarity == null) {
+			
+			if (polarisedCellCount == 0) {
+			
+				// Randomly pick one.
+			
+				polarity = new int[] { 0, 0, 0 };
+			
+				int plane = RandomHelper.nextIntFromTo(0, 2);
+				int value = (RandomHelper.nextIntFromTo(0, 1) == 0) ? -1 : 1;
+				polarity[plane] = value;
+			
+			} else {
+				
+				// Cannot attach: can't match polarity to surrounding cells.
+				return false;
+				
+			} // End if()
+			
+		} // End if)_
+		
+		this.polarity = polarity;
+		
+		this.attached = true;
+		
+		this.membraneChannels.get(CellProductType.SAM).setOpenForOutput(true);
+		this.membraneChannels.get(CellProductType.FOOD).setOpenForOutput(true);
+
+		logger.info("Cell adhesion event.");
+		
+		return true;
+		
+	} // End of attachCell()
+	
+	
+	/**
+	 * 
+	 */
+	protected void detachCell() {
+		
+		this.attached = false;
+		this.polarity = null;
+		
+		this.membraneChannels.get(CellProductType.SAM).setOpenForOutput(false);
+		this.membraneChannels.get(CellProductType.FOOD).setOpenForOutput(false);
+		
+	} // End of detachCell()
+	
+	
+	/**
+	 * 
+	 */
+	protected void diffuseToPartnerCells(
+			final List<GeneRegulatedCell> partnerCells) {
+		
+		assert this.attached : "Cell is not supposed to use gap junctions!";
+	
+		for (CellMembraneChannel substanceChannel : 
+				this.membraneChannels.values()) {
+	
+			double localConcentration =	substanceChannel.getConcentration();
+			double newLocalConcentration = localConcentration;
+	
+			for (GeneRegulatedCell partnerCell : partnerCells) {
+	
+				if (partnerCell.attached) {
+					
+					CellMembraneChannel partnerChannel = 
+							partnerCell.membraneChannels
+							.get(substanceChannel.getSubstanceType());
+					
+					double partnerConcentration = 
+							partnerChannel.getConcentration(); 
+			
+					if (localConcentration > partnerConcentration) {
+			
+						double equilibriumConcentration =
+								(localConcentration	+ partnerConcentration) / 2;
+			
+						double diffusingConcentration =
+								(localConcentration	- equilibriumConcentration) 
+								* GAP_TRANSFER_RATE;
+			
+						newLocalConcentration = 
+								localConcentration - diffusingConcentration;
+						double newPartnerConcentration =
+								partnerConcentration + diffusingConcentration;
+				
+						partnerChannel.setConcentration(
+								newPartnerConcentration);
+				
+						break;
+						
+					} // End if()
+			
+				} // End if()
+			
+			} // End for(partnerCells)
+				
+			substanceChannel.setConcentration(newLocalConcentration);
+	
+		} // End for() products
+
+	} // End diffuseThroughGapJunction()
 	
 	
 	/**
@@ -1113,58 +1422,18 @@ public abstract class GeneRegulatedCell extends Cell {
 			// get the grid location of this Cell
 			GridPoint pt = this.grid.getLocation(this);
 					
-			// use the GridCellNgh class to create GridCells for
-			// the surrounding neighbourhood.
-			GridCellNgh<ExtracellularMatrix> nghCreator = 
-					new GridCellNgh<ExtracellularMatrix>(
-							this.grid, pt, ExtracellularMatrix.class, 1, 1, 1);
-			List<GridCell<ExtracellularMatrix>> gridCells = 
-					nghCreator.getNeighborhood(true);
-			SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
-		
-			GridPoint pointWithMostElements = null;
-			double maxGradient = -1;
-			
-			for (GridCell<ExtracellularMatrix> gridCell : gridCells) {
-				
-				if (gridCell.size() > 1) {
-					throw new IllegalStateException("Multiple matrix!");
-				}
-			
-				GridPoint gridPoint = gridCell.getPoint();
-				
-				if (isFreeGridCell(gridPoint)) {
-					
-					for (ExtracellularMatrix matrix : gridCell.items()) {
-					
-						Map<CellProductType, Double> concentrations = 
-								matrix.getConcentrations();
-					
-						double gradient = 
-								concentrations.get(CellProductType.FOOD);
-								//+ concentrations.get(CellProductType.SAM);
-						if (gradient > maxGradient) {
-							pointWithMostElements = gridPoint;
-							maxGradient = gradient;
-						}
-					
-					} // End for() matrices
-				
-				} // End if()
-				
-			} // End for() gridCells
+			GridLocationStatus locationStatus =	
+					findHighestConcentrationGridCell(CellProductType.FOOD, 
+							pt, 1, 1, 1, true, true);
 
-			if (pointWithMostElements != null) {
-				this.space.moveTo(this, 
-						pointWithMostElements.getX() + 0.5, 
-						pointWithMostElements.getY() + 0.5, 
-						pointWithMostElements.getZ() + 0.5);
-				this.grid.moveTo(this, pointWithMostElements.getX(), 
-						pointWithMostElements.getY(), 
-						pointWithMostElements.getZ());
-				logger.info("Cell movement event.");
+			if (locationStatus.getOccupant() == null) {
+				
+				moveTo(locationStatus.getLocation());
+				logger.debug("Cell movement event.");
+
 				return true;
-			}
+			
+			} // End if()
 			
 		} // End if()
 		

@@ -6,7 +6,6 @@ package org.thoughtsfactory.neurogenesis.brain;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
 
@@ -29,12 +28,15 @@ import repast.simphony.util.SimUtilities;
 
 
 /**
- * @author bob
+ * @author 
  *
  */
 public class Neuron extends GeneRegulatedCell {
 
 
+	// CONSTANTS ===============================================================
+	
+	
 	/**
 	 * 
 	 */
@@ -56,6 +58,9 @@ public class Neuron extends GeneRegulatedCell {
 	//
 	private final static Logger logger = Logger.getLogger(Neuron.class);	
 		
+	
+	// INSTANCE VARIABLES ======================================================
+	
 	
 	/**
 	 * 
@@ -107,6 +112,9 @@ public class Neuron extends GeneRegulatedCell {
 	protected int totalDendrites = 0;
 	
 	
+	// CONSTRUCTORS ============================================================
+	
+	
 	/**
 	 * 
 	 * @param space
@@ -154,6 +162,12 @@ public class Neuron extends GeneRegulatedCell {
 	} // End of Neuron(GeneRegulatedCell)
 	
 	
+	// METHODS =================================================================
+	
+	
+	// ACESSORS ----------------------------------------------------------------
+	
+	
 	/**
 	 * 
 	 * @return
@@ -163,6 +177,9 @@ public class Neuron extends GeneRegulatedCell {
 	};
 	
 
+	// OTHER METHDOS -----------------------------------------------------------
+	
+	
 	/**
 	 * 
 	 */
@@ -190,18 +207,8 @@ public class Neuron extends GeneRegulatedCell {
 			cellAxonGrowthHandler();
 			cellDendritesGrowthHandler();
 			
-			cellInvasionHandler();
-			
-			// Handles cell adhesion.
-//			if (this.cellAdhesionEnabled) {
-//				cellAdhesionHandler();
-//			}
-
 			// Handles mutations.
 			//cellMutationHandler();
-			
-			// Handles movement.
-			//cellMovementHandler();
 			
 			expelProductsToMatrix();
 
@@ -209,6 +216,39 @@ public class Neuron extends GeneRegulatedCell {
 		
 	} // End of step()
 
+
+	/**
+	 * 
+	 * @param neighbour
+	 * @return
+	 */
+	@Override
+	protected boolean bumpRequest(final Cell requester, 
+			final GridPoint requesterLocation, final int extentX, 
+			final int extentY, final int extentZ) {
+
+		// Neurons can't be bumped.
+		return false;
+		
+	} // End of bumpRequest()
+	
+	
+	/**
+	 * 
+	 */
+	@Override
+	public void moveTo(final int x, int y, int z) {
+		
+		// Once initialised neuron can't be move.
+		if (this.neuritesRoot == null) {
+			super.moveTo(x, y, z);
+		} else {
+			throw new IllegalStateException(
+					"Neuron can't be moved once intialised!");
+		}
+		
+	} // End of moveTo()
+	
 	
 	/**
 	 * Remove a cell from the context along with all with all the dependent
@@ -269,26 +309,8 @@ public class Neuron extends GeneRegulatedCell {
 			
 			for (NeuriteJunction synapse : currentJunction.getSynapses()) {
 				
-//				// Remove link between neurons.
-//				
-//				RepastEdge<Object> neuralNetworkEdge = 
-//						this.neuralNetwork.getEdge(currentJunction.getNeuron(), 
-//								synapse.getNeuron());
-//				
-//				assert neuralNetworkEdge != null : 
-//						"Should have a corresponding link between neurons!";
-//				
-//				this.neuralNetwork.removeEdge(neuralNetworkEdge);
-				
 				// Remove the synaptic link.
 				synapse.getPredecessors().remove(currentJunction);
-				
-//				RepastEdge<Object> synapticEdge = 
-//						this.neuritesNetwork.getEdge(currentJunction, synapse);
-//				
-//				assert synapticEdge != null : "No synaptic link!";
-//				
-//				this.neuritesNetwork.removeEdge(synapticEdge);
 				
 			} // End for(synapse)
 			
@@ -326,8 +348,9 @@ public class Neuron extends GeneRegulatedCell {
 		
 			NeuriteJunction currentJunction = junctionsToDestroy.pop();
 			
-			assert currentJunction.getType() == NeuriteJunction.Type.DENDRITE :
-					"Current junction is not a dendrite!";
+			// Has to be a NEURON (root) or DENDRITE. 
+			assert (currentJunction.getType() != NeuriteJunction.Type.AXON) :
+					"Current junction belong to an AXON!";
 			
 			for (NeuriteJunction predecessor : 
 					currentJunction.getPredecessors()) {
@@ -581,11 +604,11 @@ public class Neuron extends GeneRegulatedCell {
 					+ ((dendriteLeaf.getNeuron().alive)	
 							? "alive" : "dead") + ")";
 				
-			Map<CellProductType, Double> externalConcentrations = 
-					getExternalConcentrations(dendriteLocation);
+			ExtracellularMatrixSample extracellularMatrix = 
+					getExtracellularMatrixSample(dendriteLocation);
 			
 			double externalConcentration = 
-						externalConcentrations.get(CellProductType.SAM);
+					extracellularMatrix.getConcentration(CellProductType.SAM);
 				
 			double currentValue = externalConcentration 
 					* Math.pow(dendriteLeaf.getDepth(), 2);
@@ -636,7 +659,6 @@ public class Neuron extends GeneRegulatedCell {
 			
 			// Second (optional) branch from bud.
 			
-//			if (checkConcentrationTrigger(this.cellGrowthRegulator, false)) {
 			if (checkConcentrationTrigger(this.cellGrowthRegulator 
 					/ Math.pow(nextBud.getDepth(), 2), false)) {
 				
@@ -831,10 +853,10 @@ public class Neuron extends GeneRegulatedCell {
 				
 				if (freeCell) {
 					
-					Map<CellProductType, Double> externalConcentrations = 
-							getExternalConcentrations(gridCell.getPoint());
-					double samConcentration = 
-							externalConcentrations.get(CellProductType.SAM);
+					ExtracellularMatrixSample extracellularMatrix = 
+							getExtracellularMatrixSample(gridCell.getPoint());
+					double samConcentration = extracellularMatrix
+							.getConcentration(CellProductType.SAM);
 					if (samConcentration < minConcentration) {
 						minConcentration = samConcentration;
 						selectedGridCell = gridCell;
@@ -1001,8 +1023,8 @@ public class Neuron extends GeneRegulatedCell {
 					+ inputNeuron.getActivation() + ", weight = " 
 					+ inputEdge.getWeight());
 
-			netInput += inputNeuron.getActivation() 
-					* inputEdge.getWeight()	* foodConcentration;
+			netInput += inputNeuron.getActivation() * inputEdge.getWeight()	
+					* this.cellNeurotransmitterRegulator * foodConcentration;
 			
 			inputEdges.add(inputEdge);
 			

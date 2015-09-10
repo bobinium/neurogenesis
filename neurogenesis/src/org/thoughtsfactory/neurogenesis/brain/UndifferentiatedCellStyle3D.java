@@ -11,8 +11,15 @@ import repast.simphony.visualization.visualization3D.style.Style3D;
 import repast.simphony.visualization.visualization3D.style.TaggedAppearance;
 import repast.simphony.visualization.visualization3D.style.TaggedBranchGroup;
 
+
+/**
+ * 
+ * @author bob
+ *
+ */
 public class UndifferentiatedCellStyle3D implements Style3D<UndifferentiatedCell> {
 
+	
 	//
 	private static final double MINIMUM_CELL_SIZE = 0.3;
 	
@@ -30,7 +37,8 @@ public class UndifferentiatedCellStyle3D implements Style3D<UndifferentiatedCell
 			taggedGroup = new TaggedBranchGroup("DEFAULT");
 			Shape3D shape;
 			if (agent.isAttached()) {
-				shape = ShapeFactory.createCube(.03f, "DEFAULT");
+				shape = ShapeFactory.createCone(.03f, .03f, "DEFAULT");
+						//.createCube(.03f, "DEFAULT");
 			} else {
 				shape = ShapeFactory.createSphere(.03f, "DEFAULT");
 			}
@@ -49,7 +57,38 @@ public class UndifferentiatedCellStyle3D implements Style3D<UndifferentiatedCell
 	 * @return
 	 */
 	public float[] getRotation(UndifferentiatedCell agent) {
-		return null;
+		
+		if (!agent.attached) {
+			return null;
+		}
+		float[] rotations;
+		if (agent.polarity == null) {
+			return null;
+		} else {
+			
+			float rotationX = 0;
+			float rotationY = 0;
+			float rotationZ = 0;
+			float angle = (float) Math.PI / 2;
+			
+			if (agent.polarity[0] != 0) {
+				// x: Rotate 90 degees positive/negative around the z-axis.
+				rotationZ = agent.polarity[0]; 
+			} else if (agent.polarity[1] != 0) {
+				// y: Do not rotate if y < 0, otherwise turn the cone upside down.
+				rotationZ = (agent.polarity[1] > 0) ? 1 : 0;
+				angle = (float) Math.PI;
+			} else if (agent.polarity[2] != 0) {
+				// z: Rotate around the x-axis, but inverse sign.
+				rotationX = -agent.polarity[2];
+			}
+			
+			rotations = new float[] { rotationX, rotationY, rotationZ, angle };
+			
+		}
+		
+		return rotations;
+		
 	}
 	
 	
@@ -104,10 +143,12 @@ public class UndifferentiatedCellStyle3D implements Style3D<UndifferentiatedCell
 		
 		if (taggedAppearance == null || taggedAppearance.getTag() == null) {
 			taggedAppearance = new TaggedAppearance("DEFAULT");
+			
 			AppearanceFactory.setMaterialAppearance(
 					taggedAppearance.getAppearance(), 
-					agent.isAttached() ? ((agent.invaders.isEmpty() )? Color.MAGENTA : Color.ORANGE) : Color.GREEN);
-	    }
+					agent.isAttached() ? Color.PINK : Color.GREEN);
+			
+	    } // End if()
 	    
 	    return taggedAppearance;
 	    

@@ -1,5 +1,7 @@
 package org.thoughtsfactory.neurogenesis;
 
+import org.thoughtsfactory.neurogenesis.brain.ExtracellularMatrix;
+
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
@@ -31,6 +33,10 @@ public final class SimulationContextHolder implements SimulationContext {
 	
 	//
 	private Network<Object> neuritesNetwork;
+	
+	
+	//
+	private ExtracellularMatrix extracellularMatrix;
 	
 	
 	/**
@@ -79,6 +85,16 @@ public final class SimulationContextHolder implements SimulationContext {
 	
 	/**
 	 * 
+	 * @return
+	 */
+	@Override
+	public ExtracellularMatrix getExtracellularMatrix() {
+		return this.extracellularMatrix;
+	}
+	
+	
+	/**
+	 * 
 	 * @param newBrainSpace
 	 */
 	public void setBrainSpace(final ContinuousSpace<Object> newBrainSpace) {
@@ -113,6 +129,16 @@ public final class SimulationContextHolder implements SimulationContext {
 	}
 	
 
+	/**
+	 * 
+	 * @param newExtracellularMatrix
+	 */
+	public void setExtracellularMatrix(
+			final ExtracellularMatrix newExtracellularMatrix) {
+		this.extracellularMatrix = newExtracellularMatrix;
+	}
+	
+	
 	/**
 	 * 
 	 * @return

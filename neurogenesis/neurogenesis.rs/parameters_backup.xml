@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
-					<parameter name="cell.adhesion.enabled" displayName="Cell Adhesion Enabled" type="boolean" 
-						defaultValue="false" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
-									
-		/>
-				<parameter name="neuron.learning.rate" displayName="Neuron Learning Rate" type="double" 
+					<parameter name="neuron.learning.rate" displayName="Neuron Learning Rate" type="double" 
 						defaultValue="0.2" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
@@ -36,12 +30,11 @@
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
-				<parameter name="population.extent" displayName="Initial Population Extent" type="int" 
-						defaultValue="2" 
+				<parameter name="cell.adhesion.enabled" displayName="Cell Adhesion Enabled" type="boolean" 
+						defaultValue="false" 
 						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									values="1 2 3 4 "
-						
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+									
 		/>
 				<parameter name="dendrites.leaves.max" displayName="Max. Dendrite Leaves" type="int" 
 						defaultValue="30" 
@@ -53,6 +46,12 @@
 						defaultValue="0.2" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="simulation.test" displayName="Run Test Model" type="boolean" 
+						defaultValue="false" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									
 		/>
 		</parameters>
