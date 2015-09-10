@@ -234,7 +234,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		
 		setupInitialEnvironment(context);
 		
-		//RunEnvironment.getInstance().endAt(10000);
+		RunEnvironment.getInstance().endAt(20000);
 		
 		return context;
 		
@@ -399,12 +399,6 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		initialConcentrations.put(CellProductType.FOOD, 
 				this.initialMatrixFoodConcentration);
 
-//		ExtracellularMatrix matrix = 
-//				new ArrayExtracellularMatrix(this.brainGridQuadrantSize, 
-//						initialConcentrations);
-
-		//context.add(matrix);
-		
 		ExtracellularMatrix matrix = new DistributedExtracellularMatrix(
 				context, this.brainSpace, this.brainGrid, 
 				this.brainGridQuadrantSize,	initialConcentrations);
