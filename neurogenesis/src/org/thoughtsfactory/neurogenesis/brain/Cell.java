@@ -25,6 +25,10 @@ public abstract class Cell {
 	private final static Logger logger = Logger.getLogger(Cell.class);	
 		
 	
+	//
+	private final String id;
+	
+	
 	/**
 	 * 
 	 */
@@ -42,9 +46,11 @@ public abstract class Cell {
 	 * @param space
 	 * @param grid
 	 */
-	protected Cell(final ContinuousSpace<Object> newSpace, 
+	protected Cell(final String newId, 
+			final ContinuousSpace<Object> newSpace, 
 			final Grid<Object> newGrid) {
-		
+	
+		this.id = newId;
 		this.space = newSpace;
 		this.grid = newGrid;
 		
@@ -55,12 +61,22 @@ public abstract class Cell {
 	 * 
 	 * @param motherCell
 	 */
-	protected Cell(final Cell motherCell) {
+	protected Cell(final String newId, final Cell motherCell) {
 	
+		this.id = newId;
 		this.space = motherCell.space;
 		this.grid = motherCell.grid;
 		
 	} // End of Cell(Cell)
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final String getId() {
+		return this.id;
+	}
 	
 	
 	/**
@@ -247,7 +263,14 @@ public abstract class Cell {
 					
 					// Neighbour has agreed: move to its now free location.
 					
-					logger.debug("Cell shifting to new location.");
+					logger.debug("Cell " + this.id 
+							+ " shifting to (" + neighbourCoords[0] 
+							+ "," + neighbourCoords[1] + "," 
+							+ neighbourCoords[2] + ") as requested by " 
+							+ requester.id + " from ("
+							+ requesterLocation.getX() + "," 
+							+ requesterLocation.getY() + "," 
+							+ requesterLocation.getZ() + ").");
 					
 					moveTo(neighbourCoords[0], neighbourCoords[1], 
 							neighbourCoords[2]);
@@ -267,9 +290,16 @@ public abstract class Cell {
 			
 			// Agree to the request: move to free grid cell.
 			
-			logger.info("Cell being bumped.");
+			GridPoint newLocation = freeGridCell.getPoint();
 			
-			moveTo(freeGridCell.getPoint()); 
+			logger.info("Cell " + this.id + "being bumped to (" 
+					+ newLocation.getX() + "," + newLocation.getY() + "," 
+					+ newLocation.getZ() + ") as requested by " + requester.id 
+					+ " from (" + requesterLocation.getX() + "," 
+					+ requesterLocation.getY() + "," + requesterLocation.getZ() 
+					+ ").");
+			
+			moveTo(newLocation); 
 				
 			return true;
 			
@@ -281,7 +311,7 @@ public abstract class Cell {
 	/**
 	 * 
 	 */
-	protected abstract Cell clone();
+	protected abstract Cell getClone(final String newId);
 	
 	
 } // End of Cell class

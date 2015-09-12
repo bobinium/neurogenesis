@@ -18,5 +18,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="repast.simphony.runtime.RepastMain"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="&quot;${workspace_loc:neurogenesis}/neurogenesis.rs&quot;"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="neurogenesis"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xss10M -Xmx5000M -ea -XX:+UseG1GC"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xss10M -Xmx5g -ea -XX:+UseG1GC"/>
 </launchConfiguration>

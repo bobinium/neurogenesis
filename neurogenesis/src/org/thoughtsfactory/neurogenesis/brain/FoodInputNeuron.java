@@ -35,14 +35,15 @@ public class FoodInputNeuron extends InputNeuron {
 	 * 
 	 * @param newNeuralNetwork
 	 */
-	public FoodInputNeuron(final ContinuousSpace<Object> newSpace,
+	public FoodInputNeuron(final String newId,
+			final ContinuousSpace<Object> newSpace,
 			final Grid<Object> newGrid,
 			final RegulatoryNetwork newRegulatoryNetwork,
 			final Network<Object> newNeuralNetwork,
 			final Network<Object> newNeuritesNetwork,
 			final Sensor newSensor) {
 		
-		super(newSpace, newGrid, newRegulatoryNetwork, 
+		super(newId, newSpace, newGrid, newRegulatoryNetwork, 
 				newNeuralNetwork, newNeuritesNetwork, newSensor);
 		
 		CellMembraneChannel foodChannel = 

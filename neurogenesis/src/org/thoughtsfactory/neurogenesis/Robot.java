@@ -37,19 +37,19 @@ public class Robot {
 	
 	
 	//
-	private final MotionSensor leftMotionSensor = new MotionSensor();
+	private final MotionSensor leftMotionSensor = new MotionSensor("Left");
 	
 	
 	//
-	private final MotionSensor rightMotionSensor = new MotionSensor();
+	private final MotionSensor rightMotionSensor = new MotionSensor("Right");
 	
 	
 	//
-	private final Motor leftMotor = new Motor();
+	private final Motor leftMotor = new Motor("Left");
 	
 	
 	//
-	private final Motor rightMotor = new Motor();
+	private final Motor rightMotor = new Motor("Right");
 	
 	
 	//
@@ -208,10 +208,15 @@ public class Robot {
 	 */
 	public void update() {
 		
+		double leftAcceleration = this.leftMotor.getAcceleration();
+		logger.debug("Left motor accelration: " + leftAcceleration);
+		
+		double rightAcceleration = this.rightMotor.getAcceleration();
+		logger.debug("Right motor accelration: " + rightAcceleration);
+		
 		// Calculates new velocity.
 		double newAngularVelocity = this.angularVelocity 
-				+ this.leftMotor.getAcceleration() 
-				- this.rightMotor.getAcceleration();
+				+ leftAcceleration - rightAcceleration;
 		if (newAngularVelocity > this.maxAngularVelocity) {
 			this.angularVelocity = this.maxAngularVelocity;
 		} else if (newAngularVelocity < -this.maxAngularVelocity) {

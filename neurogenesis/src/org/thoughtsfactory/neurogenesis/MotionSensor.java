@@ -15,12 +15,44 @@ public class MotionSensor implements Sensor {
 	private double speedRatio = 0;
 	
 	
+	//
+	private String label = "";
+	
+	
+	/**
+	 * 
+	 */
+	public MotionSensor() {
+	}
+	
+	
+	/**
+	 * 
+	 * @param newLabel
+	 */
+	public MotionSensor(final String newLabel) {
+		
+		this.label = newLabel;
+	
+	} // End of MotionSensor(String)
+	
+	
 	/**
 	 * 
 	 * @return
 	 */
 	public final double getSpeedRatio() {
 		return this.speedRatio;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@Override
+	public String getLabel() {
+		return this.label;
 	}
 	
 	
@@ -33,6 +65,15 @@ public class MotionSensor implements Sensor {
 	}
 
 
+	/**
+	 * 
+	 * @param newLabel
+	 */
+	public void setLabel(final String newLabel) {
+		this.label = newLabel;
+	}
+	
+	
 	/**
 	 * 
 	 * @param newSpeedRatio

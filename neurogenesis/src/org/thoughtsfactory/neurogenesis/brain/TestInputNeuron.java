@@ -17,22 +17,18 @@ import repast.simphony.space.grid.Grid;
  * @author bob
  *
  */
-public class InputNeuron extends Neuron {
+public class TestInputNeuron extends InputNeuron {
 
 	
 	//
-	private final static Logger logger = Logger.getLogger(InputNeuron.class);	
+	private final static Logger logger = Logger.getLogger(TestInputNeuron.class);	
 		
 
-	//
-	protected final Sensor sensor;
-	
-	
 	/**
 	 * 
 	 * @param newNeuralNetwork
 	 */
-	public InputNeuron(final String newId,
+	public TestInputNeuron(final String newId,
 			final ContinuousSpace<Object> newSpace,
 			final Grid<Object> newGrid,
 			final RegulatoryNetwork newRegulatoryNetwork,
@@ -41,22 +37,11 @@ public class InputNeuron extends Neuron {
 			final Sensor newSensor) {
 		
 		super(newId, newSpace, newGrid, newRegulatoryNetwork, 
-				newNeuralNetwork, newNeuritesNetwork, false);
+				newNeuralNetwork, newNeuritesNetwork, newSensor);
 		
-		this.sensor = newSensor;
-		
-	} // End of InputNeuron()
+	} // End of TestInputNeuron()
 	
 
-	/**
-	 * 
-	 * @return
-	 */
-	public final Sensor getSensor() {
-		return this.sensor;
-	}
-	
-	
 	/**
 	 * 
 	 */
@@ -65,27 +50,12 @@ public class InputNeuron extends Neuron {
 	@Override
 	public void step() {
 
-		if (this.neuritesRoot == null) {
-			if (!initialiseNeurites(true, false)) {
-				throw new IllegalStateException(
-						"Input neuron initialisation failed!");
-			}
-		}
-		
 		this.activation = this.sensor.getValue();
 
-		logger.info("Input neuron activation: " + this.activation);
-		
-		CellMembraneChannel samChannel = 
-				this.membraneChannels.get(CellProductType.SAM);
-		samChannel.setConcentration(0.9);
-		
-		expelProductsToMatrix();
-
-		this.cellGrowthRegulator = 0.5;
-		cellAxonGrowthHandler();
+		logger.info("Test input neuron activation (" 
+				+ getSensor().getLabel() + ") : " + this.activation);
 		
 	} // End of step()
 	
 	
-} // End of InputNeuron class
+} // End of TestInputNeuron class

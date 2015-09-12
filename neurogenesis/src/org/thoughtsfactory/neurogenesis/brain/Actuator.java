@@ -12,6 +12,13 @@ public interface Actuator {
 	 * 
 	 * @return
 	 */
+	public String getLabel();
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public double getValue();
 	
 	

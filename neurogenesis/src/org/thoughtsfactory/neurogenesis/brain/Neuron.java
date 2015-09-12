@@ -120,14 +120,16 @@ public class Neuron extends GeneRegulatedCell {
 	 * @param space
 	 * @param grid
 	 */
-	public Neuron(final ContinuousSpace<Object> newSpace, 
+	public Neuron(final String newId,
+			final ContinuousSpace<Object> newSpace, 
 			final Grid<Object> newGrid,
 			final RegulatoryNetwork newRegulatoryNetwork,
 			final Network<Object> newNeuralNetwork,
 			final Network<Object> newNeuritesNetwork,
 			final boolean newCellAdhesionEnabled) {
 		
-		super(newSpace, newGrid, newRegulatoryNetwork, newCellAdhesionEnabled);
+		super(newId, newSpace, newGrid, 
+				newRegulatoryNetwork, newCellAdhesionEnabled);
 		
 		this.neuralNetwork = newNeuralNetwork;
 		this.neuritesNetwork = newNeuritesNetwork;
@@ -139,11 +141,12 @@ public class Neuron extends GeneRegulatedCell {
 	 * 
 	 * @param baseCell
 	 */
-	public Neuron(final GeneRegulatedCell motherCell, 
+	public Neuron(final String newId, 
+			final GeneRegulatedCell motherCell, 
 			final Network<Object> newNeuralNetwork,
 			final Network<Object> newNeuritesNetwork) {
 		
-		super(motherCell, false);
+		super(newId, motherCell, false);
 				
 		this.attached = false;
 		
@@ -292,6 +295,8 @@ public class Neuron extends GeneRegulatedCell {
 	 */
 	protected void destroyAxon() {
 	
+		logger.debug("Destroying axon...");
+		
 		assert this.axonTip != null : "No axon tip!";
 		assert this.neuritesRoot != null : "No dendrite root!";
 		
@@ -319,7 +324,7 @@ public class Neuron extends GeneRegulatedCell {
 			assert currentJunction.getPredecessors().size() == 1 :
 				"Axon junctions must have one and one only predecessor!";
 			
-			currentJunction.getPredecessors().get(0);
+			currentJunction = currentJunction.getPredecessors().get(0);
 			
 		} // End while()
 		
@@ -335,6 +340,8 @@ public class Neuron extends GeneRegulatedCell {
 	 */
 	protected void destroyDendrites() {
 
+		logger.debug("Destroying dendrites...");
+		
 		this.neuritesRoot.setActive(false);
 		
 		Stack<NeuriteJunction> junctionsToDestroy = 
@@ -1068,7 +1075,8 @@ public class Neuron extends GeneRegulatedCell {
 	
 	/** 
 	 */
-	protected Cell clone() {
+	@Override
+	protected Cell getClone(final String newId) {
 		throw new IllegalStateException("Neurons cannot be cloned!");
 	}
 	

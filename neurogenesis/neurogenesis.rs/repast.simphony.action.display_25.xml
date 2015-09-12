@@ -23,6 +23,10 @@
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
     <entry>
+      <string>org.thoughtsfactory.neurogenesis.brain.TestInputNeuron</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
+    </entry>
+    <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.FoodInputNeuron</string>
       <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
     </entry>
@@ -49,6 +53,10 @@
       <string>org.thoughtsfactory.neurogenesis.brain.MotionInputNeuron.style_2.xml</string>
     </entry>
     <entry>
+      <string>org.thoughtsfactory.neurogenesis.brain.TestInputNeuron</string>
+      <string>org.thoughtsfactory.neurogenesis.brain.TestInputNeuron.style_0.xml</string>
+    </entry>
+    <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.FoodInputNeuron</string>
       <string>org.thoughtsfactory.neurogenesis.brain.FoodInputNeuron.style_3.xml</string>
     </entry>
@@ -73,7 +81,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>400584511</hashCode>
+    <hashCode>-370509458</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>brain space</layoutProjection>
@@ -81,27 +89,31 @@
   <layerOrder>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.OutputNeuron</string>
-      <int>5</int>
+      <int>6</int>
     </entry>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.NeuriteJunction</string>
-      <int>4</int>
+      <int>5</int>
     </entry>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.Neuron</string>
-      <int>3</int>
+      <int>4</int>
     </entry>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCell</string>
-      <int>2</int>
+      <int>3</int>
     </entry>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.MotionInputNeuron</string>
-      <int>1</int>
+      <int>2</int>
+    </entry>
+    <entry>
+      <string>org.thoughtsfactory.neurogenesis.brain.TestInputNeuron</string>
+      <int>0</int>
     </entry>
     <entry>
       <string>org.thoughtsfactory.neurogenesis.brain.FoodInputNeuron</string>
-      <int>0</int>
+      <int>1</int>
     </entry>
   </layerOrder>
   <projections>

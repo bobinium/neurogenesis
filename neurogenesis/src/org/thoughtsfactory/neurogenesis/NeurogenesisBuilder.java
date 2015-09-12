@@ -12,9 +12,12 @@ import org.thoughtsfactory.neurogenesis.brain.CellProductType;
 import org.thoughtsfactory.neurogenesis.brain.DistributedExtracellularMatrix;
 import org.thoughtsfactory.neurogenesis.brain.ExtracellularMatrix;
 import org.thoughtsfactory.neurogenesis.brain.FoodInputNeuron;
+import org.thoughtsfactory.neurogenesis.brain.InputNeuron;
 import org.thoughtsfactory.neurogenesis.brain.MotionInputNeuron;
 import org.thoughtsfactory.neurogenesis.brain.Neuron;
 import org.thoughtsfactory.neurogenesis.brain.OutputNeuron;
+import org.thoughtsfactory.neurogenesis.brain.TestInputNeuron;
+import org.thoughtsfactory.neurogenesis.brain.TestOutputNeuron;
 import org.thoughtsfactory.neurogenesis.brain.UndifferentiatedCell;
 
 import repast.simphony.context.Context;
@@ -116,11 +119,11 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	
 	
 	//
-	private FoodInputNeuron leftLightInputNeuron;
+	private InputNeuron leftLightInputNeuron;
 	
 	
 	//
-	private FoodInputNeuron rightLightInputNeuron;
+	private InputNeuron rightLightInputNeuron;
 	
 	
 	//
@@ -140,7 +143,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	
 
 	//
-	private boolean testSetup;
+	private boolean controlTestSetup;
 	
 	
 	//
@@ -219,18 +222,23 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		this.neuritesNetwork = netBuilder.buildNetwork();
 		simulationContext.setNeuritesNetwork(this.neuritesNetwork);
 
-		// Initialisation has to be in this order because of dependencies.
 		setupArena(context);
-		setupOutputNeuron(context);
-		setupLightInputNeurons(context);
 		
-		if (this.testSetup) {
-			setupTestModel(context);
+		if (this.controlTestSetup) {
+			
+			setupControlTest(context);
+			
 		} else {
+			
+			// Initialisation has to be in this order because of dependencies.
+			setupOutputNeuron(context);
+			setupLightInputNeurons(context);
 			setupMotionInputNeurons(context);
 			//setupTestNeuronPair(context);
+
 			setupInitialPopulation(context);
-		}
+			
+		} // End if()
 		
 		setupInitialEnvironment(context);
 		
@@ -250,7 +258,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		
 		Configuration config = Configuration.getInstance();
 		
-		this.testSetup = params.getBoolean("simulation.test");
+		this.controlTestSetup = params.getBoolean("simulation.test");
 		
 		config.setGenomeSize(params.getInteger("genome.size"));
 		
@@ -305,14 +313,14 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	 */
 	private void setupLightInputNeurons(final Context<Object> context) {
 		
-		this.leftLightInputNeuron = new FoodInputNeuron(this.brainSpace, 
-				this.brainGrid,	null, this.neuralNetwork, this.neuritesNetwork, 
-				this.robot.getLeftLightSensor());
+		this.leftLightInputNeuron = new FoodInputNeuron("Left",
+				this.brainSpace, this.brainGrid, null, this.neuralNetwork, 
+				this.neuritesNetwork, this.robot.getLeftLightSensor());
 		context.add(this.leftLightInputNeuron);
 		
-		this.rightLightInputNeuron = new FoodInputNeuron(this.brainSpace, 
-				this.brainGrid,	null, this.neuralNetwork, this.neuritesNetwork, 
-				this.robot.getRightLightSensor());
+		this.rightLightInputNeuron = new FoodInputNeuron("Right",
+				this.brainSpace, this.brainGrid, null, this.neuralNetwork, 
+				this.neuritesNetwork, this.robot.getRightLightSensor());
 		context.add(this.rightLightInputNeuron);
 		
 		final int offsetInputNeuronPos = this.brainGridSize / 3;
@@ -335,18 +343,18 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		
 		final int offsetInputNeuronPos = this.brainGridSize / 3;
 
-		this.leftMotionInputNeuron = new MotionInputNeuron(this.brainSpace, 
-				this.brainGrid, null, this.neuralNetwork, this.neuritesNetwork, 
-				this.robot.getLeftMotionSensor());
+		this.leftMotionInputNeuron = new MotionInputNeuron("Left",
+				this.brainSpace, this.brainGrid, null, this.neuralNetwork, 
+				this.neuritesNetwork, this.robot.getLeftMotionSensor());
 		context.add(this.leftMotionInputNeuron);
 		
 		this.leftMotionInputNeuron.moveTo(
 				this.brainGridQuadrantSize - offsetInputNeuronPos, 0, 
 				-this.brainGridQuadrantSize);
 
-		this.rightMotionInputNeuron = new MotionInputNeuron(this.brainSpace, 
-				this.brainGrid, null, this.neuralNetwork, this.neuritesNetwork, 
-				this.robot.getRightMotionSensor());
+		this.rightMotionInputNeuron = new MotionInputNeuron("Right", 
+				this.brainSpace, this.brainGrid, null, this.neuralNetwork, 
+				this.neuritesNetwork, this.robot.getRightMotionSensor());
 		context.add(this.rightMotionInputNeuron);
 		
 		this.rightMotionInputNeuron.moveTo( 
@@ -364,7 +372,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		
 		final int offsetOutputNeuronPos = this.brainGridSize / 3;
 
-		this.leftMotorNeuron = new OutputNeuron(this.brainSpace, 
+		this.leftMotorNeuron = new OutputNeuron("Left", this.brainSpace, 
 				this.brainGrid, null, this.neuralNetwork, this.neuritesNetwork, 
 				this.robot.getLeftMotor());
 		context.add(this.leftMotorNeuron);
@@ -373,7 +381,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 				this.brainGridQuadrantSize - offsetOutputNeuronPos, 
 				-this.brainGridQuadrantSize, 0);
 
-		this.rightMotorNeuron = new OutputNeuron(this.brainSpace, 
+		this.rightMotorNeuron = new OutputNeuron("Right", this.brainSpace, 
 				this.brainGrid,	null, this.neuralNetwork, this.neuritesNetwork, 
 				this.robot.getRightMotor());
 		context.add(this.rightMotorNeuron);
@@ -428,12 +436,17 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 				for (int z = -this.initialPopulationExtent; 
 						z <= this.initialPopulationExtent; z++) {
 					
-					UndifferentiatedCell motherCell = CellFactory
-							.getNewUndifferentiatedCell(); 
-					motherCell.setGenerationId(x + "," + y + "," + z);
-					context.add(motherCell);
+					if (!this.brainGrid.getObjectsAt(x, y, z)
+							.iterator().hasNext()) {
 					
-					motherCell.moveTo(x, y, z);
+						UndifferentiatedCell motherCell = 
+								CellFactory.getNewUndifferentiatedCell(
+										"U(" + x + "," + y + "," + z + ")"); 
+						context.add(motherCell);
+					
+						motherCell.moveTo(x, y, z);
+						
+					} // End if()
 
 				} // End for(z)
 				
@@ -451,7 +464,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	@SuppressWarnings("unused")
 	private void setupTestNeuron(final Context<Object> context) {
 		
-		Neuron neuron = CellFactory.getNewNeuron();
+		Neuron neuron = CellFactory.getNewNeuron("");
 		
 		context.add(neuron);
 		this.brainSpace.moveTo(neuron, 0.5, 0.5, 0.5);
@@ -469,7 +482,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		
 		final int offsetNeuronPos = this.brainGridSize / 3;
 
-		Neuron neuron1 = CellFactory.getNewNeuron();
+		Neuron neuron1 = CellFactory.getNewNeuron("");
 		
 		context.add(neuron1);
 		this.brainSpace.moveTo(neuron1, 
@@ -477,7 +490,7 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 		this.brainGrid.moveTo(neuron1, 
 				this.brainGridQuadrantSize - offsetNeuronPos, 0, 0);
 
-		Neuron neuron2 = CellFactory.getNewNeuron();
+		Neuron neuron2 = CellFactory.getNewNeuron("");
 		
 		context.add(neuron2);
 		neuron2.moveTo(-this.brainGridQuadrantSize + offsetNeuronPos, 0, 0);
@@ -489,17 +502,41 @@ public class NeurogenesisBuilder implements ContextBuilder<Object> {
 	 * 
 	 * @param context
 	 */
-	private void setupTestModel(final Context<Object> context) {
+	private void setupControlTest(final Context<Object> context) {
+
+		this.leftLightInputNeuron = new TestInputNeuron("Left",
+				this.brainSpace, this.brainGrid, null, this.neuralNetwork, 
+				this.neuritesNetwork, this.robot.getLeftLightSensor());
+		context.add(this.leftLightInputNeuron);
+		
+		this.rightLightInputNeuron = new TestInputNeuron("Right", 
+				this.brainSpace, this.brainGrid, null, this.neuralNetwork, 
+				this.neuritesNetwork, this.robot.getRightLightSensor());
+		context.add(this.rightLightInputNeuron);
+		
+		final int offsetInputNeuronPos = this.brainGridSize / 3;
+
+		this.leftLightInputNeuron.moveTo( 
+				this.brainGridQuadrantSize - offsetInputNeuronPos, 0,
+				this.brainGridQuadrantSize);
+		
+		this.rightLightInputNeuron.moveTo( 
+				-this.brainGridQuadrantSize + offsetInputNeuronPos, 0,
+				this.brainGridQuadrantSize);
+
+		// Sufficient to wire only the left (positive) motor of the robot. 
+		this.leftMotorNeuron = new TestOutputNeuron("Left", this.brainSpace, 
+				this.brainGrid,	null, this.neuralNetwork, this.neuritesNetwork, 
+				this.robot.getLeftMotor());
+		context.add(this.leftMotorNeuron);
+		
+		this.leftMotorNeuron.moveTo(0, -this.brainGridQuadrantSize, 0);
 		
 		this.neuralNetwork.addEdge(this.leftLightInputNeuron, 
-				this.leftMotorNeuron, 0.5);
-		this.neuralNetwork.addEdge(this.leftLightInputNeuron, 
-				this.rightMotorNeuron, -0.5);
+				this.leftMotorNeuron, 1);
 		
 		this.neuralNetwork.addEdge(this.rightLightInputNeuron, 
-				this.rightMotorNeuron, 0.5);
-		this.neuralNetwork.addEdge(this.rightLightInputNeuron, 
-				this.leftMotorNeuron, -0.5);
+				this.leftMotorNeuron, -1);
 		
 	} // End of setupTestModel)_
 	

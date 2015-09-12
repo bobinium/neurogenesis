@@ -85,6 +85,7 @@ public class LightSensor implements Sensor {
 	 * 
 	 * @return
 	 */
+	@Override
 	public String getLabel() {
 		return this.angularRelativePosition > 0 ? "Left" : "Right";
 	}
@@ -98,7 +99,8 @@ public class LightSensor implements Sensor {
 		this.space.moveTo(this, 
 				robot.getRadius() * Math.cos(robot.getAngularPosition(this)), 
 				robot.getRadius() * Math.sin(robot.getAngularPosition(this)));
-		logger.debug("Updating sensor with intensity " + newLightIntensity);
+		logger.debug("Updating sensor (" + getLabel() 
+				+ ") with intensity " + newLightIntensity);
 		this.lightIntensity = newLightIntensity;
 		
 	} // End of update()

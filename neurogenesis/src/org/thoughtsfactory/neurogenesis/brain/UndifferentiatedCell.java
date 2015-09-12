@@ -35,12 +35,14 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 	 * @param newCellDivisionRegulator
 	 * @param newCellDeathRegulator
 	 */
-	public UndifferentiatedCell(final ContinuousSpace<Object> newSpace,
+	public UndifferentiatedCell(final String newId,
+			final ContinuousSpace<Object> newSpace,
 			final Grid<Object> newGrid,
 			final RegulatoryNetwork newRegulatoryNetwork,
 			final boolean newCellAdhesionEnabled) {
 		
-		super(newSpace, newGrid, newRegulatoryNetwork, newCellAdhesionEnabled);
+		super(newId, newSpace, newGrid, 
+				newRegulatoryNetwork, newCellAdhesionEnabled);
 		
 	} // End of Cell(ContinuousSpace, Grid, RegulatoryNetwork)
 	
@@ -49,9 +51,10 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 	 * 
 	 * @param motherCell
 	 */
-	protected UndifferentiatedCell(final UndifferentiatedCell motherCell) {
+	protected UndifferentiatedCell(final String newId,
+			final UndifferentiatedCell motherCell) {
 		
-		super(motherCell, motherCell.cellAdhesionEnabled);
+		super(newId, motherCell, motherCell.cellAdhesionEnabled);
 		
 	} // End of UndifferentiatedCell(UndifferentiatedCell)
 
@@ -141,8 +144,9 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 	/**
 	 * 
 	 */
-	protected Cell clone() {
-		return new UndifferentiatedCell(this);
+	@Override
+	protected Cell getClone(final String newId) {
+		return new UndifferentiatedCell(newId, this);
 	}
 	
 	

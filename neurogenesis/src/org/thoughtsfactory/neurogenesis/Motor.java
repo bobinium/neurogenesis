@@ -15,12 +15,43 @@ public class Motor implements Actuator {
 	private double acceleration = 0;
 	
 	
+	//
+	private String label = "";
+	
+	
+	/**
+	 * 
+	 */
+	public Motor() {	
+	}
+	
+	
+	/**
+	 * 
+	 * @param newLabel
+	 */
+	public Motor(final String newLabel) {
+		
+		this.label = newLabel;
+		
+	} // End of Motor(String)
+	
+	
 	/**
 	 * 
 	 * @return
 	 */
 	public final double getAcceleration() {
 		return this.acceleration;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	@Override
+	public String getLabel() {
+		return this.label;
 	}
 	
 	
@@ -40,5 +71,14 @@ public class Motor implements Actuator {
 		this.acceleration = newValue;
 	}
 
+	
+	/**
+	 * 
+	 * @param newLabel
+	 */
+	public void setLabel(final String newLabel) {
+		this.label = newLabel;
+	}
+	
 	
 } // End of Motor class

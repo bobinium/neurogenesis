@@ -43,7 +43,7 @@
 									
 		/>
 				<parameter name="matrix.food.concentration" displayName="Initial Matrix Food Concentration" type="double" 
-						defaultValue="0.2" 
+						defaultValue="0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -54,7 +54,7 @@
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
-				<parameter name="simulation.test" displayName="Run Test Model" type="boolean" 
+				<parameter name="simulation.test" displayName="Run Simulation Control Test" type="boolean" 
 						defaultValue="false" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"

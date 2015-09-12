@@ -3,6 +3,7 @@
  */
 package org.thoughtsfactory.neurogenesis.brain;
 
+import org.apache.log4j.Logger;
 import org.thoughtsfactory.neurogenesis.genetics.RegulatoryNetwork;
 
 import repast.simphony.engine.schedule.ScheduleParameters;
@@ -20,21 +21,27 @@ public class OutputNeuron extends Neuron {
 
 	
 	//
-	private final Actuator actuator;
+	@SuppressWarnings("unused")
+	private final static Logger logger = Logger.getLogger(OutputNeuron.class);	
+
+	
+	//
+	protected final Actuator actuator;
 	
 	
 	/**
 	 * 
 	 * @param newNeuralNetwork
 	 */
-	public OutputNeuron(final ContinuousSpace<Object> newSpace, 
+	public OutputNeuron(final String newId,
+			final ContinuousSpace<Object> newSpace, 
 			final Grid<Object> newGrid,
 			final RegulatoryNetwork newRegulatoryNetwork,
 			final Network<Object> newNeuralNetwork,
 			final Network<Object> newNeuritesNetwork,
 			final Actuator newActuator) {
 
-		super(newSpace, newGrid, newRegulatoryNetwork, 
+		super(newId, newSpace, newGrid, newRegulatoryNetwork, 
 				newNeuralNetwork, newNeuritesNetwork, false);
 
 		this.actuator = newActuator;

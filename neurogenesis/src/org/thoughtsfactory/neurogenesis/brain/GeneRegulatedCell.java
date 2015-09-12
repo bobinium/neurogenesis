@@ -91,12 +91,6 @@ public abstract class GeneRegulatedCell extends Cell {
 	/**
 	 * 
 	 */
-	protected String generationId;
-	
-	
-	/**
-	 * 
-	 */
 	protected RegulatoryNetwork regulatoryNetwork;
 	
 
@@ -142,6 +136,12 @@ public abstract class GeneRegulatedCell extends Cell {
 	protected int[] polarity = null;
 	
 	
+	/**
+	 * 
+	 */
+	protected int childNumber = 0;
+	
+	
 	// CONSTRUCTORS ============================================================
 	
 	
@@ -150,12 +150,13 @@ public abstract class GeneRegulatedCell extends Cell {
 	 * @param space
 	 * @param grid
 	 */
-	protected GeneRegulatedCell(final ContinuousSpace<Object> newSpace, 
+	protected GeneRegulatedCell(final String newId, 
+			final ContinuousSpace<Object> newSpace, 
 			final Grid<Object> newGrid, 
 			final RegulatoryNetwork newRegulatoryNetwork,
 			final boolean newCellAdhesionEnabled) {
 		
-		super(newSpace, newGrid);
+		super(newId, newSpace, newGrid);
 		
 		this.regulatoryNetwork = newRegulatoryNetwork;
 		this.cellAdhesionEnabled = newCellAdhesionEnabled;
@@ -163,7 +164,7 @@ public abstract class GeneRegulatedCell extends Cell {
 		// Food is by default only taken in, not out.
 		this.membraneChannels.put(CellProductType.FOOD,
 				new CellMembraneChannel(CellProductType.FOOD, 
-						0 /*INITIAL_CONCENTRATION*/, OSMOSIS_RATE, true, 
+						INITIAL_CONCENTRATION, OSMOSIS_RATE, true, 
 						OSMOSIS_RATE, false));
 		
 		this.membraneChannels.put(CellProductType.WASTE, 
@@ -195,10 +196,11 @@ public abstract class GeneRegulatedCell extends Cell {
 	 * 
 	 * @param motherCell
 	 */
-	protected GeneRegulatedCell(final GeneRegulatedCell motherCell, 
+	protected GeneRegulatedCell(final String newId,
+			final GeneRegulatedCell motherCell, 
 			final boolean newCellAdhesionEnabled) {
 		
-		super(motherCell);
+		super(newId, motherCell);
 		
 		this.regulatoryNetwork = motherCell.regulatoryNetwork.clone();
 		this.membraneChannels.putAll(motherCell.membraneChannels);
@@ -216,24 +218,6 @@ public abstract class GeneRegulatedCell extends Cell {
 	
 	
 	// METHODS =================================================================
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getGenerationId() {
-		return this.generationId;
-	}
-	
-	
-	/**
-	 * 
-	 * @param newId
-	 */
-	public void setGenerationId(final String newId) {
-		this.generationId = newId;
-	}
 	
 	
 	/**
@@ -1162,7 +1146,7 @@ public abstract class GeneRegulatedCell extends Cell {
 
 			this.cellGrowthRegulator = this.cellGrowthRegulator / 2;
 			
-			Cell daughterCell = clone();
+			Cell daughterCell = getClone(getId() + "," + ++this.childNumber);
 			
 			@SuppressWarnings("unchecked")
 			Context<Object> context = ContextUtils.getContext(this);

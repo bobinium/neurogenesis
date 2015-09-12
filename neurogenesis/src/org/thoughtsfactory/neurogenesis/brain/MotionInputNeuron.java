@@ -21,14 +21,15 @@ public class MotionInputNeuron extends InputNeuron {
 	 * 
 	 * @param newNeuralNetwork
 	 */
-	public MotionInputNeuron(final ContinuousSpace<Object> newSpace,
+	public MotionInputNeuron(final String newId,
+			final ContinuousSpace<Object> newSpace,
 			final Grid<Object> newGrid,
 			final RegulatoryNetwork newRegulatoryNetwork,
 			final Network<Object> newNeuralNetwork,
 			final Network<Object> newNeuritesNetwork,
 			final Sensor newSensor) {
 		
-		super(newSpace, newGrid, newRegulatoryNetwork, 
+		super(newId, newSpace, newGrid, newRegulatoryNetwork, 
 				newNeuralNetwork, newNeuritesNetwork, newSensor);
 		
 	} // End of MotionInputNeuron()

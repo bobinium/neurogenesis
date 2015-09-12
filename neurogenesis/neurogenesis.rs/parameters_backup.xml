@@ -48,10 +48,10 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="simulation.test" displayName="Run Test Model" type="boolean" 
-						defaultValue="false" 
+				<parameter name="population.extent.percent" displayName="Initial Population Extent (%)" type="int" 
+						defaultValue="20" 
 						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 		</parameters>

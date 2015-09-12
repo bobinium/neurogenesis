@@ -12,6 +12,13 @@ public interface Sensor {
 	 * 
 	 * @return
 	 */
+	public String getLabel();
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public double getValue();
 	
 	

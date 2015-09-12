@@ -131,8 +131,7 @@ public class ArenaSupervisor {
 					this.lightSource.getLightIntensity() / distanceSquared;
 			}
 			
-			sensor.update(this.robot, lightIntensity 
-					/ this.lightSource.getLightIntensity());
+			sensor.update(this.robot, lightIntensity);
 			
 		} // End of for()
 		
