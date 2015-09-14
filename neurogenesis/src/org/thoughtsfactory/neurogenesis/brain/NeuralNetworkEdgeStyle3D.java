@@ -1,6 +1,5 @@
 package org.thoughtsfactory.neurogenesis.brain;
 
-
 import java.awt.Color;
 import java.awt.Font;
 
@@ -13,73 +12,158 @@ import repast.simphony.visualization.visualization3D.style.EdgeStyle3D;
 import repast.simphony.visualization.visualization3D.style.TaggedAppearance;
 import repast.simphony.visualization.visualization3D.style.TaggedBranchGroup;
 
+
 /**
- * @author Nick Collier
- * @version $Revision: 1.3 $ $Date: 2006/01/06 22:53:54 $
+ * Class that provides the 3D style applied to neural network edges in the 3D
+ * display of the simulation runtime environment.
+ * 
+ * @author Robert Langlois
  */
 public class NeuralNetworkEdgeStyle3D<T> implements EdgeStyle3D<T> {
-	  
-	  protected float radius = .01f;
-	  
-	  public TaggedBranchGroup getBranchGroup(T o, TaggedBranchGroup taggedGroup) {
-	    if (taggedGroup == null || taggedGroup.getTag() == null) {
-	      taggedGroup = new TaggedBranchGroup("DEFAULT");
-	      Shape3D shape = ShapeFactory.createCylinder(radius, 1f, "DEFAULT");
-	      taggedGroup.getBranchGroup().addChild(shape);
-	      return taggedGroup;
-	    }
-	    
-	    return null;
-	  }
+   
+    
+    /**
+     * The radius of a network edge. 
+     */
+    protected float radius = .01f;
+      
+    
+    /**
+     * Returns the branch group.
+     * 
+     * @return The branch group.
+     */
+    public TaggedBranchGroup getBranchGroup(
+            T o, TaggedBranchGroup taggedGroup) {
 
-	  public float edgeRadius(T o) {
-	    return radius;
-	  }
+        if (taggedGroup == null || taggedGroup.getTag() == null) {
+            taggedGroup = new TaggedBranchGroup("DEFAULT");
+            Shape3D shape = ShapeFactory.createCylinder(radius, 1f, "DEFAULT");
+            taggedGroup.getBranchGroup().addChild(shape);
+            return taggedGroup;
+        }
+        
+        return null;
+        
+    } // End of getBranchGroup()
+    
+    
+    /**
+     * Returns the edge radius.
+     * 
+     * @return The edge radius.
+     */
+    public float edgeRadius(T o) {
+        return radius;
+    }
 
-	  public EdgeType getEdgeType() {
-	    return EdgeType.SHAPE;
-	  }
+    
+    /**
+     * Returns the edge type.
+     * 
+     * @return The edge type.
+     */
+    public EdgeType getEdgeType() {
+        return EdgeType.SHAPE;
+    }
 
-		public String getLabel(T o, String currentLabel) {
-			@SuppressWarnings("unchecked" )
-			RepastEdge<Object> edge = (RepastEdge<Object>) o;
-			return String.format("%+.2f", edge.getWeight());
-		}
+    
+    /**
+     * Return the label associated with an edge. Currently this is the
+     * connection weight between the two neurons.
+     * 
+     * @return The label as a string.
+     */
+    public String getLabel(T o, String currentLabel) {
+        
+        @SuppressWarnings("unchecked" )
+        RepastEdge<Object> edge = (RepastEdge<Object>) o;
+        return String.format("%+.2f", edge.getWeight());
+        
+    } // End of getLabel()
+    
+    
+    /**
+     * Return the label's colour.
+     * 
+     * @return The label's colour, or {@code null} to use the default colour.
+     */
+    public Color getLabelColor(T t, Color currentColor) {
+        return null;
+    }
 
-		public Color getLabelColor(T t, Color currentColor) {
-			return null; // To change body of implemented methods use File |
-			// Settings | File Templates.
-		}
+    
+    /**
+     * Returns the font to use for the label.
+     * 
+     * @return The font to use for the label, or {@code null} to use the 
+     *         default font.
+     */
+    public Font getLabelFont(T t, Font currentFont) {
+            return null;
+    }
 
-		public Font getLabelFont(T t, Font currentFont) {
-			return null; // To change body of implemented methods use File |
-			// Settings | File Templates.
-		}
+    
+    /**
+     * Returns the label's position.
+     * 
+     * @return The label's position.
+     */
+    public EdgeStyle3D.LabelPosition getLabelPosition(
+            T o, LabelPosition curentPosition) {
+        return LabelPosition.NORTH;
+    }
 
-		public EdgeStyle3D.LabelPosition getLabelPosition(T o, LabelPosition curentPosition) {
-			return LabelPosition.NORTH;
-		}
+    
+    /**
+     * Returns the label's offset.
+     * 
+     * @return The label's offset.
+     */
+    public float getLabelOffset(T t) {
+        return .015f;
+    }
 
-		public float getLabelOffset(T t) {
-			return .015f;
-		}
+    
+    /**
+     * Returns the scale factor.
+     * 
+     * @returns The scale factor.
+     */
+    public float[] getScale(T o) {
+        return null;
+    }
 
-		public float[] getScale(T o) {
-			return null;
-		}
+    
+    /**
+     * Returns the rotation applied to the edge.
+     * 
+     * @return A float array giving the rotation of the edge on each axis, or
+     *         {@code null} for no rotation.
+     */
+    public float[] getRotation(T t) {
+        return null;
+    }
+    
+    
+    /**
+     * Returns the appearance of the edge.
+     * 
+     * @return The appearance of the edge.
+     */
+    public TaggedAppearance getAppearance(
+            T t, TaggedAppearance taggedAppearance, Object shapeID) {
+        
+        if (taggedAppearance == null || taggedAppearance.getTag() == null) {
+            taggedAppearance = new TaggedAppearance("DEFAULT");
+            AppearanceFactory.setMaterialAppearance(
+                    taggedAppearance.getAppearance(), Color.GRAY);
+            return taggedAppearance;
+        }
 
-		public float[] getRotation(T t) {
-			return null;
-		}
-	  
-	  public TaggedAppearance getAppearance(T t, TaggedAppearance taggedAppearance, Object shapeID) {
-	    if (taggedAppearance == null || taggedAppearance.getTag() == null) {
-	      taggedAppearance = new TaggedAppearance("DEFAULT");
-	      AppearanceFactory.setMaterialAppearance(taggedAppearance.getAppearance(), Color.GRAY);
-				return taggedAppearance;
-	    }
+        return null;
+        
+    } // End of getAppearance()
 
-			return null;
-	  }
-	
-}
+      
+} // End of NeuralNetworkEdgeStyle3D class
