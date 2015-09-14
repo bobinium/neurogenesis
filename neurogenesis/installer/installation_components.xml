@@ -132,7 +132,8 @@
             <file src="$EclipsePluginsDirectory/repast.simphony.jasperreports_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.jdbcfreezedryer_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.jung_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            <file src="$EclipsePluginsDirectory/repast.simphony.ora_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            <!-- file src="$EclipsePluginsDirectory/repast.simphony.ora_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/ -->
+            <file src="$EclipsePluginsDirectory/repast.simphony.ora_2.2.0" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.pajek_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.plugin.util_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.R_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>

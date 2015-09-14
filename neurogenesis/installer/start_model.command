@@ -28,4 +28,4 @@ CP=$CP:$PWD/groovylib/$Groovy_All_Jar
 cd neurogenesis
 
 # Start the Model
-java -Xss10M -Xmx400M -cp $CP repast.simphony.runtime.RepastMain  ./neurogenesis.rs
+java -Xss10M -Xmx2g -XX:+UseG1GC -cp $CP repast.simphony.runtime.RepastMain  ./neurogenesis.rs
