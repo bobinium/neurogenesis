@@ -69,9 +69,9 @@ public class DistributedExtracellularMatrix implements ExtracellularMatrix {
         
         for (int x = -gridQuadrantSize; x <= gridQuadrantSize; x++) {
             
-            for (int y = -gridQuadrantSize;    y <= gridQuadrantSize; y++) {
+            for (int y = -gridQuadrantSize; y <= gridQuadrantSize; y++) {
                 
-                for (int z = -gridQuadrantSize;    z <= gridQuadrantSize; z++) {
+                for (int z = -gridQuadrantSize; z <= gridQuadrantSize; z++) {
                     
                     ExtracellularMatrixSample matrixSample;
                     
@@ -86,16 +86,16 @@ public class DistributedExtracellularMatrix implements ExtracellularMatrix {
                      * into the grid.
                      */
                     
-                   if ((x % 2 == 0) && (y % 2 == 0) && (z % 2 == 0)) {
+                    if ((x % 2 == 0) && (y % 2 == 0) && (z % 2 == 0)) {
                         
-                       // Active sample.
-                       matrixSample = 
+                        // Active sample.
+                        matrixSample = 
                                 new DistributedExtracellularMatrixSample(
                                         x, y, z, this.grid);
                     
                     } else {
                         
-                    	// Passive sample.
+                        // Passive sample.
                         matrixSample = new ExtracellularMatrixSample(x, y, z);
                         
                     } // End if()
