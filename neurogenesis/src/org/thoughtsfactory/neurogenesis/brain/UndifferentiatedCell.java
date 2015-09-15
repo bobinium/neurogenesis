@@ -86,7 +86,7 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
      */
     @ScheduledMethod(start = 1, interval = 1, 
             priority = ScheduleParameters.RANDOM_PRIORITY)
-    public void step() {
+    public void update() {
 
         absorbProductsFromMatrix();
         updateRegulatoryNetwork();
@@ -120,7 +120,7 @@ public class UndifferentiatedCell extends GeneRegulatedCell {
 
         } // End if()
         
-    } // End of step()
+    } // End of update()
 
     
     /**
